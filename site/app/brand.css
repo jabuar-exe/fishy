@@ -1,0 +1,12 @@
+/* Display the supplied artwork without cropping, filters, or raster changes. */
+.topbar .brand{flex-shrink:0;min-height:44px;gap:8px}
+.topbar .brand-logo{display:block;width:auto;height:40px;max-width:none;object-fit:contain;flex-shrink:0}
+@media(max-width:799px){.topbar .brand-logo{height:34px}}
+@media(max-width:380px){
+  .studio .topbar{gap:4px;padding:0 6px}
+  .studio .topbar nav button{padding:5px 3px}
+  .studio .top-actions{gap:0}
+  .studio .top-actions>button{padding:5px 3px}
+  .studio .canvas-toolbar{left:6px;right:6px;gap:4px}
+  .studio .canvas-toolbar button{font-size:13px;padding:5px 4px;gap:3px}
+}

@@ -1,0 +1,26 @@
+{
+  "date": "2026-09-13",
+  "runtime": "bundled workspace Python and Blender 5.2.0 LTS",
+  "focusedTests": {
+    "command": "bundled-python -m unittest discover -s blender/tests -p test_heldout_evaluation.py -v",
+    "tests": 36,
+    "result": "passed"
+  },
+  "nativeIntegrationTest": {
+    "command": "FISHY_RUN_NATIVE_EVALUATION_TESTS=1 bundled-python -m unittest discover -s blender/tests -p test_render_heldout_native.py -v",
+    "tests": 1,
+    "actualBackgroundBlenderRenders": 3,
+    "durationSeconds": 8.504,
+    "result": "passed",
+    "checks": [
+      "Identical native recipe and frozen camera reproduce exactly identical mask raster pixels and IoU 1",
+      "Hardscape IDs contain only the two rocks and wood",
+      "Removing plants increases visible hardscape pixels while preserving all previously visible pixels",
+      "Mask pixels are exactly black or white with no material shading",
+      "Camera hash remains identical across the native comparison"
+    ]
+  },
+  "recordedFixture": "native-fixture-final-20260913/fixture-evidence.json",
+  "visualInspection": "native-fixture-final-20260913/fixture-comparison.png inspected; reference, identical recipe, deliberately moved rock and corresponding masks agree with the recorded fixture",
+  "modelCalls": 0
+}

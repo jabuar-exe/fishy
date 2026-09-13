@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "fishy.frontier.review.v1",
+  "provenance": "protocol_fixture",
+  "run": {
+    "id": "fixture-native-resolved_changed",
+    "runtime": "blender",
+    "builder": "fishy-native-recipe-v2",
+    "sceneId": "fixture-native-tank",
+    "baseRevision": 1,
+    "revision": 2,
+    "createdAt": "2026-09-13T04:20:00Z"
+  },
+  "observations": [
+    {
+      "id": "obs-wide",
+      "view": "front",
+      "role": "reconstruction",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "note": "Protocol fixture; not a real photograph",
+      "objectIds": []
+    },
+    {
+      "id": "obs-bbbbbbbbbbbbbbbbbbbbbbbb",
+      "view": "close_up",
+      "role": "reconstruction",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "note": "Answer to request-r1-1",
+      "objectIds": [
+        "rock-01"
+      ]
+    }
+  ],
+  "requests": [
+    {
+      "id": "request-r1-1",
+      "objectId": "rock-01",
+      "question": "Show a close-up of the main left stone.",
+      "requestedView": "close_up",
+      "why": "The fixture exercises a cited changed or unresolved outcome.",
+      "status": "resolved_changed",
+      "answerObservationId": "obs-bbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  ],
+  "changes": [
+    {
+      "objectId": "rock-01",
+      "summary": "Changed position_m; base-centre displacement 2.000 cm",
+      "observationIds": [
+        "obs-bbbbbbbbbbbbbbbbbbbbbbbb"
+      ]
+    }
+  ],
+  "protection": {
+    "protectedIds": [
+      "wood-01"
+    ],
+    "blockedAttempts": [
+      {
+        "objectId": "wood-01",
+        "fields": [
+          "position_m"
+        ],
+        "reason": "Current native scene protects this object; trusted state preserved."
+      }
+    ]
+  },
+  "evaluation": null,
+  "browserProposal": null
+}

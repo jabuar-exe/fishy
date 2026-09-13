@@ -1,0 +1,46 @@
+{
+  "cameraHash": "7268f420f3aaa20a56d03e43c1973ef43c6d216dec31911f48933627e83f5d20",
+  "checks": [
+    {
+      "analyticDisagreementPx": 0.00016274789742096898,
+      "blenderProjectedPixel": [
+        17.160873413085938,
+        -14.514055252075195
+      ],
+      "markedCornerErrorPx": 58.514276397285705,
+      "name": "front-top-left"
+    },
+    {
+      "analyticDisagreementPx": 0.0001627478974244155,
+      "blenderProjectedPixel": [
+        622.8391265869141,
+        -14.514055252075195
+      ],
+      "markedCornerErrorPx": 56.520284628294945,
+      "name": "front-top-right"
+    },
+    {
+      "analyticDisagreementPx": 0.00013562484138356575,
+      "blenderProjectedPixel": [
+        17.160873413085938,
+        346.79433301091194
+      ],
+      "markedCornerErrorPx": 1.4689337348712188,
+      "name": "front-bottom-left"
+    },
+    {
+      "analyticDisagreementPx": 0.00013562484138770152,
+      "blenderProjectedPixel": [
+        622.8391265869141,
+        346.79433301091194
+      ],
+      "markedCornerErrorPx": 0.26111140426734764,
+      "name": "front-bottom-right"
+    }
+  ],
+  "frontCornerRmsResidualPx": 40.68380839549163,
+  "renderedOrScoredHardscape": false,
+  "renderer": "5.2.0 LTS",
+  "status": "passed",
+  "usedReconstructionRecipe": false
+}

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "fishy.evaluation.availability.v1",
+  "status": "complete_exploratory",
+  "evaluation": "review-evaluation.json",
+  "realPhotoScores": [
+    {
+      "revision": 1,
+      "recipeHash": "4d2a2c72126f0ac1c9cd128b051516f73271504ec9f291d4d076f119b29fa18a",
+      "iou": 0.34411666351648035,
+      "ssim": null,
+      "centroidErrorPx": 36.33835946270602,
+      "renderHash": "b2f7279300fad3a417212188157cca94e0c0279eba8e9d127d6d4f72954c106d"
+    },
+    {
+      "revision": 2,
+      "recipeHash": "db88b2c07ef568f7ce18dba2d51bb79d2d861220b245148ab5ea93ba941eddfa",
+      "iou": 0.3443307149091486,
+      "ssim": null,
+      "centroidErrorPx": 27.265521045463885,
+      "renderHash": "57eaad67f6096977d64c78c6c510b24b84e1eab39bce05b50402c9a84441bca3"
+    }
+  ],
+  "available": [
+    "Three source-verified same-aquarium reconstruction frames A80/B105/C125",
+    "One isolated prospective heldout frame D145",
+    "Frozen manually aligned camera with documented top-rim discrepancy",
+    "Frozen accepted visible-hardscape polygon mask",
+    "Validated finalized generator gate and frozen builder identity"
+  ],
+  "pending": [],
+  "note": "Exploratory silhouette overlap under assumed tank geometry and manually aligned camera. strict_test refers only to heldout-data isolation and the frozen two-revision policy, not calibrated accuracy. Unknown dimensions/refraction and a substantial tank-rim framing residual confound absolute scores. Manually annotated conservative mineral-face mask; SSIM unavailable. Source frames private analysis only, no rehosting.",
+  "modelCallsByEvaluator": 0,
+  "recordedReconstructionModelCalls": 2
+}

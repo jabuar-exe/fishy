@@ -1,0 +1,40 @@
+{
+  "builder": "fishy-native-recipe-v2",
+  "builderHash": "e8195780e6072f4c1ad96090634ef689678cc87cc9e7a828495a0ef0ed623cd5",
+  "cameraHash": "7268f420f3aaa20a56d03e43c1973ef43c6d216dec31911f48933627e83f5d20",
+  "centroidErrorPx": 27.265521045463885,
+  "intersectionPixels": 21698,
+  "iou": 0.3443307149091486,
+  "maskHash": "610668d8de33f06b10fd0fd27d52fcd0d1fa57c28f13a2769fbd99609434bb26",
+  "metric": {
+    "centroid": "foreground-union-pixel-centres; null-if-prediction-empty",
+    "foregroundKinds": [
+      "rock",
+      "wood"
+    ],
+    "maskThreshold": 127,
+    "occlusionPolicy": "plants-and-substrate-occlude; tank-glass-rim-studio-excluded",
+    "ssim": "not-computed; procedural-materials-not-photometrically-calibrated",
+    "version": "visible-hardscape-iou-v1"
+  },
+  "photoHash": "5dd22e6ae61a704237ef86ea01ae80f60781d28d970c72cbdc883da1c3399956",
+  "policy": "strict_test",
+  "predictionPixels": 43465,
+  "predictionStatus": "visible",
+  "recipeHash": "db88b2c07ef568f7ce18dba2d51bb79d2d861220b245148ab5ea93ba941eddfa",
+  "referencePixels": 41248,
+  "renderHash": "57eaad67f6096977d64c78c6c510b24b84e1eab39bce05b50402c9a84441bca3",
+  "renderMaskHash": "bc174e79fa8aada4e849faf24ccc66daffc9b0647b826c519d53d4d28530e858",
+  "renderer": {
+    "name": "BLENDER_WORKBENCH",
+    "samples": 1,
+    "version": "5.2.0 LTS"
+  },
+  "revision": 2,
+  "runtime": "blender",
+  "schemaVersion": "fishy.heldout.score.v1",
+  "sequenceHash": "811bb19eeed6777b0b686133f7730fd36ce63edd1b7806df040d63a8e00c7f0c",
+  "seriesHash": "3c8d6248f7941c0b687f9e645b578f6dab03fb6ad1e71fb97d04d07be38463d6",
+  "ssim": null,
+  "unionPixels": 63015
+}

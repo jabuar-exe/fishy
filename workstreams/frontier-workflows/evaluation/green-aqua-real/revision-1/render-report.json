@@ -1,0 +1,36 @@
+{
+  "builderHash": "e8195780e6072f4c1ad96090634ef689678cc87cc9e7a828495a0ef0ed623cd5",
+  "cameraHash": "7268f420f3aaa20a56d03e43c1973ef43c6d216dec31911f48933627e83f5d20",
+  "hardscapeIds": [
+    "r1",
+    "r2",
+    "r3",
+    "r4",
+    "r5",
+    "r6",
+    "r7",
+    "r8",
+    "r9"
+  ],
+  "mask": {
+    "path": "revision-1/hardscape-mask.png",
+    "sha256": "ab3c434ada3f0060dd235863ff8f70d3fe8afb3571ef9c6df0b8b272da0aa678"
+  },
+  "recipe": {
+    "path": "recipes/revision-1.json",
+    "sha256": "4d2a2c72126f0ac1c9cd128b051516f73271504ec9f291d4d076f119b29fa18a"
+  },
+  "render": {
+    "path": "revision-1/render.png",
+    "sha256": "b2f7279300fad3a417212188157cca94e0c0279eba8e9d127d6d4f72954c106d"
+  },
+  "renderer": {
+    "name": "BLENDER_WORKBENCH",
+    "samples": 1,
+    "version": "5.2.0 LTS"
+  },
+  "revision": 1,
+  "schemaVersion": "fishy.heldout.render.v1",
+  "sequenceHash": "811bb19eeed6777b0b686133f7730fd36ce63edd1b7806df040d63a8e00c7f0c",
+  "seriesHash": "3c8d6248f7941c0b687f9e645b578f6dab03fb6ad1e71fb97d04d07be38463d6"
+}

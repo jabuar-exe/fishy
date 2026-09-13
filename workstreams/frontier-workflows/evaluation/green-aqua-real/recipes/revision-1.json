@@ -1,0 +1,301 @@
+{
+  "schema_version": "fishy.recipe.v2",
+  "title": "Planted Rocky Bank with Open Sand",
+  "interpretation": "A tall, densely planted left bank steps down through broad foreground stones toward an open sandy area on the right. Smaller stones punctuate the foreground. Generic rock and plant volumes approximate the visible arrangement; glass reflections, equipment, fish and foliage above the tank are excluded.",
+  "assumptions": [
+    "The reference tank's actual physical dimensions are unknown; the fixed 0.60 × 0.30 × 0.36 m canvas is assumed.",
+    "Depth and spacing are estimated from the three views; reflections and foliage obscure some boundaries.",
+    "Occluded rock bases are represented by simple supporting volumes, without inventing hidden extensions.",
+    "Rounded procedural rocks cannot reproduce the visible angular slabs, and bush and grass assets approximate plant groups rather than species.",
+    "Plant heights are compressed below the tank rim, and the substrate is represented by the required uniform depth."
+  ],
+  "design": {
+    "composition": "triangular",
+    "focal_object_id": "r3",
+    "sightline": "Open sand runs across the foreground and turns into the right side beside the descending rock bank.",
+    "open_foreground_min": 0.85,
+    "mood": "lush",
+    "maintenance_tier": "low",
+    "story": "A lush rocky bank descends from the shaded left corner onto a pale sandy margin."
+  },
+  "tank": {
+    "width_m": 0.6,
+    "depth_m": 0.3,
+    "height_m": 0.36,
+    "substrate_depth_m": 0.03
+  },
+  "objects": [
+    {
+      "id": "r1",
+      "label": "Tall left bank",
+      "asset": "rock",
+      "position_m": [
+        0.077,
+        0.226,
+        0.03
+      ],
+      "size_m": [
+        0.12,
+        0.12,
+        0.235
+      ],
+      "yaw_deg": -6,
+      "seed": 101
+    },
+    {
+      "id": "r2",
+      "label": "Left upper ledge",
+      "asset": "rock",
+      "position_m": [
+        0.133,
+        0.185,
+        0.095
+      ],
+      "size_m": [
+        0.115,
+        0.09,
+        0.095
+      ],
+      "yaw_deg": 12,
+      "seed": 102
+    },
+    {
+      "id": "r3",
+      "label": "Broad foreground slab",
+      "asset": "rock",
+      "position_m": [
+        0.188,
+        0.139,
+        0.03
+      ],
+      "size_m": [
+        0.188,
+        0.105,
+        0.108
+      ],
+      "yaw_deg": -8,
+      "seed": 103
+    },
+    {
+      "id": "r4",
+      "label": "Central stepping slab",
+      "asset": "rock",
+      "position_m": [
+        0.313,
+        0.17,
+        0.03
+      ],
+      "size_m": [
+        0.113,
+        0.092,
+        0.094
+      ],
+      "yaw_deg": 9,
+      "seed": 104
+    },
+    {
+      "id": "r5",
+      "label": "Right upright stone",
+      "asset": "rock",
+      "position_m": [
+        0.405,
+        0.185,
+        0.03
+      ],
+      "size_m": [
+        0.075,
+        0.08,
+        0.143
+      ],
+      "yaw_deg": -17,
+      "seed": 105
+    },
+    {
+      "id": "r6",
+      "label": "Low right slab",
+      "asset": "rock",
+      "position_m": [
+        0.442,
+        0.126,
+        0.03
+      ],
+      "size_m": [
+        0.105,
+        0.07,
+        0.062
+      ],
+      "yaw_deg": 10,
+      "seed": 106
+    },
+    {
+      "id": "r7",
+      "label": "Left sand pebble",
+      "asset": "rock",
+      "position_m": [
+        0.244,
+        0.056,
+        0.03
+      ],
+      "size_m": [
+        0.027,
+        0.023,
+        0.021
+      ],
+      "yaw_deg": 13,
+      "seed": 107
+    },
+    {
+      "id": "r8",
+      "label": "Middle sand pebble",
+      "asset": "rock",
+      "position_m": [
+        0.306,
+        0.057,
+        0.03
+      ],
+      "size_m": [
+        0.029,
+        0.025,
+        0.019
+      ],
+      "yaw_deg": -12,
+      "seed": 108
+    },
+    {
+      "id": "r9",
+      "label": "Right sand pebble",
+      "asset": "rock",
+      "position_m": [
+        0.377,
+        0.062,
+        0.03
+      ],
+      "size_m": [
+        0.032,
+        0.022,
+        0.016
+      ],
+      "yaw_deg": 8,
+      "seed": 109
+    },
+    {
+      "id": "p1",
+      "label": "Left bank canopy",
+      "asset": "bush",
+      "position_m": [
+        0.088,
+        0.226,
+        0.185
+      ],
+      "size_m": [
+        0.145,
+        0.105,
+        0.139
+      ],
+      "yaw_deg": 0,
+      "seed": 201
+    },
+    {
+      "id": "p2",
+      "label": "Rear central foliage",
+      "asset": "bush",
+      "position_m": [
+        0.244,
+        0.238,
+        0.104
+      ],
+      "size_m": [
+        0.19,
+        0.104,
+        0.175
+      ],
+      "yaw_deg": 0,
+      "seed": 202
+    },
+    {
+      "id": "p3",
+      "label": "Upright rear fern group",
+      "asset": "grass",
+      "position_m": [
+        0.372,
+        0.244,
+        0.092
+      ],
+      "size_m": [
+        0.105,
+        0.086,
+        0.204
+      ],
+      "yaw_deg": -5,
+      "seed": 203
+    },
+    {
+      "id": "p4",
+      "label": "Left ledge greenery",
+      "asset": "bush",
+      "position_m": [
+        0.088,
+        0.153,
+        0.104
+      ],
+      "size_m": [
+        0.115,
+        0.086,
+        0.085
+      ],
+      "yaw_deg": 0,
+      "seed": 204
+    },
+    {
+      "id": "p5",
+      "label": "Low left broad leaves",
+      "asset": "bush",
+      "position_m": [
+        0.112,
+        0.101,
+        0.033
+      ],
+      "size_m": [
+        0.055,
+        0.04,
+        0.048
+      ],
+      "yaw_deg": -8,
+      "seed": 205
+    },
+    {
+      "id": "p6",
+      "label": "Central crevice leaves",
+      "asset": "bush",
+      "position_m": [
+        0.278,
+        0.13,
+        0.038
+      ],
+      "size_m": [
+        0.045,
+        0.049,
+        0.075
+      ],
+      "yaw_deg": 4,
+      "seed": 206
+    },
+    {
+      "id": "p7",
+      "label": "Right stone greenery",
+      "asset": "bush",
+      "position_m": [
+        0.395,
+        0.222,
+        0.102
+      ],
+      "size_m": [
+        0.081,
+        0.056,
+        0.064
+      ],
+      "yaw_deg": 7,
+      "seed": 207
+    }
+  ]
+}

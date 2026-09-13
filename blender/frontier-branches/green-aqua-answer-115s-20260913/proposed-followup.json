@@ -1,0 +1,33 @@
+{
+  "status": "proposed_not_executed",
+  "maximumAdditionalModelCalls": 1,
+  "automaticRetries": 0,
+  "branchCallsAlreadyMade": 1,
+  "branchCallsIfApproved": 2,
+  "changeSinceRejectedAttempt": "Prompt now states exact nonempty objectIds citation scope and answered-only resolutions; validation rules are unchanged.",
+  "inputChange": "None; same photo bytes, gate, current native snapshot and brief. No heldout or evaluation feedback.",
+  "argv": [
+    "python3",
+    "blender/generate_scene.py",
+    "generate",
+    "--frontier",
+    "--current-scene",
+    "blender/frontier-branches/green-aqua-answer-115s-20260913/scripted-native-snapshot/snapshot.json",
+    "--expected-snapshot-hash",
+    "a9d57363ce6d54169b1c0f7698b70ba128bdfcb84aad6336ecf25e8f01aab3c8",
+    "--answer-request",
+    "request-r2-1",
+    "--answer-photo",
+    "blender/frontier-branches/green-aqua-answer-115s-20260913/reconstruction/request_r2_1_left_foundation_closeup_115s.png",
+    "--answer-view",
+    "close_up",
+    "--evaluation-split",
+    "blender/frontier-branches/green-aqua-answer-115s-20260913/generator-gate.json",
+    "--brief",
+    "This is a separate unscored photo-answer branch. The current native snapshot includes a scripted native transform simulating a manual edit of r3; no cursor-authored native edit is claimed. Preserve the exact current protected r3. Inspect the newly registered close-up answer to request-r2-1 for the left foundation r1 and resolve it honestly as changed, confirmed or unresolved. Change unprotected geometry only where the supplied reconstruction evidence supports it, retain stable IDs and cite the actual answer if r1 changes. The assumed tank dimensions remain unchanged. No heldout images, camera, masks or scores are available, and no evaluation claim may be made.",
+    "--timeout",
+    "300",
+    "--run-root",
+    "blender/runs"
+  ]
+}

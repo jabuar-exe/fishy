@@ -1,0 +1,194 @@
+{
+  "schemaVersion": "fishy.frontier.review.v1",
+  "provenance": "protocol_fixture",
+  "run": {
+    "id": "browser-protection-review-fixture",
+    "runtime": "browser",
+    "builder": "fishy-browser-2",
+    "sceneId": "riverbend",
+    "baseRevision": 23,
+    "revision": 24,
+    "createdAt": "2026-09-13T04:35:00Z"
+  },
+  "observations": [],
+  "requests": [],
+  "changes": [],
+  "protection": {
+    "protectedIds": [],
+    "blockedAttempts": []
+  },
+  "evaluation": null,
+  "browserProposal": {
+    "schema": 4,
+    "builder": "fishy-browser-2",
+    "id": "riverbend",
+    "revision": 23,
+    "units": "metres",
+    "coordinates": "Y-up; X right; Z toward front; origin floor centre",
+    "tank": {
+      "width": 0.6,
+      "depth": 0.4,
+      "height": 0.36,
+      "source": "user-entered"
+    },
+    "substrate": 0.03,
+    "references": [],
+    "brief": "Keep the open foreground — interface v2 save check.",
+    "objects": [
+      {
+        "id": "wood-arch",
+        "name": "River wood",
+        "kind": "wood",
+        "position": [
+          0.2,
+          0.035,
+          -0.01
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "form": "spider",
+        "color": "#805636",
+        "size": 0.9,
+        "protected": false
+      },
+      {
+        "id": "rock-left",
+        "name": "Left stone",
+        "kind": "rock",
+        "position": [
+          -0.15,
+          0.03,
+          0.055
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "form": "faceted",
+        "color": "#777969",
+        "size": 1,
+        "protected": false
+      },
+      {
+        "id": "rock-right",
+        "name": "Right stone",
+        "kind": "rock",
+        "position": [
+          0.17,
+          0.03,
+          -0.015
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "form": "faceted",
+        "color": "#62675c",
+        "size": 0.85,
+        "protected": false
+      },
+      {
+        "id": "plant-left",
+        "name": "Fern grove",
+        "kind": "plant",
+        "position": [
+          -0.2,
+          0.03,
+          -0.09
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "form": "fern",
+        "color": "#406e36",
+        "size": 1,
+        "protected": false
+      },
+      {
+        "id": "plant-back",
+        "name": "Stem grove",
+        "kind": "plant",
+        "position": [
+          0.115,
+          0.03,
+          -0.092
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "form": "stem",
+        "color": "#5e8440",
+        "size": 1,
+        "protected": false
+      },
+      {
+        "id": "plant-front",
+        "name": "Foreground grass",
+        "kind": "plant",
+        "position": [
+          0.03,
+          0.03,
+          0.08
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "form": "grass",
+        "color": "#718b43",
+        "size": 0.8,
+        "protected": false
+      },
+      {
+        "id": "31ac864d-212c-4a54-97e6-8b2623970ef6",
+        "name": "Anubias barteri 'Petite'",
+        "kind": "plant",
+        "position": [
+          0,
+          0.03174013481938389,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "size": 1,
+        "color": "#477d3c",
+        "form": "fern",
+        "protected": false,
+        "catalogId": "plant-anubias-petite"
+      },
+      {
+        "id": "2d40968a-7f91-4515-b8eb-ed86f25ec39b",
+        "name": "Anubias barteri 'Petite'",
+        "kind": "plant",
+        "position": [
+          0,
+          0.03174013481938389,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "size": 1,
+        "color": "#477d3c",
+        "form": "broadleaf",
+        "protected": false,
+        "catalogId": "plant-anubias-petite"
+      }
+    ]
+  }
+}

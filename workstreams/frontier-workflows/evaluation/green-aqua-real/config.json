@@ -1,0 +1,47 @@
+{
+  "camera": {
+    "lensMm": 50,
+    "orthoScaleM": 0.634,
+    "positionM": [
+      0.3,
+      -3.0,
+      0.49
+    ],
+    "projection": "orthographic",
+    "quality": {
+      "accepted": true,
+      "alignmentResidualPx": 40.683692,
+      "assumptions": [
+        "Exploratory silhouette overlap under assumed tank geometry and manually aligned camera; not calibrated photographic or metric accuracy.",
+        "The supplied60\u00d730\u00d736cm tank dimensions and3cm substrate remain assumptions unchanged by heldout evidence. Actual source dimensions, focal length, lens distortion and refraction are unknown.",
+        "Orthographic horizontal span0.634m with fixed Z-up/square pixels; manual camera chosen to approximately match front width and lower front edge with a low downward view. It is not refitted per recipe.",
+        "The assumed top tank edge cannot be simultaneously aligned: manual four-front-corner RMS reprojection residual is40.683692px, dominated by upper-rim mismatch. This is an observed framing discrepancy, not a calibrated camera-fit uncertainty.",
+        "Four coplanar tank corners do not solve arbitrary camera pose/intrinsics. No general calibration is claimed; perspective/depth/refraction distortions remain uncontrolled."
+      ],
+      "method": "manual"
+    },
+    "resolution": [
+      640,
+      360
+    ],
+    "sensorWidthMm": 36,
+    "shiftX": 0,
+    "shiftY": 0,
+    "targetM": [
+      0.3,
+      0.15,
+      0.15
+    ]
+  },
+  "maskPath": "heldout/visible-hardscape-mask.png",
+  "maskQuality": {
+    "accepted": true,
+    "method": "manual_reviewed",
+    "note": "Evaluator-authored fixed integer-pixel polygons of visible exposed mineral faces plus explicit leaf/grass occlusion subtraction, visually reviewed before any real recipe output. Shadowed rock, moss/biofilm and fine video foliage remain ambiguous; conservative annotation. No beauty-color segmentation or model-render feedback."
+  },
+  "note": "Exploratory silhouette overlap under assumed tank geometry and manually aligned camera. strict_test refers only to heldout-data isolation and the frozen two-revision policy, not calibrated accuracy. Unknown dimensions/refraction and a substantial tank-rim framing residual confound absolute scores. Manually annotated conservative mineral-face mask; SSIM unavailable. Source frames private analysis only, no rehosting.",
+  "photoPath": "heldout/photo.png",
+  "policy": "strict_test",
+  "rendererVersion": "5.2.0 LTS",
+  "seriesId": "green-aqua-real-20260913"
+}

@@ -1,0 +1,370 @@
+{
+  "schema_version": "fishy.recipe.v2",
+  "title": "Planted Rocky Bank with Open Sand",
+  "interpretation": "The references show a densely planted left bank descending through broad, low stones toward open sand on the right. Compared with the prior renders, exposed left rock height is reduced, the central stones are flattened and layered farther back, and smaller overlapping plant groups fill the sparse rear bank. Rounded stones and generic foliage provide only a coarse approximation of the angular hardscape and dense planting. Reflections, equipment, fish and emergent foliage are excluded.",
+  "assumptions": [
+    "The reference tank's actual physical dimensions are unknown; the fixed 0.60 × 0.30 × 0.36 m canvas is assumed.",
+    "Depth and spacing are estimated from the three registered reconstruction views; foliage, reflections and the obstructed overhead view limit certainty.",
+    "Occluded rock boundaries remain approximate; no separate hidden hardscape is asserted.",
+    "Procedural rounded rocks cannot reproduce angular slabs, and bush and grass assets approximate plant-group volumes rather than species or fine leaf textures.",
+    "Planting is compressed below the rim, and the required uniform substrate cannot reproduce the bank's uneven ground profile.",
+    "The low maintenance tier assumes the visible attached greenery is represented by slow-growing epiphyte groups."
+  ],
+  "design": {
+    "composition": "triangular",
+    "focal_object_id": "r3",
+    "sightline": "An open sandy strip crosses the foreground and widens along the right side, leading behind the low right slab toward the descending planted bank.",
+    "open_foreground_min": 0.85,
+    "mood": "lush",
+    "maintenance_tier": "low",
+    "story": "A densely planted rocky bank steps down from the shaded left corner onto a pale sandy margin."
+  },
+  "tank": {
+    "width_m": 0.6,
+    "depth_m": 0.3,
+    "height_m": 0.36,
+    "substrate_depth_m": 0.03
+  },
+  "objects": [
+    {
+      "id": "r1",
+      "label": "Left bank foundation",
+      "asset": "rock",
+      "position_m": [
+        0.082,
+        0.221,
+        0.03
+      ],
+      "size_m": [
+        0.137,
+        0.128,
+        0.19
+      ],
+      "yaw_deg": -6,
+      "seed": 101
+    },
+    {
+      "id": "r2",
+      "label": "Left upper ledge",
+      "asset": "rock",
+      "position_m": [
+        0.132,
+        0.198,
+        0.102
+      ],
+      "size_m": [
+        0.125,
+        0.098,
+        0.074
+      ],
+      "yaw_deg": 12,
+      "seed": 102
+    },
+    {
+      "id": "r3",
+      "label": "Broad foreground slab",
+      "asset": "rock",
+      "position_m": [
+        0.18,
+        0.145,
+        0.03
+      ],
+      "size_m": [
+        0.198,
+        0.112,
+        0.092
+      ],
+      "yaw_deg": -8,
+      "seed": 103
+    },
+    {
+      "id": "r4",
+      "label": "Central stepping slab",
+      "asset": "rock",
+      "position_m": [
+        0.308,
+        0.19,
+        0.03
+      ],
+      "size_m": [
+        0.124,
+        0.099,
+        0.079
+      ],
+      "yaw_deg": 9,
+      "seed": 104
+    },
+    {
+      "id": "r5",
+      "label": "Right upright stone",
+      "asset": "rock",
+      "position_m": [
+        0.404,
+        0.2,
+        0.03
+      ],
+      "size_m": [
+        0.074,
+        0.086,
+        0.114
+      ],
+      "yaw_deg": -17,
+      "seed": 105
+    },
+    {
+      "id": "r6",
+      "label": "Low right slab",
+      "asset": "rock",
+      "position_m": [
+        0.429,
+        0.14,
+        0.03
+      ],
+      "size_m": [
+        0.104,
+        0.079,
+        0.053
+      ],
+      "yaw_deg": 10,
+      "seed": 106
+    },
+    {
+      "id": "r7",
+      "label": "Left sand pebble",
+      "asset": "rock",
+      "position_m": [
+        0.244,
+        0.056,
+        0.03
+      ],
+      "size_m": [
+        0.027,
+        0.023,
+        0.021
+      ],
+      "yaw_deg": 13,
+      "seed": 107
+    },
+    {
+      "id": "r8",
+      "label": "Middle sand pebble",
+      "asset": "rock",
+      "position_m": [
+        0.306,
+        0.057,
+        0.03
+      ],
+      "size_m": [
+        0.029,
+        0.025,
+        0.019
+      ],
+      "yaw_deg": -12,
+      "seed": 108
+    },
+    {
+      "id": "r9",
+      "label": "Right sand pebble",
+      "asset": "rock",
+      "position_m": [
+        0.377,
+        0.062,
+        0.03
+      ],
+      "size_m": [
+        0.032,
+        0.022,
+        0.016
+      ],
+      "yaw_deg": 8,
+      "seed": 109
+    },
+    {
+      "id": "p1",
+      "label": "Left bank canopy",
+      "asset": "bush",
+      "position_m": [
+        0.087,
+        0.234,
+        0.14
+      ],
+      "size_m": [
+        0.15,
+        0.108,
+        0.185
+      ],
+      "yaw_deg": 0,
+      "seed": 201
+    },
+    {
+      "id": "p2",
+      "label": "Rear central foliage",
+      "asset": "bush",
+      "position_m": [
+        0.253,
+        0.244,
+        0.03
+      ],
+      "size_m": [
+        0.155,
+        0.102,
+        0.231
+      ],
+      "yaw_deg": 0,
+      "seed": 202
+    },
+    {
+      "id": "p3",
+      "label": "Upright rear fern group",
+      "asset": "grass",
+      "position_m": [
+        0.371,
+        0.248,
+        0.084
+      ],
+      "size_m": [
+        0.094,
+        0.078,
+        0.153
+      ],
+      "yaw_deg": -5,
+      "seed": 203
+    },
+    {
+      "id": "p4",
+      "label": "Left ledge greenery",
+      "asset": "bush",
+      "position_m": [
+        0.092,
+        0.171,
+        0.105
+      ],
+      "size_m": [
+        0.134,
+        0.097,
+        0.104
+      ],
+      "yaw_deg": 0,
+      "seed": 204
+    },
+    {
+      "id": "p5",
+      "label": "Low left broad leaves",
+      "asset": "bush",
+      "position_m": [
+        0.104,
+        0.111,
+        0.047
+      ],
+      "size_m": [
+        0.063,
+        0.043,
+        0.045
+      ],
+      "yaw_deg": -8,
+      "seed": 205
+    },
+    {
+      "id": "p6",
+      "label": "Central crevice leaves",
+      "asset": "bush",
+      "position_m": [
+        0.274,
+        0.151,
+        0.046
+      ],
+      "size_m": [
+        0.054,
+        0.054,
+        0.071
+      ],
+      "yaw_deg": 4,
+      "seed": 206
+    },
+    {
+      "id": "p7",
+      "label": "Right stone greenery",
+      "asset": "bush",
+      "position_m": [
+        0.393,
+        0.233,
+        0.092
+      ],
+      "size_m": [
+        0.092,
+        0.065,
+        0.079
+      ],
+      "yaw_deg": 7,
+      "seed": 207
+    },
+    {
+      "id": "p8",
+      "label": "Left rear foliage fill",
+      "asset": "bush",
+      "position_m": [
+        0.165,
+        0.247,
+        0.055
+      ],
+      "size_m": [
+        0.123,
+        0.093,
+        0.222
+      ],
+      "yaw_deg": 0,
+      "seed": 208
+    },
+    {
+      "id": "p9",
+      "label": "Central ledge planting",
+      "asset": "bush",
+      "position_m": [
+        0.227,
+        0.209,
+        0.083
+      ],
+      "size_m": [
+        0.113,
+        0.071,
+        0.089
+      ],
+      "yaw_deg": -8,
+      "seed": 209
+    },
+    {
+      "id": "p10",
+      "label": "Rear fine foliage",
+      "asset": "grass",
+      "position_m": [
+        0.306,
+        0.255,
+        0.045
+      ],
+      "size_m": [
+        0.104,
+        0.072,
+        0.194
+      ],
+      "yaw_deg": 4,
+      "seed": 210
+    },
+    {
+      "id": "p11",
+      "label": "Central fern undergrowth",
+      "asset": "bush",
+      "position_m": [
+        0.334,
+        0.239,
+        0.059
+      ],
+      "size_m": [
+        0.113,
+        0.082,
+        0.129
+      ],
+      "yaw_deg": 0,
+      "seed": 211
+    }
+  ]
+}

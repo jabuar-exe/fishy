@@ -1,0 +1,13 @@
+00:02.806  render           | Saved: '/Users/joshuabanzon/Documents/ChatGPT/Fishy/workstreams/frontier-workflows/evaluation/native-fixture-final-20260913/revision-0/render.png'
+00:02.847  render           | Saved: '/Users/joshuabanzon/Documents/ChatGPT/Fishy/workstreams/frontier-workflows/evaluation/native-fixture-final-20260913/revision-0/hardscape-mask.png'
+Info: Saved as "scene.blend"
+FISHY_BLEND=/Users/joshuabanzon/Documents/ChatGPT/Fishy/workstreams/frontier-workflows/evaluation/native-fixture-final-20260913/revision-0/scene.blend
+FISHY_BUILD_REPORT=/Users/joshuabanzon/Documents/ChatGPT/Fishy/workstreams/frontier-workflows/evaluation/native-fixture-final-20260913/revision-0/scene.build-report.json
+FISHY_RECIPE_OBJECTS=6
+Info: Saved as "evaluation.blend"
+FISHY_HELDOUT_RENDER_REPORT=/Users/joshuabanzon/Documents/ChatGPT/Fishy/workstreams/frontier-workflows/evaluation/native-fixture-final-20260913/revision-0/render-report.json
+Blender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:31:22)
+
+Blender quit
+Error: Not freed memory blocks: 315, total unfreed memory 0.023346 MB
+

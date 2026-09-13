@@ -1,0 +1,46 @@
+{
+  "finalized": true,
+  "heldout": [
+    {
+      "sha256": "5dd22e6ae61a704237ef86ea01ae80f60781d28d970c72cbdc883da1c3399956"
+    },
+    {
+      "sha256": "610668d8de33f06b10fd0fd27d52fcd0d1fa57c28f13a2769fbd99609434bb26"
+    },
+    {
+      "sha256": "40757d7606b46632f3575f5521d3789986c45d5ce3dd23c6a598472cd72ed43a"
+    },
+    {
+      "sha256": "f1c5b7d8f163cb426b06df74f14e078f02ac79ade6095303e6c2f847a29f65b8"
+    },
+    {
+      "sha256": "922e638afc492044ba31d56a8e48617580a8e3dfbed45ce6dca24317368c2754"
+    },
+    {
+      "sha256": "51462fc135f1615e8a0641980399727ebfbba709dc8996c36af0ba52a5d372d4"
+    }
+  ],
+  "policy": "strict_test",
+  "reconstruction": [
+    {
+      "id": "green-aqua-a80",
+      "path": "reconstruction/view_a_left_perspective_80s.png",
+      "sha256": "9c5ade526a564cde48b1a48a011238a40a052d4bef010ae68d1bb51eea8b2bb4",
+      "view": "front"
+    },
+    {
+      "id": "green-aqua-b105",
+      "path": "reconstruction/view_b_top_105s.png",
+      "sha256": "5741f4012b6dc2cb42e25bb626305675f193ce5f6cee7b9d63fcc0d1b2a1daaf",
+      "view": "left"
+    },
+    {
+      "id": "green-aqua-c125",
+      "path": "reconstruction/view_c_front_125s.png",
+      "sha256": "2e51bdcc21e5fed822e2917955d9eed7add52779ea52563f09889050e17bdbf7",
+      "view": "top"
+    }
+  ],
+  "schemaVersion": "fishy.evaluation.split.v1",
+  "seriesId": "green-aqua-real-20260913"
+}

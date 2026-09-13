@@ -1,0 +1,108 @@
+{
+  "builder": "fishy-native-recipe-v2",
+  "builderFiles": [
+    {
+      "path": "build_recipe.py",
+      "sha256": "bb5cfe9a5eef7ec46252efba7be607dba3e4f96be9058affc482c379ccfa757a"
+    },
+    {
+      "path": "build_scene.py",
+      "sha256": "e644bc5457875dece4d4182567254c68991140875f8035d4939b690d30f387cc"
+    },
+    {
+      "path": "scene_recipe.py",
+      "sha256": "aea2518d6df40e41f0e32664f1b2452dc86666e152f3a95fc11736878c04a985"
+    },
+    {
+      "path": "fishy_controls.py",
+      "sha256": "fbcaafff4d0ead773453adaa3360b106b5134b5f08eeafd8d86a6969e6d9ac70"
+    },
+    {
+      "path": "native_snapshot.py",
+      "sha256": "7a7dc42c8e7eaa448bdd8b23882302499667b87c67a6011323ae55fa04c92b40"
+    },
+    {
+      "path": "frontier_contract.py",
+      "sha256": "516d1592d27f64f8377093a06ccf6c5e583d9982ea2e7ada1c48b4492fb6f2f0"
+    },
+    {
+      "path": "heldout_evaluation.py",
+      "sha256": "f3cdbf0e4dd0697ead63938dbb2d9de98c5d9d4ed4310264aedfcc263444c3f2"
+    },
+    {
+      "path": "render_heldout.py",
+      "sha256": "e6888dd433c8890d4ea0b4a0d299ff457aabe42b3f7c43e8ec8e0681580980da"
+    }
+  ],
+  "builderHash": "e8195780e6072f4c1ad96090634ef689678cc87cc9e7a828495a0ef0ed623cd5",
+  "camera": {
+    "lensMm": 50,
+    "orthoScaleM": 0.634,
+    "positionM": [
+      0.3,
+      -3.0,
+      0.49
+    ],
+    "projection": "orthographic",
+    "quality": {
+      "accepted": true,
+      "alignmentResidualPx": 40.683692,
+      "assumptions": [
+        "Exploratory silhouette overlap under assumed tank geometry and manually aligned camera; not calibrated photographic or metric accuracy.",
+        "The supplied60\u00d730\u00d736cm tank dimensions and3cm substrate remain assumptions unchanged by heldout evidence. Actual source dimensions, focal length, lens distortion and refraction are unknown.",
+        "Orthographic horizontal span0.634m with fixed Z-up/square pixels; manual camera chosen to approximately match front width and lower front edge with a low downward view. It is not refitted per recipe.",
+        "The assumed top tank edge cannot be simultaneously aligned: manual four-front-corner RMS reprojection residual is40.683692px, dominated by upper-rim mismatch. This is an observed framing discrepancy, not a calibrated camera-fit uncertainty.",
+        "Four coplanar tank corners do not solve arbitrary camera pose/intrinsics. No general calibration is claimed; perspective/depth/refraction distortions remain uncontrolled."
+      ],
+      "method": "manual"
+    },
+    "resolution": [
+      640,
+      360
+    ],
+    "sensorWidthMm": 36,
+    "shiftX": 0,
+    "shiftY": 0,
+    "targetM": [
+      0.3,
+      0.15,
+      0.15
+    ]
+  },
+  "cameraHash": "7268f420f3aaa20a56d03e43c1973ef43c6d216dec31911f48933627e83f5d20",
+  "mask": {
+    "path": "heldout/visible-hardscape-mask.png",
+    "sha256": "610668d8de33f06b10fd0fd27d52fcd0d1fa57c28f13a2769fbd99609434bb26"
+  },
+  "maskQuality": {
+    "accepted": true,
+    "method": "manual_reviewed",
+    "note": "Evaluator-authored fixed integer-pixel polygons of visible exposed mineral faces plus explicit leaf/grass occlusion subtraction, visually reviewed before any real recipe output. Shadowed rock, moss/biofilm and fine video foliage remain ambiguous; conservative annotation. No beauty-color segmentation or model-render feedback."
+  },
+  "metric": {
+    "centroid": "foreground-union-pixel-centres; null-if-prediction-empty",
+    "foregroundKinds": [
+      "rock",
+      "wood"
+    ],
+    "maskThreshold": 127,
+    "occlusionPolicy": "plants-and-substrate-occlude; tank-glass-rim-studio-excluded",
+    "ssim": "not-computed; procedural-materials-not-photometrically-calibrated",
+    "version": "visible-hardscape-iou-v1"
+  },
+  "note": "Exploratory silhouette overlap under assumed tank geometry and manually aligned camera. strict_test refers only to heldout-data isolation and the frozen two-revision policy, not calibrated accuracy. Unknown dimensions/refraction and a substantial tank-rim framing residual confound absolute scores. Manually annotated conservative mineral-face mask; SSIM unavailable. Source frames private analysis only, no rehosting.",
+  "photo": {
+    "path": "heldout/photo.png",
+    "sha256": "5dd22e6ae61a704237ef86ea01ae80f60781d28d970c72cbdc883da1c3399956"
+  },
+  "policy": "strict_test",
+  "renderer": {
+    "name": "BLENDER_WORKBENCH",
+    "samples": 1,
+    "version": "5.2.0 LTS"
+  },
+  "runtime": "blender",
+  "schemaVersion": "fishy.heldout.series.v1",
+  "seriesHash": "3c8d6248f7941c0b687f9e645b578f6dab03fb6ad1e71fb97d04d07be38463d6",
+  "seriesId": "green-aqua-real-20260913"
+}

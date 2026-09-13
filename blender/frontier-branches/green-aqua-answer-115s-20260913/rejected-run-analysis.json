@@ -1,0 +1,42 @@
+{
+  "runId": "20260913T044524Z-04a1e470",
+  "status": "rejected_before_build",
+  "modelCalls": 1,
+  "rawProposalSha256": "6cbf0cedcff96a4d7803d79802323767ae20ffd6179423745d2bd8a9ff23d552",
+  "primaryValidatorError": "Object evidence cites an observation assigned to a different object",
+  "violations": [
+    {
+      "kind": "citation_object_scope",
+      "observationId": "obs-a0331ad408f771fa0c40a4d1",
+      "registeredObjectIds": [
+        "r1"
+      ],
+      "invalidCitingObjectIds": [
+        "p4",
+        "p9"
+      ]
+    },
+    {
+      "kind": "unanswered_request_resolution",
+      "requestId": "request-r2-2",
+      "authoritativeStatus": "requested",
+      "proposedResolution": {
+        "requestId": "request-r2-2",
+        "status": "request_unresolved",
+        "explanation": "No answer to this request is supplied. The existing overhead observation is obstructed and does not establish r4's rear extent or overlap; its geometry remains unchanged.",
+        "observationIds": [
+          "green-aqua-c125"
+        ]
+      },
+      "rule": "Only a currently answered request may receive a resolution"
+    }
+  ],
+  "unchangedArtifacts": [
+    "original strict W2 pair",
+    "original strict generator gate",
+    "rejected raw proposal",
+    "rejected manifest"
+  ],
+  "automaticRetries": 0,
+  "acceptedSceneBuilt": false
+}

@@ -1,0 +1,23 @@
+{
+  "checks": [
+    "Identical recipe and camera give IoU 1",
+    "Intentional rock movement lowers IoU",
+    "Camera and builder hashes identical across revisions"
+  ],
+  "modelCalls": 0,
+  "provenance": "protocol_fixture",
+  "reference": "Earlier native render of the hand-authored recipe, not a photograph",
+  "scores": [
+    {
+      "centroidErrorPx": 0.0,
+      "iou": 1.0,
+      "revision": 0
+    },
+    {
+      "centroidErrorPx": 14.423946511102926,
+      "iou": 0.5030822835700884,
+      "revision": 1
+    }
+  ],
+  "status": "passed"
+}

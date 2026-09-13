@@ -1,0 +1,15 @@
+{
+  "status": "complete",
+  "reviewedProposal": "proposed-followup.json",
+  "runId": "20260913T045133Z-f468b506",
+  "approvedAdditionalCalls": 1,
+  "actualAdditionalCalls": 1,
+  "automaticRetries": 0,
+  "totalBranchModelCalls": 2,
+  "priorRejectedRunId": "20260913T044524Z-04a1e470",
+  "nativeEditProvenance": "scripted_transform_fixture",
+  "recipeSha256": "3eadfef7ee42cd2acc27dc228dc83d3a76621eeee0a6e7870eca90a1affe7b24",
+  "frontierReviewSha256": "1c98d2e1cb12754a512027014e4ccc76f25863b8195f4fbcc553cf5edb004415",
+  "requestOutcome": "resolved_changed",
+  "evaluation": "not evaluated; separate unscored branch"
+}

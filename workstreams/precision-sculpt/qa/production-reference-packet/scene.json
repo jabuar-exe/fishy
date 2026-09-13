@@ -1,0 +1,133 @@
+{
+  "schema": 5,
+  "builder": "fishy-browser-3",
+  "id": "riverbend",
+  "revision": 19,
+  "units": "metres",
+  "coordinates": "Y-up; X right; Z toward front; origin floor centre",
+  "tank": {
+    "width": 0.9,
+    "depth": 1,
+    "height": 0.56,
+    "source": "user-entered"
+  },
+  "substrate": 0.03,
+  "objects": [
+    {
+      "id": "wood-arch",
+      "name": "River wood",
+      "kind": "wood",
+      "position": [
+        -0.0722048338568228,
+        0.026153778949975965,
+        -0.05515779502093937
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "size": 1,
+      "form": "arch",
+      "color": "#805636",
+      "protected": true
+    },
+    {
+      "id": "rock-left",
+      "name": "Left stone",
+      "kind": "rock",
+      "position": [
+        -0.16,
+        0.03,
+        0.055
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "size": 1,
+      "form": "faceted",
+      "color": "#777969",
+      "protected": false
+    },
+    {
+      "id": "rock-right",
+      "name": "Right stone",
+      "kind": "rock",
+      "position": [
+        0.17,
+        0.03,
+        -0.015
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "size": 0.85,
+      "form": "faceted",
+      "color": "#62675c",
+      "protected": false
+    },
+    {
+      "id": "plant-left",
+      "name": "Fern grove",
+      "kind": "plant",
+      "position": [
+        -0.2,
+        0.03,
+        -0.09
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "size": 1,
+      "form": "fern",
+      "color": "#406e36",
+      "protected": false
+    },
+    {
+      "id": "plant-back",
+      "name": "Stem grove",
+      "kind": "plant",
+      "position": [
+        0.115,
+        0.03,
+        -0.092
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "size": 1,
+      "form": "stem",
+      "color": "#5e8440",
+      "protected": false
+    },
+    {
+      "id": "plant-front",
+      "name": "Foreground grass",
+      "kind": "plant",
+      "position": [
+        0.03,
+        0.03,
+        0.08
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "size": 0.8,
+      "form": "grass",
+      "color": "#718b43",
+      "protected": false
+    }
+  ],
+  "references": [],
+  "brief": ""
+}

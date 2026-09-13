@@ -1,0 +1,92 @@
+{
+  "builder": "fishy-native-recipe-v2",
+  "builderFiles": [
+    {
+      "path": "build_recipe.py",
+      "sha256": "71f58ce23f15cd7225ab9373ae7ff89727f2ab2438a1f607bac89bdd52d2589a"
+    },
+    {
+      "path": "build_scene.py",
+      "sha256": "e644bc5457875dece4d4182567254c68991140875f8035d4939b690d30f387cc"
+    },
+    {
+      "path": "scene_recipe.py",
+      "sha256": "aea2518d6df40e41f0e32664f1b2452dc86666e152f3a95fc11736878c04a985"
+    },
+    {
+      "path": "fishy_controls.py",
+      "sha256": "a832bf134aba31ae2d887ccff8cb87e7e8ac6415e69e58157fa319c4a334866f"
+    },
+    {
+      "path": "heldout_evaluation.py",
+      "sha256": "aab49ec42fce8129d51b0df09f74a8f24ae59dfa4fe93f96c45b5a92943c5f90"
+    },
+    {
+      "path": "render_heldout.py",
+      "sha256": "ea16516b3f792a487c646b4a0d1d84b63ab26a012afedcb7f857893e3e812f1b"
+    }
+  ],
+  "builderHash": "7d3e9edcebb79d78fecd33c3f4f7e6c8bac0ae4ceb0ecef97386c2a68bb3763e",
+  "camera": {
+    "lensMm": 50,
+    "orthoScaleM": 0.75,
+    "positionM": [
+      0.3,
+      -1.5,
+      0.35
+    ],
+    "projection": "orthographic",
+    "quality": {
+      "accepted": true,
+      "alignmentResidualPx": null,
+      "assumptions": [
+        "Synthetic protocol fixture; camera is explicitly authored, not calibrated from a photograph.",
+        "World metres, Z up, square pixels, horizontal sensor fit; no lens distortion."
+      ],
+      "method": "synthetic_fixture"
+    },
+    "resolution": [
+      256,
+      192
+    ],
+    "sensorWidthMm": 36,
+    "shiftX": 0,
+    "shiftY": 0,
+    "targetM": [
+      0.3,
+      0.15,
+      0.2
+    ]
+  },
+  "cameraHash": "73e12a02b666e8c01ed215d76963d1f594c800e389d6e5306e0b44a466d13606",
+  "mask": {
+    "path": "bootstrap-mask.png",
+    "sha256": "14eb5d48fbac90bba46862f2489420a926648f9c114d54d590329e84f72489a7"
+  },
+  "metric": {
+    "centroid": "foreground-union-pixel-centres; null-if-prediction-empty",
+    "foregroundKinds": [
+      "rock",
+      "wood"
+    ],
+    "maskThreshold": 127,
+    "occlusionPolicy": "plants-and-substrate-occlude; tank-glass-rim-studio-excluded",
+    "ssim": "not-computed; procedural-materials-not-photometrically-calibrated",
+    "version": "visible-hardscape-iou-v1"
+  },
+  "note": "Synthetic protocol fixture only. No model call or real aquarium photograph. Bootstrap establishes native render reference.",
+  "photo": {
+    "path": "bootstrap-photo.png",
+    "sha256": "55f2dafb60e2117d4baed4b1ec933b6beafb2b461aa28d89c0d9cb7c18867b95"
+  },
+  "policy": "fixture",
+  "renderer": {
+    "name": "BLENDER_WORKBENCH",
+    "samples": 1,
+    "version": "5.2.0 LTS"
+  },
+  "runtime": "blender",
+  "schemaVersion": "fishy.heldout.series.v1",
+  "seriesHash": "f53571ccadb8eff011dedfa528f289aacaa1e9e3d570e57886facc700dac50e4",
+  "seriesId": "native-bootstrap-fixture"
+}

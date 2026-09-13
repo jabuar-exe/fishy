@@ -1,0 +1,202 @@
+{
+  "schema": "fishy.recipe-build-report.v1",
+  "status": "built",
+  "scene_source": "Recipe-generated editable approximation",
+  "recipe_path": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/blender/frontier-fixtures/native-runtime-final/unsaved-snapshot-02/effective-recipe.json",
+  "recipe_sha256": "e1392f03e0a66f1487f7d79798fea51d4ad8f37356591616adf301570936b975",
+  "blend_path": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/blender/frontier-fixtures/native-runtime-final/unsaved-effective-final.blend",
+  "tank": {
+    "width_m": 0.6,
+    "depth_m": 0.3,
+    "height_m": 0.36,
+    "substrate_depth_m": 0.03
+  },
+  "object_count": 6,
+  "objects": [
+    {
+      "id": "plant-01",
+      "asset": "bush",
+      "actual_world_bounds_m": {
+        "min_m": [
+          0.05999999865889549,
+          0.1850000023841858,
+          0.029999999329447746
+        ],
+        "max_m": [
+          0.17999999225139618,
+          0.2750000059604645,
+          0.2199999988079071
+        ]
+      },
+      "recipe_world_envelope_m": {
+        "min_m": [
+          0.06,
+          0.185,
+          0.03
+        ],
+        "max_m": [
+          0.18,
+          0.275,
+          0.22
+        ]
+      },
+      "maximum_envelope_error_m": 7.748603814139443e-09
+    },
+    {
+      "id": "plant-02",
+      "asset": "bush",
+      "actual_world_bounds_m": {
+        "min_m": [
+          0.4050000011920929,
+          0.1850000023841858,
+          0.029999999329447746
+        ],
+        "max_m": [
+          0.5349999666213989,
+          0.2750000059604645,
+          0.23000000417232513
+        ]
+      },
+      "recipe_world_envelope_m": {
+        "min_m": [
+          0.40499999999999997,
+          0.185,
+          0.03
+        ],
+        "max_m": [
+          0.5349999999999999,
+          0.275,
+          0.23
+        ]
+      },
+      "maximum_envelope_error_m": 3.337860099428269e-08
+    },
+    {
+      "id": "plant-03",
+      "asset": "grass",
+      "actual_world_bounds_m": {
+        "min_m": [
+          0.20499998331069946,
+          0.032499998807907104,
+          0.029999999329447746
+        ],
+        "max_m": [
+          0.375,
+          0.09749999642372131,
+          0.06499999761581421
+        ]
+      },
+      "recipe_world_envelope_m": {
+        "min_m": [
+          0.20499999999999996,
+          0.0325,
+          0.03
+        ],
+        "max_m": [
+          0.375,
+          0.0975,
+          0.065
+        ]
+      },
+      "maximum_envelope_error_m": 1.6689300497141346e-08
+    },
+    {
+      "id": "rock-01",
+      "asset": "rock",
+      "actual_world_bounds_m": {
+        "min_m": [
+          0.1255679726600647,
+          0.06971009075641632,
+          0.029999999329447746
+        ],
+        "max_m": [
+          0.2744320333003998,
+          0.19028989970684052,
+          0.14000000059604645
+        ]
+      },
+      "recipe_world_envelope_m": {
+        "min_m": [
+          0.12556796426159714,
+          0.06971009988532809,
+          0.03
+        ],
+        "max_m": [
+          0.2744320357384029,
+          0.19028990011467192,
+          0.14
+        ]
+      },
+      "maximum_envelope_error_m": 9.128911765410308e-09
+    },
+    {
+      "id": "rock-02",
+      "asset": "rock",
+      "actual_world_bounds_m": {
+        "min_m": [
+          0.35215169191360474,
+          0.07812841236591339,
+          0.029999999329447746
+        ],
+        "max_m": [
+          0.4478483200073242,
+          0.16187158226966858,
+          0.10000000149011612
+        ]
+      },
+      "recipe_world_envelope_m": {
+        "min_m": [
+          0.3521516908687936,
+          0.078128415643396,
+          0.03
+        ],
+        "max_m": [
+          0.44784830913120643,
+          0.16187158435660398,
+          0.1
+        ]
+      },
+      "maximum_envelope_error_m": 1.0876117784164308e-08
+    },
+    {
+      "id": "wood-01",
+      "asset": "branchwood",
+      "actual_world_bounds_m": {
+        "min_m": [
+          0.18764165043830872,
+          0.08737950772047043,
+          0.029999999329447746
+        ],
+        "max_m": [
+          0.4763583242893219,
+          0.25262048840522766,
+          0.26099997758865356
+        ]
+      },
+      "recipe_world_envelope_m": {
+        "min_m": [
+          0.1876416331357521,
+          0.08737950207946352,
+          0.029999999329447746
+        ],
+        "max_m": [
+          0.4763583415918785,
+          0.25262050149681514,
+          0.2609999875873328
+        ]
+      },
+      "maximum_envelope_error_m": 1.7302556609699593e-08
+    }
+  ],
+  "protected_native_objects": [
+    {
+      "id": "wood-01",
+      "meshHash": "ead6d4f4ad3ff6e8919cf8823676183b8614b1e257b5cc1d1115f58e46e7eaa9",
+      "matrixMaxError": 0.0,
+      "preservedFromCurrentUnsavedScene": true
+    }
+  ],
+  "renders": {},
+  "bounds_tolerance_m": 1e-06,
+  "provenance_path": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/blender/frontier-fixtures/native-runtime-final/unsaved-snapshot-02/effective-manifest.json"
+}

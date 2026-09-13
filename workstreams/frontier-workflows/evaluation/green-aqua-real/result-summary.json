@@ -1,0 +1,33 @@
+{
+  "actualTankDimensionsKnown": false,
+  "calibrated": false,
+  "cameraOrMaskChangedAfterGeneration": false,
+  "initialRun": "20260913T043221Z-1b5ea408",
+  "iouDelta": 0.00021405139266827966,
+  "modelCallsByEvaluator": 0,
+  "note": "Exploratory silhouette overlap under assumed tank geometry and manually aligned camera. strict_test refers only to heldout-data isolation and the frozen two-revision policy, not calibrated accuracy. Unknown dimensions/refraction and a substantial tank-rim framing residual confound absolute scores. Manually annotated conservative mineral-face mask; SSIM unavailable. Source frames private analysis only, no rehosting.",
+  "provenance": "recorded_model_run",
+  "revisionRun": "20260913T043532Z-af1a9947",
+  "scores": [
+    {
+      "centroidErrorPx": 36.33835946270602,
+      "iou": 0.34411666351648035,
+      "recipeHash": "4d2a2c72126f0ac1c9cd128b051516f73271504ec9f291d4d076f119b29fa18a",
+      "renderHash": "b2f7279300fad3a417212188157cca94e0c0279eba8e9d127d6d4f72954c106d",
+      "revision": 1,
+      "ssim": null
+    },
+    {
+      "centroidErrorPx": 27.265521045463885,
+      "iou": 0.3443307149091486,
+      "recipeHash": "db88b2c07ef568f7ce18dba2d51bb79d2d861220b245148ab5ea93ba941eddfa",
+      "renderHash": "57eaad67f6096977d64c78c6c510b24b84e1eab39bce05b50402c9a84441bca3",
+      "revision": 2,
+      "ssim": null
+    }
+  ],
+  "seriesId": "green-aqua-real-20260913",
+  "sourceFramesMayBeRehosted": false,
+  "status": "complete",
+  "recordedReconstructionModelCalls": 2
+}

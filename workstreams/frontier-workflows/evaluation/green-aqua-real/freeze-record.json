@@ -1,0 +1,21 @@
+{
+  "actualTankDimensionsKnown": false,
+  "assumedTankM": [
+    0.6,
+    0.3,
+    0.36
+  ],
+  "builderHash": "e8195780e6072f4c1ad96090634ef689678cc87cc9e7a828495a0ef0ed623cd5",
+  "calibrated": false,
+  "cameraAnnotationHash": "117dba52b04b737f46a54262e2042fca1fca1484258788360dc0ac9ebfc57701",
+  "cameraHash": "7268f420f3aaa20a56d03e43c1973ef43c6d216dec31911f48933627e83f5d20",
+  "frozenBeforeReconstruction": true,
+  "generatorGateHash": "bde8799c18e4f3e77283f8ef69be25c8f3334b9008066df06e4bc82f78019a8b",
+  "maskAnnotationHash": "381b2d03f43cb58a5e4860b342d964b5e06452c6a0a1b0b9c37b05a260760d20",
+  "maskHash": "610668d8de33f06b10fd0fd27d52fcd0d1fa57c28f13a2769fbd99609434bb26",
+  "modelCallsByEvaluator": 0,
+  "photoHash": "5dd22e6ae61a704237ef86ea01ae80f60781d28d970c72cbdc883da1c3399956",
+  "revisionPolicy": "Initial model recipe followed by exactly one revision using reconstruction inputs and ordinary own-scene renders only. No heldout/evaluation feedback. Freeze both final recipe hashes before any evaluation render or score.",
+  "seriesHash": "3c8d6248f7941c0b687f9e645b578f6dab03fb6ad1e71fb97d04d07be38463d6",
+  "seriesId": "green-aqua-real-20260913"
+}

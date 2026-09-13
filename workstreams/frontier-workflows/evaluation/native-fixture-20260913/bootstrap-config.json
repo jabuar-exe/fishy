@@ -1,0 +1,39 @@
+{
+  "seriesId": "native-bootstrap-fixture",
+  "policy": "fixture",
+  "camera": {
+    "projection": "orthographic",
+    "positionM": [
+      0.3,
+      -1.5,
+      0.35
+    ],
+    "targetM": [
+      0.3,
+      0.15,
+      0.2
+    ],
+    "lensMm": 50,
+    "sensorWidthMm": 36,
+    "orthoScaleM": 0.75,
+    "shiftX": 0,
+    "shiftY": 0,
+    "resolution": [
+      256,
+      192
+    ],
+    "quality": {
+      "method": "synthetic_fixture",
+      "assumptions": [
+        "Synthetic protocol fixture; camera is explicitly authored, not calibrated from a photograph.",
+        "World metres, Z up, square pixels, horizontal sensor fit; no lens distortion."
+      ],
+      "alignmentResidualPx": null,
+      "accepted": true
+    }
+  },
+  "photoPath": "bootstrap-photo.png",
+  "maskPath": "bootstrap-mask.png",
+  "rendererVersion": "5.2.0 LTS",
+  "note": "Synthetic protocol fixture only. No model call or real aquarium photograph. Bootstrap establishes native render reference."
+}

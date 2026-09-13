@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1640" height="1140" viewBox="0 0 1640 1140" role="img" aria-labelledby="title desc">
+<title id="title">Fishy editor functional layout</title><desc id="desc">Desktop workspace with project controls, layer tabs, dominant empty canvas and contextual properties, alongside narrow-screen sheet behavior. Diagram only; no aquarium rendering.</desc>
+<defs><style>text{font-family:Arial,sans-serif;fill:#edf1f2;font-size:13px}.muted{fill:#b1bbc0}.small{font-size:12px}.label{font-size:16px;font-weight:600}.title{font-size:24px;font-weight:600}.surface{fill:#1d2123;stroke:#394348}.input{fill:#171b1d;stroke:#66747b}.accent{fill:#8bdace}.center{text-anchor:middle}</style></defs>
+<rect width="1640" height="1140" fill="#101314"/>
+<text x="32" y="42" class="title">Fishy · editor workspace</text><text x="32" y="69" class="muted">Functional wireframe · Aquarium area intentionally empty · Desktop 1440 × 900 reference</text>
+<!-- Desktop scaled to 1152 x 720 (80%) -->
+<g transform="translate(32 96) scale(.8)">
+<rect width="1440" height="900" rx="8" fill="#151819" stroke="#66747b"/>
+<rect width="1440" height="52" class="surface"/>
+<text x="16" y="32" style="font-size:18px;font-weight:600">fishy</text><text x="85" y="24">Riverbend study</text><text x="85" y="41" class="small muted">60 × 30 × 36 cm</text>
+<rect x="297" y="9" width="64" height="34" rx="6" fill="#243e3d"/><text x="329" y="31" class="center accent">Editor</text><text x="409" y="31" class="center muted">Originals</text>
+<text x="1040" y="31">↶</text><text x="1080" y="31" class="muted">↷</text><text x="1130" y="31" class="muted">Unsaved changes</text><rect x="1270" y="10" width="92" height="32" rx="6" fill="#8bdace"/><text x="1316" y="31" text-anchor="middle" style="fill:#102c29">Save</text><text x="1400" y="31">•••</text>
+<!-- docks -->
+<rect x="0" y="52" width="240" height="824" class="surface"/><rect x="1160" y="52" width="280" height="824" class="surface"/>
+<text x="17" y="82" class="accent">Layers</text><text x="92" y="82" class="muted">Assets</text><text x="170" y="82" class="muted">Ideas</text><path d="M16 94H65" stroke="#8bdace" stroke-width="2"/><path d="M0 99H240" stroke="#394348"/>
+<text x="16" y="128" class="muted">Objects</text><text x="216" y="128" class="muted">6</text>
+<text x="17" y="164">▣  Tank</text><rect x="8" y="180" width="224" height="36" rx="5" fill="#243e3d"/><rect x="8" y="183" width="2" height="30" fill="#8bdace"/>
+<text x="25" y="203">River wood</text><text x="201" y="203" class="accent">◇</text><text x="25" y="239">Left stone</text><text x="25" y="275">Right stone</text><text x="25" y="311">Fern grove</text><text x="25" y="347">Stem grove</text><text x="25" y="383">Foreground grass</text>
+<rect x="16" y="820" width="208" height="36" rx="6" class="input"/><text x="120" y="843" class="center">+ Add material</text>
+<!-- canvas -->
+<rect x="241" y="53" width="918" height="822" fill="#111a1e"/>
+<rect x="258" y="68" width="231" height="40" rx="8" class="surface"/><rect x="263" y="72" width="102" height="32" rx="5" fill="#243e3d"/><text x="314" y="93" class="center accent">Move   V</text><text x="425" y="93" class="center">Rotate   R</text>
+<rect x="1105" y="68" width="38" height="40" rx="8" class="surface"/><text x="1124" y="94" class="center">F</text>
+<rect x="414" y="290" width="570" height="340" rx="8" fill="none" stroke="#394348" stroke-dasharray="8 8"/>
+<text x="700" y="432" class="center label">Live 3D aquarium canvas</text><text x="700" y="460" class="center muted">920px wide · dominant workspace</text><text x="700" y="488" class="center muted">Selection outline and transform gizmo live here</text><text x="700" y="527" class="center small muted">No illustration in this wireframe</text>
+<rect x="258" y="824" width="116" height="32" rx="6" class="surface"/><text x="316" y="845" class="center muted">Perspective</text><circle cx="1124" cy="841" r="16" class="surface"/><text x="1124" y="846" class="center">?</text>
+<!-- Properties -->
+<text x="1176" y="82" class="accent">Properties</text><text x="1290" y="82" class="muted">Conversation</text><path d="M1176 94H1249" stroke="#8bdace" stroke-width="2"/><path d="M1160 99H1440" stroke="#394348"/>
+<text x="1176" y="128" class="muted">Wood</text><text x="1176" y="154" class="label">River wood</text><path d="M1160 174H1440" stroke="#394348"/>
+<text x="1176" y="204">Transform</text><text x="1176" y="233" class="small muted">X · cm</text><text x="1260" y="233" class="small muted">Y · cm</text><text x="1345" y="233" class="small muted">Z · cm</text>
+<rect x="1176" y="242" width="76" height="32" rx="5" class="input"/><rect x="1260" y="242" width="76" height="32" rx="5" class="input"/><rect x="1344" y="242" width="76" height="32" rx="5" class="input"/><text x="1187" y="263">−1</text><text x="1271" y="263">3.5</text><text x="1355" y="263">−1</text>
+<text x="1176" y="306" class="muted">Rotation Y</text><rect x="1315" y="285" width="105" height="32" rx="5" class="input"/><text x="1327" y="306">0°</text><text x="1176" y="350" class="muted">Size</text><rect x="1315" y="329" width="105" height="32" rx="5" class="input"/><text x="1327" y="350">100%</text>
+<path d="M1160 382H1440" stroke="#394348"/><text x="1176" y="413">Wood style</text><rect x="1176" y="426" width="244" height="32" rx="5" class="input"/><text x="1188" y="448">Arch</text><text x="1400" y="448">⌄</text><text x="1176" y="490" class="small muted">› Material source and details</text><path d="M1160 511H1440" stroke="#394348"/>
+<text x="1176" y="541">Protect from AI edits</text><rect x="1380" y="526" width="40" height="22" rx="11" fill="#8bdace"/><circle cx="1408" cy="537" r="8" fill="#102c29"/><text x="1176" y="568" class="small muted">You can still edit this object.</text>
+<rect x="0" y="876" width="1440" height="24" class="surface"/><text x="12" y="893" class="small muted">Moved River wood</text><text x="1262" y="893" class="small muted">Rev 4 · Browser storage</text>
+</g>
+<!-- Mobile -->
+<text x="1220" y="83" class="label">Narrow · 390px</text>
+<g transform="translate(1220 96)">
+<rect width="390" height="720" rx="9" class="surface"/><text x="13" y="30" style="font-weight:600">fishy</text><text x="64" y="30">Riverbend study</text><rect x="290" y="9" width="56" height="32" rx="6" fill="#8bdace"/><text x="318" y="30" text-anchor="middle" style="fill:#102c29">Save</text><text x="365" y="30">•••</text>
+<rect x="1" y="52" width="388" height="268" fill="#111a1e"/><rect x="12" y="64" width="147" height="36" rx="6" class="surface"/><text x="27" y="87" class="accent">Move</text><text x="98" y="87">Rotate</text><text x="195" y="182" class="center label">Live canvas</text><text x="195" y="209" class="center small muted">Remains visible above sheet</text>
+<rect x="1" y="320" width="388" height="352" rx="12" class="surface"/><rect x="171" y="328" width="48" height="4" rx="2" fill="#66747b"/><text x="17" y="358" class="label">Properties</text><text x="340" y="358">Close</text><path d="M1 370H389" stroke="#394348"/>
+<text x="17" y="400" class="label">River wood</text><text x="17" y="430" class="muted">Transform</text><text x="17" y="458" class="small muted">X · cm</text><text x="140" y="458" class="small muted">Y · cm</text><text x="262" y="458" class="small muted">Z · cm</text><rect x="17" y="469" width="110" height="44" rx="6" class="input"/><rect x="140" y="469" width="110" height="44" rx="6" class="input"/><rect x="263" y="469" width="110" height="44" rx="6" class="input"/><text x="28" y="496">−1</text><text x="151" y="496">3.5</text><text x="274" y="496">−1</text><text x="17" y="552" class="muted">Rotation Y</text><rect x="230" y="525" width="143" height="44" rx="6" class="input"/><text x="242" y="552">0°</text><text x="17" y="608" class="muted">Size</text><rect x="230" y="581" width="143" height="44" rx="6" class="input"/><text x="242" y="608">100%</text><text x="195" y="651" class="center small muted">Sheet content scrolls independently</text>
+<path d="M0 672H390" stroke="#66747b"/><text x="34" y="700" class="center small muted">Layers</text><text x="103" y="700" class="center small muted">Assets</text><text x="172" y="700" class="center small muted">Ideas</text><text x="253" y="700" class="center small accent">Properties</text><text x="341" y="700" class="center small muted">Conversation</text>
+</g>
+<text x="32" y="862" class="label">One shell, five purposeful panels</text>
+<text x="32" y="895" class="muted">Layers: select objects and tank. Assets: search, source and add real procedural materials. Ideas: browse and save attributed references.</text>
+<text x="32" y="922" class="muted">Properties: tank when unselected; object transforms when selected. Conversation: brief, saved ideas, local photos and honest capability status.</text>
+<text x="32" y="972" class="label">Originals remain a separate view-only composition browser</text>
+<text x="32" y="1005" class="muted">Preserve Editor state when switching. Compact original selector replaces editing controls; do not imply imported meshes are editable.</text>
+<text x="32" y="1055" class="label">Responsive rules</text><text x="32" y="1088" class="muted">≥1200px: both docks. 960–1199px: left dock + optional right overlay. &lt;960px: full-width canvas + one accessible panel sheet.</text>
+</svg>

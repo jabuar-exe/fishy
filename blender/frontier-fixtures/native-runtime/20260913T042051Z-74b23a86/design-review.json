@@ -1,0 +1,161 @@
+{
+  "review_version": "fishy.design-review.v1",
+  "principles": [
+    {
+      "id": "hardscape-first",
+      "title": "Hardscape carries the design"
+    },
+    {
+      "id": "sightline",
+      "title": "One path for the eye"
+    },
+    {
+      "id": "contrast",
+      "title": "Contrast in texture, colour and mass"
+    },
+    {
+      "id": "mood",
+      "title": "A deliberate mood"
+    },
+    {
+      "id": "proportion",
+      "title": "Proportions that leave room to layer"
+    },
+    {
+      "id": "negative-space",
+      "title": "A clean frame"
+    },
+    {
+      "id": "story",
+      "title": "A story and a fish match"
+    },
+    {
+      "id": "maintenance",
+      "title": "Designed for the maintenance you will actually do"
+    }
+  ],
+  "declared_design": {
+    "composition": "convex",
+    "focal_object_id": "wood-01",
+    "sightline": "Low grass foreground with open sand at both front corners, leading up to the central wood and stone island.",
+    "open_foreground_min": 0.4,
+    "mood": "lush",
+    "maintenance_tier": "medium",
+    "story": "A planted island grown around one fallen branch."
+  },
+  "inferred_composition": "convex",
+  "inferred_maintenance": "medium",
+  "measures": {
+    "grid": [
+      120,
+      60
+    ],
+    "covered_fraction": 0.46569444444444447,
+    "hardscape_footprint_fraction": 0.3176388888888889,
+    "planted_footprint_fraction": 0.19111111111111112,
+    "open_foreground_fraction": 0.762962962962963,
+    "mass_centre_x_fraction": 0.5001727096419085,
+    "mass_thirds": [
+      0.2376,
+      0.5133,
+      0.2491
+    ],
+    "channel": {
+      "x_fraction": 0.8833333333333333,
+      "width_fraction": 0.23333333333333334,
+      "depth_fraction": 0.6166666666666667
+    },
+    "depth_bands": {
+      "front": {
+        "hardscape": false,
+        "any": true
+      },
+      "mid": {
+        "hardscape": true,
+        "any": true
+      },
+      "back": {
+        "hardscape": false,
+        "any": true
+      }
+    },
+    "tall_objects_in_front_band": [],
+    "top_fraction_of_height": 0.6944444444444444,
+    "largest_hardscape_id": "wood-01",
+    "largest_hardscape_width_fraction": 0.4654462984815344,
+    "hardscape_assets": [
+      "branchwood",
+      "rock"
+    ],
+    "plant_assets": [
+      "bush",
+      "grass"
+    ],
+    "bush_count": 2,
+    "depth_to_width": 0.5,
+    "height_to_width": 0.6
+  },
+  "findings": [
+    {
+      "principle": "proportion",
+      "status": "note",
+      "message": "All hardscape sits in one depth band; stepping a piece forward or back adds depth."
+    },
+    {
+      "principle": "hardscape-first",
+      "status": "ok",
+      "message": "Hardscape covers 32% of the floor; the largest piece spans 47% of the width."
+    },
+    {
+      "principle": "sightline",
+      "status": "ok",
+      "message": "Open channel from the front at 88% of the width, 23% wide, reaching 62% of the depth."
+    },
+    {
+      "principle": "contrast",
+      "status": "ok",
+      "message": "Focal object wood-01 is centred at 53%. Centred reads static unless the scheme is convex."
+    },
+    {
+      "principle": "contrast",
+      "status": "ok",
+      "message": "Hardscape plus at least two plant forms gives texture contrast."
+    },
+    {
+      "principle": "mood",
+      "status": "ok",
+      "message": "Mood declared: lush."
+    },
+    {
+      "principle": "proportion",
+      "status": "ok",
+      "message": "Depth is 50% of width; there is room for front, middle and back layers."
+    },
+    {
+      "principle": "proportion",
+      "status": "ok",
+      "message": "Tallest object reaches 69% of the tank height."
+    },
+    {
+      "principle": "negative-space",
+      "status": "ok",
+      "message": "47% of the floor is covered; negative space remains."
+    },
+    {
+      "principle": "story",
+      "status": "ok",
+      "message": "Story declared: A planted island grown around one fallen branch."
+    },
+    {
+      "principle": "maintenance",
+      "status": "ok",
+      "message": "Declared maintenance tier medium matches the planted footprint."
+    }
+  ],
+  "counts": {
+    "warn": 0,
+    "note": 1,
+    "ok": 10
+  },
+  "disclaimer": "Geometric proxies from axis-aligned envelopes in a rectangular tank. Not a judgement of biology, water, growth, livestock, or the real materials' appearance."
+}

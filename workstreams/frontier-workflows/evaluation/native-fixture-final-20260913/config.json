@@ -1,0 +1,44 @@
+{
+  "camera": {
+    "lensMm": 50,
+    "orthoScaleM": 0.75,
+    "positionM": [
+      0.3,
+      -1.5,
+      0.35
+    ],
+    "projection": "orthographic",
+    "quality": {
+      "accepted": true,
+      "alignmentResidualPx": null,
+      "assumptions": [
+        "Synthetic protocol fixture; camera is explicitly authored, not calibrated from a photograph.",
+        "World metres, Z up, square pixels, horizontal sensor fit; no lens distortion."
+      ],
+      "method": "synthetic_fixture"
+    },
+    "resolution": [
+      256,
+      192
+    ],
+    "sensorWidthMm": 36,
+    "shiftX": 0,
+    "shiftY": 0,
+    "targetM": [
+      0.3,
+      0.15,
+      0.2
+    ]
+  },
+  "maskPath": "fixture-reference-mask.png",
+  "maskQuality": {
+    "accepted": true,
+    "method": "synthetic_fixture",
+    "note": "Reference mask is an object-ID native render, visually checked; entirely synthetic fixture."
+  },
+  "note": "Synthetic protocol fixture. Reference is an earlier native rendering of the same hand-authored recipe. Revision 1 intentionally moves a rock to demonstrate a regression. No model performance or real-photo accuracy claim.",
+  "photoPath": "fixture-reference.png",
+  "policy": "fixture",
+  "rendererVersion": "5.2.0 LTS",
+  "seriesId": "native-fixed-camera-fixture"
+}

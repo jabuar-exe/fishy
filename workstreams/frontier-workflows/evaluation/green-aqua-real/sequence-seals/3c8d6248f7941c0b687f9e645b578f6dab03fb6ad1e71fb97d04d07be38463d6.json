@@ -1,0 +1,15 @@
+{
+  "finalized": true,
+  "revisions": [
+    {
+      "recipeHash": "4d2a2c72126f0ac1c9cd128b051516f73271504ec9f291d4d076f119b29fa18a",
+      "revision": 1
+    },
+    {
+      "recipeHash": "db88b2c07ef568f7ce18dba2d51bb79d2d861220b245148ab5ea93ba941eddfa",
+      "revision": 2
+    }
+  ],
+  "schemaVersion": "fishy.heldout.sequence.v1",
+  "seriesHash": "3c8d6248f7941c0b687f9e645b578f6dab03fb6ad1e71fb97d04d07be38463d6"
+}

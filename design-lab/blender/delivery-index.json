@@ -1,0 +1,48 @@
+{
+  "run": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/design-lab/blender/runs/20260913-110819",
+  "comparison": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/design-lab/blender/runs/20260913-110819/comparison.png",
+  "scenes": [
+    {
+      "id": "hero-60-arch",
+      "dimensions_m": [
+        0.6,
+        0.3,
+        0.36
+      ],
+      "wood_style": "arch",
+      "preview": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/design-lab/blender/runs/20260913-110819/hero-60-arch/beauty.png",
+      "blend": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/design-lab/blender/runs/20260913-110819/hero-60-arch/aquarium.blend",
+      "glb": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/design-lab/blender/runs/20260913-110819/hero-60-arch/aquarium.glb",
+      "decor_glb": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/design-lab/blender/runs/20260913-110819/hero-60-arch/hardscape.glb",
+      "audit": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/design-lab/blender/runs/20260913-110819/hero-60-arch/audit.json"
+    },
+    {
+      "id": "panorama-90-angular",
+      "dimensions_m": [
+        0.9,
+        0.3,
+        0.3
+      ],
+      "wood_style": "angular",
+      "preview": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/design-lab/blender/runs/20260913-110819/panorama-90-angular/beauty-fixed.png",
+      "blend": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/design-lab/blender/runs/20260913-110819/panorama-90-angular/aquarium-camera-fixed.blend",
+      "glb": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/design-lab/blender/runs/20260913-110819/panorama-90-angular/aquarium.glb",
+      "decor_glb": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/design-lab/blender/runs/20260913-110819/panorama-90-angular/hardscape.glb",
+      "audit": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/design-lab/blender/runs/20260913-110819/panorama-90-angular/audit.json"
+    },
+    {
+      "id": "cube-45-stump",
+      "dimensions_m": [
+        0.45,
+        0.45,
+        0.45
+      ],
+      "wood_style": "stump",
+      "preview": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/design-lab/blender/runs/20260913-110819/cube-45-stump/beauty.png",
+      "blend": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/design-lab/blender/runs/20260913-110819/cube-45-stump/aquarium.blend",
+      "glb": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/design-lab/blender/runs/20260913-110819/cube-45-stump/aquarium.glb",
+      "decor_glb": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/design-lab/blender/runs/20260913-110819/cube-45-stump/hardscape.glb",
+      "audit": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/design-lab/blender/runs/20260913-110819/cube-45-stump/audit.json"
+    }
+  ]
+}

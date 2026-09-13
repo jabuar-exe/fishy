@@ -1,0 +1,236 @@
+{
+  "browserProposal": null,
+  "changes": [
+    {
+      "objectId": "p1",
+      "observationIds": [
+        "green-aqua-a80",
+        "green-aqua-b105"
+      ],
+      "summary": "Changed position_m, size_m; base-centre displacement 4.572 cm"
+    },
+    {
+      "objectId": "p10",
+      "observationIds": [
+        "green-aqua-a80",
+        "green-aqua-b105",
+        "green-aqua-c125"
+      ],
+      "summary": "Added native object"
+    },
+    {
+      "objectId": "p11",
+      "observationIds": [
+        "green-aqua-a80",
+        "green-aqua-b105",
+        "green-aqua-c125"
+      ],
+      "summary": "Added native object"
+    },
+    {
+      "objectId": "p2",
+      "observationIds": [
+        "green-aqua-a80",
+        "green-aqua-b105",
+        "green-aqua-c125"
+      ],
+      "summary": "Changed position_m, size_m; base-centre displacement 7.479 cm"
+    },
+    {
+      "objectId": "p3",
+      "observationIds": [
+        "green-aqua-a80",
+        "green-aqua-b105",
+        "green-aqua-c125"
+      ],
+      "summary": "Changed position_m, size_m; base-centre displacement 0.900 cm"
+    },
+    {
+      "objectId": "p4",
+      "observationIds": [
+        "green-aqua-a80",
+        "green-aqua-b105"
+      ],
+      "summary": "Changed position_m, size_m; base-centre displacement 1.847 cm"
+    },
+    {
+      "objectId": "p5",
+      "observationIds": [
+        "green-aqua-a80",
+        "green-aqua-b105"
+      ],
+      "summary": "Changed position_m, size_m; base-centre displacement 1.897 cm"
+    },
+    {
+      "objectId": "p6",
+      "observationIds": [
+        "green-aqua-a80",
+        "green-aqua-b105"
+      ],
+      "summary": "Changed position_m, size_m; base-centre displacement 2.283 cm"
+    },
+    {
+      "objectId": "p7",
+      "observationIds": [
+        "green-aqua-a80",
+        "green-aqua-b105",
+        "green-aqua-c125"
+      ],
+      "summary": "Changed position_m, size_m; base-centre displacement 1.500 cm"
+    },
+    {
+      "objectId": "p8",
+      "observationIds": [
+        "green-aqua-a80",
+        "green-aqua-b105"
+      ],
+      "summary": "Added native object"
+    },
+    {
+      "objectId": "p9",
+      "observationIds": [
+        "green-aqua-a80",
+        "green-aqua-b105"
+      ],
+      "summary": "Added native object"
+    },
+    {
+      "objectId": "r1",
+      "observationIds": [
+        "green-aqua-a80",
+        "green-aqua-b105"
+      ],
+      "summary": "Changed label, position_m, size_m; base-centre displacement 0.707 cm"
+    },
+    {
+      "objectId": "r2",
+      "observationIds": [
+        "green-aqua-a80",
+        "green-aqua-b105"
+      ],
+      "summary": "Changed position_m, size_m; base-centre displacement 1.480 cm"
+    },
+    {
+      "objectId": "r3",
+      "observationIds": [
+        "green-aqua-a80",
+        "green-aqua-b105"
+      ],
+      "summary": "Changed position_m, size_m; base-centre displacement 1.000 cm"
+    },
+    {
+      "objectId": "r4",
+      "observationIds": [
+        "green-aqua-a80",
+        "green-aqua-b105"
+      ],
+      "summary": "Changed position_m, size_m; base-centre displacement 2.062 cm"
+    },
+    {
+      "objectId": "r5",
+      "observationIds": [
+        "green-aqua-a80",
+        "green-aqua-b105"
+      ],
+      "summary": "Changed position_m, size_m; base-centre displacement 1.503 cm"
+    },
+    {
+      "objectId": "r6",
+      "observationIds": [
+        "green-aqua-a80",
+        "green-aqua-b105",
+        "green-aqua-c125"
+      ],
+      "summary": "Changed position_m, size_m; base-centre displacement 1.910 cm"
+    }
+  ],
+  "evaluation": {
+    "builder": "fishy-native-recipe-v2",
+    "builderHash": "e8195780e6072f4c1ad96090634ef689678cc87cc9e7a828495a0ef0ed623cd5",
+    "cameraHash": "7268f420f3aaa20a56d03e43c1973ef43c6d216dec31911f48933627e83f5d20",
+    "maskHash": "610668d8de33f06b10fd0fd27d52fcd0d1fa57c28f13a2769fbd99609434bb26",
+    "note": "Exploratory silhouette overlap under assumed tank geometry and manually aligned camera. strict_test refers only to heldout-data isolation and the frozen two-revision policy, not calibrated accuracy. Unknown dimensions/refraction and a substantial tank-rim framing residual confound absolute scores. Manually annotated conservative mineral-face mask; SSIM unavailable. Source frames private analysis only, no rehosting.",
+    "photoHash": "5dd22e6ae61a704237ef86ea01ae80f60781d28d970c72cbdc883da1c3399956",
+    "policy": "strict_test",
+    "runtime": "blender",
+    "scores": [
+      {
+        "centroidErrorPx": 36.33835946270602,
+        "iou": 0.34411666351648035,
+        "recipeHash": "4d2a2c72126f0ac1c9cd128b051516f73271504ec9f291d4d076f119b29fa18a",
+        "renderHash": "b2f7279300fad3a417212188157cca94e0c0279eba8e9d127d6d4f72954c106d",
+        "revision": 1,
+        "ssim": null
+      },
+      {
+        "centroidErrorPx": 27.265521045463885,
+        "iou": 0.3443307149091486,
+        "recipeHash": "db88b2c07ef568f7ce18dba2d51bb79d2d861220b245148ab5ea93ba941eddfa",
+        "renderHash": "57eaad67f6096977d64c78c6c510b24b84e1eab39bce05b50402c9a84441bca3",
+        "revision": 2,
+        "ssim": null
+      }
+    ],
+    "seriesId": "green-aqua-real-20260913",
+    "status": "complete"
+  },
+  "observations": [
+    {
+      "id": "green-aqua-a80",
+      "note": "Reconstruction reference; view declared by the user or source registry.",
+      "objectIds": [],
+      "role": "reconstruction",
+      "sha256": "9c5ade526a564cde48b1a48a011238a40a052d4bef010ae68d1bb51eea8b2bb4",
+      "view": "front"
+    },
+    {
+      "id": "green-aqua-b105",
+      "note": "Reconstruction reference; view declared by the user or source registry.",
+      "objectIds": [],
+      "role": "reconstruction",
+      "sha256": "5741f4012b6dc2cb42e25bb626305675f193ce5f6cee7b9d63fcc0d1b2a1daaf",
+      "view": "left"
+    },
+    {
+      "id": "green-aqua-c125",
+      "note": "Reconstruction reference; view declared by the user or source registry.",
+      "objectIds": [],
+      "role": "reconstruction",
+      "sha256": "2e51bdcc21e5fed822e2917955d9eed7add52779ea52563f09889050e17bdbf7",
+      "view": "top"
+    }
+  ],
+  "protection": {
+    "blockedAttempts": [],
+    "protectedIds": []
+  },
+  "provenance": "recorded_model_run",
+  "requests": [
+    {
+      "id": "request-r2-1",
+      "objectId": "r1",
+      "question": "How much of the left bank is exposed stone beneath the foliage?",
+      "requestedView": "close_up",
+      "status": "requested",
+      "why": "Plant cover obscures the foundation's upper boundary and whether it reads as one rock or several ledges."
+    },
+    {
+      "id": "request-r2-2",
+      "objectId": "r4",
+      "question": "How far behind the broad foreground slab does the central stepping stone extend?",
+      "requestedView": "top",
+      "status": "requested",
+      "why": "The supplied overhead view is obstructed, limiting confidence in the stone's depth and overlap."
+    }
+  ],
+  "run": {
+    "baseRevision": 1,
+    "builder": "fishy-native-recipe-v2",
+    "createdAt": "2026-09-13T04:35:32.854597+00:00",
+    "id": "20260913T043532Z-af1a9947",
+    "revision": 2,
+    "runtime": "blender",
+    "sceneId": "native-a76fc1820b2b43258b7d841f2876dee9"
+  },
+  "schemaVersion": "fishy.frontier.review.v1"
+}

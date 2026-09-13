@@ -1,0 +1,34 @@
+{
+  "runId": "20260913T045133Z-f468b506",
+  "modelCalls": 1,
+  "editProvenance": "scripted_transform_fixture",
+  "description": "Actual model revision after a scripted native transform simulating a manual edit; no cursor-authored native edit claimed.",
+  "baseRevision": 3,
+  "acceptedRevision": 4,
+  "protectedObjects": [
+    {
+      "objectId": "r3",
+      "exactMeshPreserved": true,
+      "exactWorldMatrixPreserved": true,
+      "acceptedRecipePreserved": true,
+      "rawOverrideAttempted": false,
+      "overrideRecordedAsBlocked": false,
+      "attemptedFields": [],
+      "rawPositionDeltaM": 0.0
+    }
+  ],
+  "requestId": "request-r2-1",
+  "requestOutcome": "resolved_changed",
+  "answerObservationId": "obs-a0331ad408f771fa0c40a4d1",
+  "answerSha256": "a0331ad408f771fa0c40a4d1042edf08a8fcd31ef25139470038e252463720e4",
+  "targetGeometryChanged": true,
+  "targetAnswerCitedInChange": true,
+  "targetNativeGeometryMatchesAcceptedRecipe": true,
+  "targetNativeSizeM": [
+    0.137,
+    0.128,
+    0.15
+  ],
+  "acceptedChanges": 1,
+  "evaluation": "Not evaluated; separate branch from sealed sequence"
+}

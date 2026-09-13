@@ -1,0 +1,67 @@
+/* Proposed Fishy workspace tokens. Scoped integration is the site owner's choice. */
+:root {
+  color-scheme: dark;
+  --fishy-bg: #151819;
+  --fishy-surface: #1d2123;
+  --fishy-surface-raised: #252a2d;
+  --fishy-surface-hover: #2d3336;
+  --fishy-input: #171b1d;
+  --fishy-canvas: #111a1e;
+  --fishy-text: #edf1f2;
+  --fishy-text-secondary: #b1bbc0;
+  --fishy-text-muted: #9aa6ad;
+  --fishy-border: #394348;
+  --fishy-input-border: #66747b;
+  --fishy-accent: #8bdace;
+  --fishy-accent-ink: #102c29;
+  --fishy-selected: #243e3d;
+  --fishy-focus: #a1e9df;
+  --fishy-warning: #e9c580;
+  --fishy-error: #ffb5ad;
+  --fishy-font: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --fishy-font-body: 13px;
+  --fishy-font-support: 12px;
+  --fishy-font-heading: 14px;
+  --fishy-line-height: 1.45;
+  --fishy-radius-control: 6px;
+  --fishy-radius-panel: 8px;
+  --fishy-space-1: 4px;
+  --fishy-space-2: 8px;
+  --fishy-space-3: 12px;
+  --fishy-space-4: 16px;
+  --fishy-space-5: 24px;
+  --fishy-topbar-height: 52px;
+  --fishy-status-height: 24px;
+  --fishy-left-width: 240px;
+  --fishy-right-width: 280px;
+  --fishy-control-height: 32px;
+  --fishy-tool-size: 36px;
+  --fishy-layer-height: 36px;
+  --fishy-touch-size: 44px;
+  --fishy-overlay-shadow: 0 8px 28px #0005;
+  /* Bridge to existing globals and installed component conventions. */
+  --background: var(--fishy-bg);
+  --foreground: var(--fishy-text);
+  --card: var(--fishy-surface);
+  --primary: var(--fishy-accent);
+  --primary-foreground: var(--fishy-accent-ink);
+  --muted: var(--fishy-surface-raised);
+  --muted-foreground: var(--fishy-text-muted);
+  --border: var(--fishy-border);
+  --input: var(--fishy-input);
+  --ring: var(--fishy-focus);
+}
+/* Recommended focus rule; attach to workspace controls when integrating. */
+.fishy-workspace :is(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--fishy-focus);
+  outline-offset: 2px;
+}
+@media (max-width: 1399px) and (min-width: 1200px) {
+  :root { --fishy-left-width: 224px; --fishy-right-width: 256px; }
+}
+@media (max-width: 1199px) and (min-width: 960px) {
+  :root { --fishy-left-width: 216px; --fishy-right-width: 280px; }
+}
+@media (pointer: coarse) {
+  :root { --fishy-control-height: 44px; --fishy-tool-size: 44px; --fishy-layer-height: 44px; }
+}

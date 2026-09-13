@@ -1,0 +1,30 @@
+{
+  "builder": "fishy-native-recipe-v2",
+  "builderHash": "e8195780e6072f4c1ad96090634ef689678cc87cc9e7a828495a0ef0ed623cd5",
+  "cameraHash": "7268f420f3aaa20a56d03e43c1973ef43c6d216dec31911f48933627e83f5d20",
+  "maskHash": "610668d8de33f06b10fd0fd27d52fcd0d1fa57c28f13a2769fbd99609434bb26",
+  "note": "Exploratory silhouette overlap under assumed tank geometry and manually aligned camera. strict_test refers only to heldout-data isolation and the frozen two-revision policy, not calibrated accuracy. Unknown dimensions/refraction and a substantial tank-rim framing residual confound absolute scores. Manually annotated conservative mineral-face mask; SSIM unavailable. Source frames private analysis only, no rehosting.",
+  "photoHash": "5dd22e6ae61a704237ef86ea01ae80f60781d28d970c72cbdc883da1c3399956",
+  "policy": "strict_test",
+  "runtime": "blender",
+  "scores": [
+    {
+      "centroidErrorPx": 36.33835946270602,
+      "iou": 0.34411666351648035,
+      "recipeHash": "4d2a2c72126f0ac1c9cd128b051516f73271504ec9f291d4d076f119b29fa18a",
+      "renderHash": "b2f7279300fad3a417212188157cca94e0c0279eba8e9d127d6d4f72954c106d",
+      "revision": 1,
+      "ssim": null
+    },
+    {
+      "centroidErrorPx": 27.265521045463885,
+      "iou": 0.3443307149091486,
+      "recipeHash": "db88b2c07ef568f7ce18dba2d51bb79d2d861220b245148ab5ea93ba941eddfa",
+      "renderHash": "57eaad67f6096977d64c78c6c510b24b84e1eab39bce05b50402c9a84441bca3",
+      "revision": 2,
+      "ssim": null
+    }
+  ],
+  "seriesId": "green-aqua-real-20260913",
+  "status": "complete"
+}

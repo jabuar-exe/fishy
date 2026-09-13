@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fishy aquarium scene recipe",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "title",
+    "interpretation",
+    "assumptions",
+    "tank",
+    "design",
+    "objects"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "fishy.recipe.v2"
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 120
+    },
+    "interpretation": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "assumptions": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "type": "string",
+        "maxLength": 500
+      }
+    },
+    "design": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "composition",
+        "focal_object_id",
+        "sightline",
+        "open_foreground_min",
+        "mood",
+        "maintenance_tier",
+        "story"
+      ],
+      "description": "Design intent per DESIGN_PRINCIPLES.md. Reviewed geometrically by design_review.py.",
+      "properties": {
+        "composition": {
+          "type": "string",
+          "enum": [
+            "triangular",
+            "concave",
+            "convex",
+            "diorama",
+            "hardscape-only",
+            "undetermined"
+          ],
+          "description": "Mass scheme: triangular (one side heavy), concave (open centre), convex (island), diorama (paths, cliffs, forced perspective), hardscape-only, or undetermined."
+        },
+        "focal_object_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{0,47}$",
+          "maxLength": 48,
+          "description": "ID of the object the eye should land on first. Must match an object in this recipe."
+        },
+        "sightline": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "Where the open path for the eye runs, in words."
+        },
+        "open_foreground_min": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.95,
+          "description": "Fraction of the front 30 percent of the floor intended to stay clear."
+        },
+        "mood": {
+          "type": "string",
+          "enum": [
+            "bright",
+            "lush",
+            "dark-mysterious",
+            "minimal",
+            "undetermined"
+          ]
+        },
+        "maintenance_tier": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "description": "low: hardscape, moss, epiphytes. high: stem plants needing weekly trimming."
+        },
+        "story": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "One sentence: what this tank is."
+        }
+      }
+    },
+    "tank": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "width_m",
+        "depth_m",
+        "height_m",
+        "substrate_depth_m"
+      ],
+      "properties": {
+        "width_m": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 3
+        },
+        "depth_m": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 3
+        },
+        "height_m": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 3
+        },
+        "substrate_depth_m": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.2,
+          "description": "Must also be at most 30% of tank height."
+        }
+      }
+    },
+    "objects": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 24,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "label",
+          "asset",
+          "position_m",
+          "size_m",
+          "yaw_deg",
+          "seed"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]{0,47}$",
+            "maxLength": 48
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "asset": {
+            "type": "string",
+            "enum": [
+              "rock",
+              "branchwood",
+              "grass",
+              "bush"
+            ]
+          },
+          "position_m": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "type": "number"
+            },
+            "description": "[X, Y, Z] base-centre in metres; Z is the lowest mesh point, at or above substrate."
+          },
+          "size_m": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "type": "number",
+              "minimum": 0.002,
+              "maximum": 3
+            },
+            "description": "[width, depth, height] full envelope before yaw, each no larger than the corresponding tank dimension. Rotated envelope must fit inside tank."
+          },
+          "yaw_deg": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          },
+          "seed": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 999999
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "scene": "cube-45-stump",
+    "unique_mesh_objects": 73,
+    "triangles": 161196,
+    "maximum_export_bounds_error_m": 7.450580596923828e-09,
+    "status": "PASS"
+  },
+  {
+    "scene": "panorama-90-angular",
+    "unique_mesh_objects": 73,
+    "triangles": 160136,
+    "maximum_export_bounds_error_m": 7.450580596923828e-09,
+    "status": "PASS"
+  },
+  {
+    "scene": "hero-60-arch",
+    "unique_mesh_objects": 73,
+    "triangles": 161256,
+    "maximum_export_bounds_error_m": 1.4901161193847656e-08,
+    "status": "PASS"
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "builderHash": "b66b71362f8dbeff337ece0f0bb78773951f075d2638f120f86521afec257248",
+  "cameraHash": "73e12a02b666e8c01ed215d76963d1f594c800e389d6e5306e0b44a466d13606",
+  "hardscapeIds": [
+    "rock-01",
+    "rock-02",
+    "wood-01"
+  ],
+  "mask": {
+    "path": "revision-0/hardscape-mask.png",
+    "sha256": "02bdd83ef7f3621046de641cd5a7f057b049046ba5a6f4ec168df49eeffe9461"
+  },
+  "recipe": {
+    "path": "recipe.json",
+    "sha256": "a578c867e6849b85b8792c40e6ad0957adbdaf720a15f04a4f6f42616bac85af"
+  },
+  "render": {
+    "path": "revision-0/render.png",
+    "sha256": "fa656f92cb21ccfc56c2ccad09d5cc8ce3c66741f3c88fd6af2cd55ccbbe0e62"
+  },
+  "renderer": {
+    "name": "BLENDER_WORKBENCH",
+    "samples": 1,
+    "version": "5.2.0 LTS"
+  },
+  "revision": 0,
+  "schemaVersion": "fishy.heldout.render.v1",
+  "sequenceHash": null,
+  "seriesHash": "af51af2422c91750ae30da88079e14fb5f39d964025c3427ff51606c2863bae7"
+}

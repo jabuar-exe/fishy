@@ -1,0 +1,39 @@
+{
+  "builderHash": "e8195780e6072f4c1ad96090634ef689678cc87cc9e7a828495a0ef0ed623cd5",
+  "files": [
+    {
+      "path": "build_recipe.py",
+      "sha256": "bb5cfe9a5eef7ec46252efba7be607dba3e4f96be9058affc482c379ccfa757a"
+    },
+    {
+      "path": "build_scene.py",
+      "sha256": "e644bc5457875dece4d4182567254c68991140875f8035d4939b690d30f387cc"
+    },
+    {
+      "path": "scene_recipe.py",
+      "sha256": "aea2518d6df40e41f0e32664f1b2452dc86666e152f3a95fc11736878c04a985"
+    },
+    {
+      "path": "fishy_controls.py",
+      "sha256": "fbcaafff4d0ead773453adaa3360b106b5134b5f08eeafd8d86a6969e6d9ac70"
+    },
+    {
+      "path": "native_snapshot.py",
+      "sha256": "7a7dc42c8e7eaa448bdd8b23882302499667b87c67a6011323ae55fa04c92b40"
+    },
+    {
+      "path": "frontier_contract.py",
+      "sha256": "516d1592d27f64f8377093a06ccf6c5e583d9982ea2e7ada1c48b4492fb6f2f0"
+    },
+    {
+      "path": "heldout_evaluation.py",
+      "sha256": "f3cdbf0e4dd0697ead63938dbb2d9de98c5d9d4ed4310264aedfcc263444c3f2"
+    },
+    {
+      "path": "render_heldout.py",
+      "sha256": "e6888dd433c8890d4ea0b4a0d299ff457aabe42b3f7c43e8ec8e0681580980da"
+    }
+  ],
+  "note": "All8files match pre-generation frozen SHA. frontier_contract.py archival copy recovered by removing the one owner-confirmed post-release validation block, then verified against exact original SHA; working source untouched. Blender executable/runtime remains external.",
+  "status": "exact frozen source bytes archived"
+}

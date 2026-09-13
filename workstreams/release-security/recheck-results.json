@@ -1,0 +1,46 @@
+[
+  {
+    "name": "unsafe revision rejected",
+    "status": "PASS"
+  },
+  {
+    "name": "revision exhaustion rejected",
+    "status": "PASS"
+  },
+  {
+    "name": "oversized finite and NaN transforms rejected",
+    "status": "PASS"
+  },
+  {
+    "name": "same-name resize fits only outside ID",
+    "status": "PASS"
+  },
+  {
+    "name": "legacy known object fields preserved and source unchanged",
+    "status": "PASS"
+  },
+  {
+    "name": "legacy nested tank mapping retained",
+    "status": "PASS"
+  },
+  {
+    "name": "protected canonical equality ignores key insertion order",
+    "status": "PASS"
+  },
+  {
+    "name": "saved envelope restores exact scene past future and raw",
+    "status": "PASS"
+  },
+  {
+    "name": "cross-scene commit denied",
+    "status": "PASS"
+  },
+  {
+    "name": "empty scene identity denied",
+    "status": "PASS"
+  },
+  {
+    "name": "legacy nested scene metadata retained",
+    "status": "PASS"
+  }
+]

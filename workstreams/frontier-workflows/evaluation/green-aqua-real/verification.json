@@ -1,0 +1,19 @@
+{
+  "calibrated": false,
+  "checks": [
+    "Camera/photo/mask/metric/renderer/builder identities validated before and after both native evaluation renders",
+    "Exact two accepted native recipe hashes1,2 sealed before rendering or scoring",
+    "Actual scored recipes match the accepted native source files",
+    "Both scores have correct individual native renderHash values",
+    "Full review-with-evaluation.json passes native REVIEW_CONTRACT validation and maps to actual native revision2 manifest",
+    "Private source/mask/render comparison inspected after scoring; approximation and manual-frame limitations retained",
+    "Only generated native renders appear in native-render-comparison.png"
+  ],
+  "interpretation": "IoU changes by about0.0214percentage points, effectively unchanged at the scale of manual annotation and framing limitations. No empirically quantified annotation uncertainty or statistical significance is claimed.",
+  "meaningfulImprovementEstablished": false,
+  "modelCallsByEvaluator": 0,
+  "seriesHash": "3c8d6248f7941c0b687f9e645b578f6dab03fb6ad1e71fb97d04d07be38463d6",
+  "sourceFrameRehostingAllowed": false,
+  "sourceManifestsUnmodified": true,
+  "status": "passed"
+}

@@ -1,0 +1,86 @@
+{
+  "actualTankDimensionsKnown": false,
+  "assumedSubstrateM": 0.03,
+  "assumedTankM": [
+    0.6,
+    0.3,
+    0.36
+  ],
+  "calibrated": false,
+  "cameraHash": "7268f420f3aaa20a56d03e43c1973ef43c6d216dec31911f48933627e83f5d20",
+  "elevationDegrees": 6.160456533590614,
+  "frontCornerRmsResidualPx": 40.68369231483077,
+  "method": "Manual front-width/lower-edge framing; no optimization against hardscape or generated recipes",
+  "points": [
+    {
+      "assumedWorldM": [
+        0,
+        0,
+        0.36
+      ],
+      "errorPx": 58.514113976554306,
+      "manuallyMarkedPixel": [
+        17,
+        44
+      ],
+      "name": "front-top-left",
+      "projectedPixel": [
+        17.160883280757105,
+        -14.513892803599731
+      ]
+    },
+    {
+      "assumedWorldM": [
+        0.6,
+        0,
+        0.36
+      ],
+      "errorPx": 56.52012205122415,
+      "manuallyMarkedPixel": [
+        622,
+        42
+      ],
+      "name": "front-top-right",
+      "projectedPixel": [
+        622.8391167192428,
+        -14.513892803599731
+      ]
+    },
+    {
+      "assumedWorldM": [
+        0,
+        0,
+        0
+      ],
+      "errorPx": 1.4688170768843363,
+      "manuallyMarkedPixel": [
+        18,
+        348
+      ],
+      "name": "front-bottom-left",
+      "projectedPixel": [
+        17.160883280757105,
+        346.7944682763054
+      ]
+    },
+    {
+      "assumedWorldM": [
+        0.6,
+        0,
+        0
+      ],
+      "errorPx": 0.26101095661305723,
+      "manuallyMarkedPixel": [
+        623,
+        347
+      ],
+      "name": "front-bottom-right",
+      "projectedPixel": [
+        622.8391167192428,
+        346.7944682763054
+      ]
+    }
+  ],
+  "source": "photo.png",
+  "topEdgeMismatchAcceptedAsExploratoryLimitation": true
+}

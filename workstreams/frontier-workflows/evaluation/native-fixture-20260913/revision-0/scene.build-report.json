@@ -1,0 +1,195 @@
+{
+  "schema": "fishy.recipe-build-report.v1",
+  "status": "built",
+  "scene_source": "Recipe-generated editable approximation",
+  "recipe_path": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/workstreams/frontier-workflows/evaluation/native-fixture-20260913/recipe.json",
+  "recipe_sha256": "a578c867e6849b85b8792c40e6ad0957adbdaf720a15f04a4f6f42616bac85af",
+  "blend_path": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/workstreams/frontier-workflows/evaluation/native-fixture-20260913/revision-0/scene.blend",
+  "tank": {
+    "width_m": 0.6,
+    "depth_m": 0.3,
+    "height_m": 0.36,
+    "substrate_depth_m": 0.03
+  },
+  "object_count": 6,
+  "objects": [
+    {
+      "id": "wood-01",
+      "asset": "branchwood",
+      "actual_world_bounds_m": {
+        "min_m": [
+          0.18036609888076782,
+          0.08428262174129486,
+          0.029999999329447746
+        ],
+        "max_m": [
+          0.45963388681411743,
+          0.25571736693382263,
+          0.25
+        ]
+      },
+      "recipe_world_envelope_m": {
+        "min_m": [
+          0.18036611045553969,
+          0.08428262414966295,
+          0.03
+        ],
+        "max_m": [
+          0.45963388954446033,
+          0.25571737585033705,
+          0.25
+        ]
+      },
+      "maximum_envelope_error_m": 1.1574771863198663e-08
+    },
+    {
+      "id": "rock-01",
+      "asset": "rock",
+      "actual_world_bounds_m": {
+        "min_m": [
+          0.11556795984506607,
+          0.06971009075641632,
+          0.029999999329447746
+        ],
+        "max_m": [
+          0.26443204283714294,
+          0.19028989970684052,
+          0.14000000059604645
+        ]
+      },
+      "recipe_world_envelope_m": {
+        "min_m": [
+          0.11556796426159713,
+          0.06971009988532809,
+          0.03
+        ],
+        "max_m": [
+          0.2644320357384029,
+          0.19028990011467192,
+          0.14
+        ]
+      },
+      "maximum_envelope_error_m": 9.128911765410308e-09
+    },
+    {
+      "id": "rock-02",
+      "asset": "rock",
+      "actual_world_bounds_m": {
+        "min_m": [
+          0.35215169191360474,
+          0.07812841236591339,
+          0.029999999329447746
+        ],
+        "max_m": [
+          0.4478483200073242,
+          0.16187158226966858,
+          0.10000000149011612
+        ]
+      },
+      "recipe_world_envelope_m": {
+        "min_m": [
+          0.3521516908687936,
+          0.078128415643396,
+          0.03
+        ],
+        "max_m": [
+          0.44784830913120643,
+          0.16187158435660398,
+          0.1
+        ]
+      },
+      "maximum_envelope_error_m": 1.0876117784164308e-08
+    },
+    {
+      "id": "plant-01",
+      "asset": "bush",
+      "actual_world_bounds_m": {
+        "min_m": [
+          0.05999999865889549,
+          0.1850000023841858,
+          0.029999999329447746
+        ],
+        "max_m": [
+          0.17999999225139618,
+          0.2750000059604645,
+          0.2199999988079071
+        ]
+      },
+      "recipe_world_envelope_m": {
+        "min_m": [
+          0.06,
+          0.185,
+          0.03
+        ],
+        "max_m": [
+          0.18,
+          0.275,
+          0.22
+        ]
+      },
+      "maximum_envelope_error_m": 7.748603814139443e-09
+    },
+    {
+      "id": "plant-02",
+      "asset": "bush",
+      "actual_world_bounds_m": {
+        "min_m": [
+          0.4050000011920929,
+          0.1850000023841858,
+          0.029999999329447746
+        ],
+        "max_m": [
+          0.5349999666213989,
+          0.2750000059604645,
+          0.23000000417232513
+        ]
+      },
+      "recipe_world_envelope_m": {
+        "min_m": [
+          0.40499999999999997,
+          0.185,
+          0.03
+        ],
+        "max_m": [
+          0.5349999999999999,
+          0.275,
+          0.23
+        ]
+      },
+      "maximum_envelope_error_m": 3.337860099428269e-08
+    },
+    {
+      "id": "plant-03",
+      "asset": "grass",
+      "actual_world_bounds_m": {
+        "min_m": [
+          0.20499998331069946,
+          0.032499998807907104,
+          0.029999999329447746
+        ],
+        "max_m": [
+          0.375,
+          0.09749999642372131,
+          0.06499999761581421
+        ]
+      },
+      "recipe_world_envelope_m": {
+        "min_m": [
+          0.20499999999999996,
+          0.0325,
+          0.03
+        ],
+        "max_m": [
+          0.375,
+          0.0975,
+          0.065
+        ]
+      },
+      "maximum_envelope_error_m": 1.6689300497141346e-08
+    }
+  ],
+  "protected_native_objects": [],
+  "renders": {},
+  "bounds_tolerance_m": 1e-06,
+  "provenance_path": null
+}

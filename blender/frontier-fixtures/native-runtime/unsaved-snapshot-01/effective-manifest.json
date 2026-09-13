@@ -1,0 +1,74 @@
+{
+  "run_id": "native-preservation-fixture",
+  "created_at_utc": "2026-09-13T04:21:37.085040+00:00",
+  "status": "building",
+  "source": "imported_recipe",
+  "model_calls_attempted": 0,
+  "protocol_fixture": true,
+  "frontier": {
+    "baseRevision": 1,
+    "revision": 2,
+    "observations": [],
+    "requests": [],
+    "changes": [
+      {
+        "objectId": "rock-01",
+        "summary": "Changed position_m; base-centre displacement 1.000 cm",
+        "observationIds": []
+      }
+    ],
+    "objectEvidence": [
+      {
+        "objectId": "plant-01",
+        "observationIds": [],
+        "inferred": true,
+        "note": "Native preservation protocol fixture"
+      },
+      {
+        "objectId": "plant-02",
+        "observationIds": [],
+        "inferred": true,
+        "note": "Native preservation protocol fixture"
+      },
+      {
+        "objectId": "plant-03",
+        "observationIds": [],
+        "inferred": true,
+        "note": "Native preservation protocol fixture"
+      },
+      {
+        "objectId": "rock-01",
+        "observationIds": [],
+        "inferred": true,
+        "note": "Native preservation protocol fixture"
+      },
+      {
+        "objectId": "rock-02",
+        "observationIds": [],
+        "inferred": true,
+        "note": "Native preservation protocol fixture"
+      },
+      {
+        "objectId": "wood-01",
+        "observationIds": [],
+        "inferred": true,
+        "note": "Native preservation protocol fixture"
+      }
+    ],
+    "protection": {
+      "protectedIds": [
+        "wood-01"
+      ],
+      "blockedAttempts": [
+        {
+          "objectId": "wood-01",
+          "fields": [
+            "position_m"
+          ],
+          "reason": "Current native scene protects this object; trusted state preserved."
+        }
+      ]
+    },
+    "sceneId": "native-46fc95a4be40455fb870b6b125337fda"
+  }
+}

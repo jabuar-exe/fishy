@@ -1,0 +1,28 @@
+{
+  "builder": "fishy-native-recipe-v2",
+  "builderHash": "15a830e21b21614a3cebf4b18c2f6df608a0a58457350e1877fd766f37e655f5",
+  "cameraHash": "73e12a02b666e8c01ed215d76963d1f594c800e389d6e5306e0b44a466d13606",
+  "maskHash": "3d0196f054f421ff2287244b7a66c967b02950375f2379283a1ae8ffe3b47a07",
+  "note": "Synthetic protocol fixture. Reference is an earlier native rendering of the same hand-authored recipe. Revision 1 intentionally moves a rock to demonstrate a regression. No model performance or real-photo accuracy claim.",
+  "photoHash": "b91d01dbfd86f339897680447c20e77e921c3364b8f60bc48ed987b014a56de6",
+  "policy": "fixture",
+  "runtime": "blender",
+  "scores": [
+    {
+      "centroidErrorPx": 0.0,
+      "iou": 1.0,
+      "recipeHash": "a578c867e6849b85b8792c40e6ad0957adbdaf720a15f04a4f6f42616bac85af",
+      "revision": 0,
+      "ssim": null
+    },
+    {
+      "centroidErrorPx": 14.423946511102926,
+      "iou": 0.5030822835700884,
+      "recipeHash": "a5c5c2fd6b44140468a839b8be6dc046decf45ef5c7ade570d90805aa7063d7e",
+      "revision": 1,
+      "ssim": null
+    }
+  ],
+  "seriesId": "native-fixed-camera-fixture",
+  "status": "complete"
+}

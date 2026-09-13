@@ -1,0 +1,13 @@
+00:02.146  render           | Saved: '/Users/joshuabanzon/Documents/ChatGPT/Fishy/workstreams/frontier-workflows/evaluation/green-aqua-real/revision-2/render.png'
+00:02.204  render           | Saved: '/Users/joshuabanzon/Documents/ChatGPT/Fishy/workstreams/frontier-workflows/evaluation/green-aqua-real/revision-2/hardscape-mask.png'
+Info: Saved as "scene.blend"
+FISHY_BLEND=/Users/joshuabanzon/Documents/ChatGPT/Fishy/workstreams/frontier-workflows/evaluation/green-aqua-real/revision-2/scene.blend
+FISHY_BUILD_REPORT=/Users/joshuabanzon/Documents/ChatGPT/Fishy/workstreams/frontier-workflows/evaluation/green-aqua-real/revision-2/scene.build-report.json
+FISHY_RECIPE_OBJECTS=20
+Info: Saved as "evaluation.blend"
+FISHY_HELDOUT_RENDER_REPORT=/Users/joshuabanzon/Documents/ChatGPT/Fishy/workstreams/frontier-workflows/evaluation/green-aqua-real/revision-2/render-report.json
+Blender 5.2.0 LTS (hash fbe6228777e7 built 2026-07-14 01:31:22)
+
+Blender quit
+Error: Not freed memory blocks: 315, total unfreed memory 0.023346 MB
+

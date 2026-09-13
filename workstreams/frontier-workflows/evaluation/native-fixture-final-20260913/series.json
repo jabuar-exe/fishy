@@ -1,0 +1,105 @@
+{
+  "builder": "fishy-native-recipe-v2",
+  "builderFiles": [
+    {
+      "path": "build_recipe.py",
+      "sha256": "24e6c695174b421b6eebd17d4828b76fe78797a538b9acf25d644ee557d88f64"
+    },
+    {
+      "path": "build_scene.py",
+      "sha256": "e644bc5457875dece4d4182567254c68991140875f8035d4939b690d30f387cc"
+    },
+    {
+      "path": "scene_recipe.py",
+      "sha256": "aea2518d6df40e41f0e32664f1b2452dc86666e152f3a95fc11736878c04a985"
+    },
+    {
+      "path": "fishy_controls.py",
+      "sha256": "fbcaafff4d0ead773453adaa3360b106b5134b5f08eeafd8d86a6969e6d9ac70"
+    },
+    {
+      "path": "native_snapshot.py",
+      "sha256": "24a246bc4f83d1ee062fc524f53acfaf8964c5a99b1029cbce2b3f7f78814b8b"
+    },
+    {
+      "path": "frontier_contract.py",
+      "sha256": "df504518308938106ff00738d38c75582d23b685d3d29908de20778d44be77d1"
+    },
+    {
+      "path": "heldout_evaluation.py",
+      "sha256": "5d6dcbcac1878ed2d32a2b252639f1a4c8bd20195f6c950bc3bade81f64c215b"
+    },
+    {
+      "path": "render_heldout.py",
+      "sha256": "e6888dd433c8890d4ea0b4a0d299ff457aabe42b3f7c43e8ec8e0681580980da"
+    }
+  ],
+  "builderHash": "15a830e21b21614a3cebf4b18c2f6df608a0a58457350e1877fd766f37e655f5",
+  "camera": {
+    "lensMm": 50,
+    "orthoScaleM": 0.75,
+    "positionM": [
+      0.3,
+      -1.5,
+      0.35
+    ],
+    "projection": "orthographic",
+    "quality": {
+      "accepted": true,
+      "alignmentResidualPx": null,
+      "assumptions": [
+        "Synthetic protocol fixture; camera is explicitly authored, not calibrated from a photograph.",
+        "World metres, Z up, square pixels, horizontal sensor fit; no lens distortion."
+      ],
+      "method": "synthetic_fixture"
+    },
+    "resolution": [
+      256,
+      192
+    ],
+    "sensorWidthMm": 36,
+    "shiftX": 0,
+    "shiftY": 0,
+    "targetM": [
+      0.3,
+      0.15,
+      0.2
+    ]
+  },
+  "cameraHash": "73e12a02b666e8c01ed215d76963d1f594c800e389d6e5306e0b44a466d13606",
+  "mask": {
+    "path": "fixture-reference-mask.png",
+    "sha256": "3d0196f054f421ff2287244b7a66c967b02950375f2379283a1ae8ffe3b47a07"
+  },
+  "maskQuality": {
+    "accepted": true,
+    "method": "synthetic_fixture",
+    "note": "Reference mask is an object-ID native render, visually checked; entirely synthetic fixture."
+  },
+  "metric": {
+    "centroid": "foreground-union-pixel-centres; null-if-prediction-empty",
+    "foregroundKinds": [
+      "rock",
+      "wood"
+    ],
+    "maskThreshold": 127,
+    "occlusionPolicy": "plants-and-substrate-occlude; tank-glass-rim-studio-excluded",
+    "ssim": "not-computed; procedural-materials-not-photometrically-calibrated",
+    "version": "visible-hardscape-iou-v1"
+  },
+  "note": "Synthetic protocol fixture. Reference is an earlier native rendering of the same hand-authored recipe. Revision 1 intentionally moves a rock to demonstrate a regression. No model performance or real-photo accuracy claim.",
+  "photo": {
+    "path": "fixture-reference.png",
+    "sha256": "b91d01dbfd86f339897680447c20e77e921c3364b8f60bc48ed987b014a56de6"
+  },
+  "policy": "fixture",
+  "renderer": {
+    "name": "BLENDER_WORKBENCH",
+    "samples": 1,
+    "version": "5.2.0 LTS"
+  },
+  "runtime": "blender",
+  "schemaVersion": "fishy.heldout.series.v1",
+  "seriesHash": "80475ca4c0d315fb9dda7a3346050e4b2187eeaa315295aca640235125beb3f3",
+  "seriesId": "native-fixed-camera-fixture"
+}

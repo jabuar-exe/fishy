@@ -1,0 +1,335 @@
+{
+  "format": "fishy.reference-packet.v1",
+  "sceneId": "riverbend",
+  "revision": 6,
+  "builder": "fishy-browser-3",
+  "geometryGenerator": "fishy-object-v11",
+  "sceneFile": "scene.json",
+  "sceneSha256": "2c2b1384bc05c2d401cba6a8c0a73ffbd067c14f2edc3a7c3f31b667a9c0128c",
+  "units": "metres",
+  "dimensionsCm": {
+    "width": 60,
+    "depth": 30,
+    "height": 36
+  },
+  "dimensionSource": "assumed",
+  "water": true,
+  "orthographicScale": "Identical metres per pixel across front, left, right and top",
+  "waterPhase": "flat static surface",
+  "background": "dark studio; room photo excluded",
+  "lighting": "same studio rig as editor",
+  "views": [
+    {
+      "name": "front",
+      "file": "front.png",
+      "width": 2048,
+      "height": 1536,
+      "sha256": "e637f82ce3d495fc8ef15d32c472167bff49a5b737b81fc13af33961992c77f7",
+      "cameraSha256": "ee0ddcbbcb07561f805bbd64c2f4aeb28651bc12a455b761bff7f837fe8b437f",
+      "projection": "OrthographicCamera",
+      "metresPerPixel": 0.00034125000000000003,
+      "position": [
+        0,
+        0.16799999999999998,
+        2.205306703706571
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "target": [
+        0,
+        0.16799999999999998,
+        0
+      ],
+      "matrixWorld": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0.16799999999999998,
+        2.205306703706571,
+        1
+      ],
+      "projectionMatrix": [
+        2.8617216117216113,
+        0,
+        0,
+        0,
+        0,
+        3.815628815628815,
+        0,
+        0,
+        0,
+        0,
+        -0.02000020000200002,
+        0,
+        0,
+        0,
+        -1.0000200002000021,
+        1
+      ]
+    },
+    {
+      "name": "left",
+      "file": "left.png",
+      "width": 2048,
+      "height": 1536,
+      "sha256": "eb65be9564c8fafea80435539c4f02f943f3d8a9079b8ee87f07d745628fce7d",
+      "cameraSha256": "0583082797b57986435056d9d02bf7328eac024e89f66336da4a7c51568a2294",
+      "projection": "OrthographicCamera",
+      "metresPerPixel": 0.00034125000000000003,
+      "position": [
+        -2.205306703706571,
+        0.16799999999999998,
+        0
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "target": [
+        0,
+        0.16799999999999998,
+        0
+      ],
+      "matrixWorld": [
+        2.220446049250313e-16,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        -1,
+        0,
+        2.220446049250313e-16,
+        0,
+        -2.205306703706571,
+        0.16799999999999998,
+        0,
+        1
+      ],
+      "projectionMatrix": [
+        2.8617216117216113,
+        0,
+        0,
+        0,
+        0,
+        3.815628815628815,
+        0,
+        0,
+        0,
+        0,
+        -0.02000020000200002,
+        0,
+        0,
+        0,
+        -1.0000200002000021,
+        1
+      ]
+    },
+    {
+      "name": "right",
+      "file": "right.png",
+      "width": 2048,
+      "height": 1536,
+      "sha256": "418fb116f83a003f8d03ccd45ec777fdd049ee3fa271698c1781ead387d08ed0",
+      "cameraSha256": "1b17442cc2b75ef884368781551ecea44c6a8640cea72513f6b0fb008317a5cc",
+      "projection": "OrthographicCamera",
+      "metresPerPixel": 0.00034125000000000003,
+      "position": [
+        2.205306703706571,
+        0.16799999999999998,
+        0
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "target": [
+        0,
+        0.16799999999999998,
+        0
+      ],
+      "matrixWorld": [
+        2.220446049250313e-16,
+        0,
+        -1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        2.220446049250313e-16,
+        0,
+        2.205306703706571,
+        0.16799999999999998,
+        0,
+        1
+      ],
+      "projectionMatrix": [
+        2.8617216117216113,
+        0,
+        0,
+        0,
+        0,
+        3.815628815628815,
+        0,
+        0,
+        0,
+        0,
+        -0.02000020000200002,
+        0,
+        0,
+        0,
+        -1.0000200002000021,
+        1
+      ]
+    },
+    {
+      "name": "top",
+      "file": "top.png",
+      "width": 2048,
+      "height": 1536,
+      "sha256": "18f00bb13d6a1a9a28b4c5b41a84ef2ac50cf9b407ff879169a8b90398c54ab1",
+      "cameraSha256": "db70d6615bdee36bc6d4f308aa176abd1b21e2d71478f12002492ffba12ccea6",
+      "projection": "OrthographicCamera",
+      "metresPerPixel": 0.00034125000000000003,
+      "position": [
+        0,
+        2.373306703706571,
+        0
+      ],
+      "up": [
+        0,
+        0,
+        -1
+      ],
+      "target": [
+        0,
+        0.16799999999999998,
+        0
+      ],
+      "matrixWorld": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        2.220446049250313e-16,
+        -1,
+        0,
+        0,
+        1,
+        2.220446049250313e-16,
+        0,
+        0,
+        2.373306703706571,
+        0,
+        1
+      ],
+      "projectionMatrix": [
+        2.8617216117216113,
+        0,
+        0,
+        0,
+        0,
+        3.815628815628815,
+        0,
+        0,
+        0,
+        0,
+        -0.02000020000200002,
+        0,
+        0,
+        0,
+        -1.0000200002000021,
+        1
+      ]
+    },
+    {
+      "name": "perspective",
+      "file": "perspective.png",
+      "width": 2048,
+      "height": 1536,
+      "sha256": "ccb2d2336a6105572756677ccb199325423c6d42967e04d0b38fff31660e4303",
+      "cameraSha256": "7bc2a21c82f37f89031af7a1f87b09faf84adfeedbf6b54c0908aaedbd767de0",
+      "projection": "PerspectiveCamera",
+      "metresPerPixel": null,
+      "position": [
+        0.8729307146984977,
+        0.7354049645540235,
+        1.091163393373122
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "target": [
+        0,
+        0.16799999999999998,
+        0
+      ],
+      "matrixWorld": [
+        0.7808688094430303,
+        2.7755575615628914e-17,
+        -0.6246950475544243,
+        0,
+        -0.23502239729362853,
+        0.9265306047152662,
+        -0.29377799661703563,
+        0,
+        0.5787990801732327,
+        0.3762194021126013,
+        0.7234988502165408,
+        0,
+        0.8729307146984977,
+        0.7354049645540235,
+        1.091163393373122,
+        1
+      ],
+      "projectionMatrix": [
+        2.3082626528814405,
+        0,
+        0,
+        0,
+        0,
+        3.0776835371752536,
+        0,
+        0,
+        0,
+        0,
+        -1.0000200002000021,
+        -1,
+        0,
+        0,
+        -0.0020000200002000023,
+        0
+      ]
+    }
+  ],
+  "limitations": [
+    "These are rendered views of one frozen scene, not photographs or alternative designs.",
+    "Scene dimensions are user-entered or assumed, not independently measured.",
+    "Orthographic front/left/right/top preserve relative model scale; perspective overview is not a measurement view.",
+    "Materials are procedural approximations. Browser/GPU differences may affect pixels.",
+    "scene.json is the full data record including sculpt fields; this release does not provide a general scene-file import UI."
+  ]
+}

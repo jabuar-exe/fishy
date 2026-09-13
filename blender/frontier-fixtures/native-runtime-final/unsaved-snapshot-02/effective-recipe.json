@@ -1,0 +1,128 @@
+{
+  "schema_version": "fishy.recipe.v2",
+  "title": "Hand-authored test fixture: planted island",
+  "interpretation": "Hand-authored test data for validating the Blender recipe pipeline. This is not model output and is not reconstructed from a photograph.",
+  "assumptions": [
+    "The tank measures 60 by 30 by 36 centimetres, with 3 centimetres of substrate.",
+    "Generic procedural assets represent visual masses rather than identified species or purchasable materials."
+  ],
+  "tank": {
+    "width_m": 0.6,
+    "depth_m": 0.3,
+    "height_m": 0.36,
+    "substrate_depth_m": 0.03
+  },
+  "design": {
+    "composition": "convex",
+    "focal_object_id": "wood-01",
+    "sightline": "Low grass foreground with open sand at both front corners, leading up to the central wood and stone island.",
+    "open_foreground_min": 0.4,
+    "mood": "lush",
+    "maintenance_tier": "medium",
+    "story": "A planted island grown around one fallen branch."
+  },
+  "objects": [
+    {
+      "asset": "bush",
+      "id": "plant-01",
+      "label": "Left background bush",
+      "position_m": [
+        0.12,
+        0.23,
+        0.03
+      ],
+      "seed": 31,
+      "size_m": [
+        0.12,
+        0.09,
+        0.19
+      ],
+      "yaw_deg": 0
+    },
+    {
+      "asset": "bush",
+      "id": "plant-02",
+      "label": "Right background bush",
+      "position_m": [
+        0.47,
+        0.23,
+        0.03
+      ],
+      "seed": 32,
+      "size_m": [
+        0.13,
+        0.09,
+        0.2
+      ],
+      "yaw_deg": 0
+    },
+    {
+      "asset": "grass",
+      "id": "plant-03",
+      "label": "Foreground grass",
+      "position_m": [
+        0.29,
+        0.065,
+        0.03
+      ],
+      "seed": 33,
+      "size_m": [
+        0.17,
+        0.065,
+        0.035
+      ],
+      "yaw_deg": 0
+    },
+    {
+      "asset": "rock",
+      "id": "rock-01",
+      "label": "Main stone",
+      "position_m": [
+        0.2,
+        0.13,
+        0.03
+      ],
+      "seed": 21,
+      "size_m": [
+        0.13,
+        0.09,
+        0.11
+      ],
+      "yaw_deg": 15
+    },
+    {
+      "asset": "rock",
+      "id": "rock-02",
+      "label": "Companion stone",
+      "position_m": [
+        0.4,
+        0.12,
+        0.03
+      ],
+      "seed": 22,
+      "size_m": [
+        0.08,
+        0.06,
+        0.07
+      ],
+      "yaw_deg": -20
+    },
+    {
+      "asset": "branchwood",
+      "id": "wood-01",
+      "label": "Branchwood centrepiece",
+      "position_m": [
+        0.3319999873638153,
+        0.17000000178813934,
+        0.029999999329447746
+      ],
+      "seed": 14,
+      "size_m": [
+        0.27300000858306817,
+        0.1260000057667492,
+        0.23099998825788504
+      ],
+      "yaw_deg": -8.562251945272747
+    }
+  ]
+}

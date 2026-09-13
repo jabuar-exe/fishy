@@ -1,0 +1,68 @@
+{
+  "description": "Scripted native transform simulating a manual edit; no cursor-authored native edit claimed.",
+  "sourceBlend": "/Users/joshuabanzon/Documents/ChatGPT/Fishy/blender/runs/20260913T043532Z-af1a9947/aquarium.blend",
+  "sourceBlendSha256": "452a11fff333cff64b3d8291d0bbb5b7250e77e894e178e7e368977778996b6e",
+  "objectId": "r3",
+  "translationDeltaM": [
+    0.01,
+    0,
+    0
+  ],
+  "yawDeltaRadians": 0.035,
+  "beforeMatrix": [
+    [
+      0.9902680516242981,
+      0.13917310535907745,
+      0.0,
+      0.18000000715255737
+    ],
+    [
+      -0.13917310535907745,
+      0.9902680516242981,
+      0.0,
+      0.14499999582767487
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      0.029999999329447746
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "afterMatrix": [
+    [
+      0.9945316314697266,
+      0.10443556308746338,
+      0.0,
+      0.1900000125169754
+    ],
+    [
+      -0.10443556308746338,
+      0.9945316314697266,
+      0.0,
+      0.14499999582767487
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      0.029999999329447746
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "meshSha256": "f673e89be73f8f5636a5b3e9127ee63bb54f07e9cff8fbe532ba7eda03072286",
+  "snapshotSha256": "a9d57363ce6d54169b1c0f7698b70ba128bdfcb84aad6336ecf25e8f01aab3c8",
+  "sourceFileUnchanged": true,
+  "nativeRevision": 3
+}
