@@ -1,0 +1,15 @@
+/* Materials cards lead with their editable 3D form; photography stays on demand. */
+.material-choice .form-preview{background:#e9eeea}
+.material-choice .form-preview img{object-fit:contain}
+.material-preview-status{padding:8px;text-align:center;font-size:12px;line-height:1.35;color:#596561}
+.material-real-sample-workspace{min-height:100%;padding-bottom:18px}
+.material-real-sample-workspace h3{margin:8px 0 12px;font-size:17px}
+.material-reference.material-reference-inspection{margin:0}
+.material-reference.material-reference-inspection>img{height:min(40vh,340px);object-fit:contain;background:#e9eeea}
+
+/* Desktop configuration tray width can be adjusted with pointer or keyboard. */
+.left-panel-resize{position:relative;z-index:8;flex:0 0 12px;width:12px;cursor:col-resize;touch-action:none;user-select:none;outline:none}
+.left-panel-resize::before{content:"";position:absolute;top:0;bottom:0;left:5px;width:2px;background:transparent;transition:background .15s ease}
+.left-panel-resize:hover::before,.left-panel-resize:focus-visible::before,.left-panel-resize[data-resizing=true]::before{background:#17695d}
+.left-panel-resize:focus-visible{outline:2px solid #17695d;outline-offset:-2px}
+@media(pointer:coarse){.left-panel-resize{flex-basis:18px;width:18px}.left-panel-resize::before{left:8px}}

@@ -19,6 +19,7 @@
   --reui-accent-strong: #0f554a;
   --reui-accent-soft: #e4f1e9;
   --reui-danger: #a84335;
+  --reui-brand-gradient: linear-gradient(100deg, #0d6b5e 0%, #159b7c 50%, #287bb8 100%);
   --reui-radius: 10px;
   --reui-shadow: 0 1px 2px rgb(24 34 30 / 5%), 0 8px 24px rgb(24 34 30 / 6%);
 }
@@ -43,7 +44,22 @@
   letter-spacing: -1.2px;
 }
 
+.studio .brand > span {
+  color: var(--reui-accent);
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .studio .brand > span {
+    background: var(--reui-brand-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
 .studio .topbar nav {
+  flex-shrink: 0;
   gap: 4px;
   padding: 3px;
   border: 1px solid var(--reui-line);
@@ -72,7 +88,7 @@
 }
 
 .studio .project-title input {
-  width: clamp(132px, 17vw, 264px);
+  width: clamp(132px, 11vw, 188px);
   min-height: 26px;
   padding: 0 4px;
   border-radius: 5px;
@@ -81,10 +97,23 @@
   font-weight: 650;
 }
 
+@media (forced-colors: active) {
+  .studio .brand > span {
+    background: none;
+    color: LinkText;
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
 .studio .project-title > span,
 .studio .save-state {
   color: var(--reui-subtle-ink);
   font-size: 11px;
+}
+
+/* Match the editable title text inset so both project labels share an edge. */
+.studio .project-title > span {
+  padding-inline-start: 4px;
 }
 
 /* ReUI-compatible primitive variants used by the workspace. */
@@ -238,11 +267,12 @@
   padding: 0 14px 18px;
 }
 
+/* The sheet is portalled to <body>, so its rules cannot be scoped to .studio. */
 .studio .dock-content > .panel-section,
 .studio .dock-content > .catalog-panel,
 .studio .object-config-card .panel-section,
-.studio .mobile-sheet .panel-section,
-.studio .mobile-sheet .catalog-panel {
+.mobile-sheet .panel-section,
+.mobile-sheet .catalog-panel {
   margin-top: 10px;
   padding: 16px;
   border: 1px solid var(--reui-line);
@@ -253,7 +283,7 @@
 
 .studio .dock-content > .panel-section + .panel-section,
 .studio .object-config-card .panel-section + .panel-section,
-.studio .mobile-sheet .panel-section + .panel-section {
+.mobile-sheet .panel-section + .panel-section {
   padding-top: 16px;
 }
 
@@ -518,45 +548,142 @@
   box-shadow: 0 10px 30px rgb(75 40 31 / 13%);
 }
 
+/* Scroll surfaces: Chrome ignores ::-webkit-scrollbar once scrollbar-width or
+   scrollbar-color is set, so both keywords are released where the pseudo-
+   elements exist and kept where they do not. */
+.studio .dock-content,
+.sheet-scroll,
+.aquascape-chat-thread,
+.studio .material-browser {
+  scrollbar-width: thin;
+  scrollbar-color: var(--reui-line-strong) transparent;
+}
+
+@supports selector(::-webkit-scrollbar) {
+  .studio .dock-content,
+  .sheet-scroll,
+  .aquascape-chat-thread,
+  .studio .material-browser {
+    scrollbar-width: auto;
+    scrollbar-color: auto;
+  }
+
+  .studio ::-webkit-scrollbar,
+  .mobile-sheet ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  .studio ::-webkit-scrollbar-track,
+  .studio ::-webkit-scrollbar-corner,
+  .mobile-sheet ::-webkit-scrollbar-track,
+  .mobile-sheet ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  .studio ::-webkit-scrollbar-thumb,
+  .mobile-sheet ::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background: var(--reui-line-strong);
+    background-clip: padding-box;
+  }
+
+  .studio ::-webkit-scrollbar-thumb:hover,
+  .mobile-sheet ::-webkit-scrollbar-thumb:hover {
+    background: #9aada0;
+    background-clip: padding-box;
+  }
+
+  .studio ::-webkit-scrollbar-button,
+  .mobile-sheet ::-webkit-scrollbar-button {
+    display: none;
+  }
+}
+
+/* Ideas tray: a secondary underlined subnav under the primary dock tabs. */
+.ideas-subnav {
+  gap: 16px;
+  margin: 0 2px;
+  padding: 0;
+  border-bottom: 1px solid var(--reui-line);
+}
+
+.ideas-subnav button {
+  flex: none;
+  min-height: 34px;
+  padding: 0 2px 8px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--reui-subtle-ink);
+  font-size: 13px;
+  font-weight: 560;
+  box-shadow: none;
+}
+
+.ideas-subnav button:hover:not(:disabled) {
+  background: transparent;
+  color: var(--reui-accent-strong);
+}
+
+.ideas-subnav button[aria-pressed="true"] {
+  border-bottom-color: var(--reui-accent);
+  background: transparent;
+  color: var(--reui-accent);
+}
+
+@media (pointer: coarse) {
+  .ideas-subnav button {
+    min-height: 42px;
+  }
+}
+
 /* Conversational brief and its composer share the same panel language. */
-.studio .chat-panel {
+.chat-panel {
   padding: 0 !important;
   overflow: hidden;
 }
 
-.studio .aquascape-chat {
+.studio .dock-content > .chat-panel,
+.mobile-sheet .chat-panel {
+  box-shadow: var(--reui-shadow);
+}
+
+.aquascape-chat {
   min-height: 350px;
   border: 0;
   border-radius: inherit;
   box-shadow: none;
 }
 
-.studio .aquascape-chat-header {
+.aquascape-chat-header {
   padding: 8px;
   border-bottom-color: var(--reui-line);
   background: var(--reui-surface-muted);
 }
 
-.studio .aquascape-chat-tabs {
+.aquascape-chat-tabs {
   padding: 2px;
   border: 1px solid var(--reui-line);
   border-radius: 8px;
   background: var(--reui-surface);
 }
 
-.studio .aquascape-chat-tabs button[aria-selected="true"] {
+.aquascape-chat-tabs button[aria-selected="true"] {
   border-radius: 6px;
   background: var(--reui-accent-soft);
   color: var(--reui-accent-strong);
 }
 
-.studio .aquascape-chat-user {
+.aquascape-chat-user {
   border: 1px solid #c6dbcc;
   border-radius: 11px 11px 3px 11px;
   background: var(--reui-accent-soft);
 }
 
-.studio .aquascape-chat-reply > div {
+.aquascape-chat-reply > div {
   max-width: 92%;
   padding: 9px 10px;
   border: 1px solid var(--reui-line);
@@ -564,14 +691,18 @@
   background: var(--reui-surface-muted);
 }
 
-.studio .aquascape-chat-composer {
+.aquascape-chat-composer {
   margin: 8px;
   border-color: var(--reui-line-strong);
   border-radius: 10px;
   background: var(--reui-surface);
 }
 
-.studio .aquascape-chat-composer button {
+.aquascape-chat-composer input:focus-visible {
+  outline: 0;
+}
+
+.aquascape-chat-composer button {
   border-radius: 7px;
 }
 
@@ -655,11 +786,11 @@
     padding-inline: 8px;
   }
 
-  .studio .mobile-sheet {
+  .mobile-sheet {
     background: #f3f6f2;
   }
 
-  .studio .mobile-sheet .sheet-scroll {
+  .mobile-sheet .sheet-scroll {
     padding: 0 12px 14px;
   }
 
@@ -684,6 +815,31 @@
     bottom: 14px;
     width: calc(100% - 24px);
   }
+}
+
+.reset-confirm-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.reset-confirm-actions button {
+  flex: 1;
+}
+
+.studio .reset-tank-section {
+  background: #eef5f2;
+}
+
+.studio .reset-tank-button {
+  border-color: #6f988f;
+  background: #1c7366;
+  color: #fff;
+}
+
+.studio .reset-tank-button:hover:not(:disabled) {
+  border-color: #15584e;
+  background: #155f55;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -68,7 +68,8 @@ export function stageBrowserProposal(current:SceneRecord,artifact:FrontierReview
   if(!proposal||review.run.runtime!=="browser"||review.run.builder!==BUILDER)throw new Error("This recorded native run is view-only, not a browser proposal.");
   if(review.run.sceneId!==current.id||proposal.id!==current.id)throw new Error("This proposal belongs to a different scene.");
   if(review.run.baseRevision!==current.revision||proposal.revision!==current.revision)throw new Error("This proposal is stale. Export the current scene and request a new proposal.");
-  if(proposal.substrate!==current.substrate)throw new Error("Substrate changes are not supported by browser proposals in this release. Nothing was applied.");
+  if(proposal.substrate!==current.substrate||proposal.substrateCatalogId!==current.substrateCatalogId)throw new Error("Substrate changes are not supported by browser proposals in this release. Nothing was applied.");
+  if(!equal(proposal.equipment,current.equipment))throw new Error("Installed filter and light changes are not supported by browser proposals in this release. Nothing was applied.");
   const attempts:BlockedAttempt[]=[],protectedObjects=current.objects.filter(o=>o.protected);
   for(const old of protectedObjects){const candidate=proposal.objects.find(o=>o.id===old.id);if(!candidate||!equal(old,candidate))attempts.push({objectId:old.id,fields:candidate?Object.keys({...old,...candidate}).filter(k=>!equal(old[k as keyof SceneObject],candidate[k as keyof SceneObject])):["deletion"],reason:"Current human-protected object retained by the browser."});}
   const protectedIds=new Set(protectedObjects.map(o=>o.id));

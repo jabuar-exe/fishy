@@ -1,7 +1,7 @@
 "use client";
 
 import {useEffect,useRef,useState} from "react";
-import {ImagePlus,Search,SendHorizontal,Sparkles} from "lucide-react";
+import {Check,ChevronRight,ImagePlus,Search,SendHorizontal} from "lucide-react";
 import type {SceneRecord} from "@/lib/scene";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
@@ -13,6 +13,7 @@ export type GeneratedAquascape={scene:SceneRecord;summary:string;baseRevision:nu
 
 const MAX_AGENT_PHOTOS=4;
 const MAX_ENCODED_BLOB=1_800_000;
+const DREAM_PROMPT="Describe your dream aquascape";
 
 function blobDataUrl(blob:Blob){return new Promise<string>((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>typeof reader.result==="string"?resolve(reader.result):reject(new Error("Could not prepare the reference photo."));reader.onerror=()=>reject(new Error("Could not read the reference photo."));reader.readAsDataURL(blob);});}
 
@@ -28,15 +29,54 @@ async function encodePhoto(photo:AquascapePhoto){
   } finally {bitmap.close();}
 }
 
+const TRACE_STAGES=["Reading your brief and current tank","Selecting catalog components","Composing the layout","Fitting every component to the tank"];
+
+function ThinkingTrace({active,elapsed}:{active:boolean;elapsed:number|null}) {
+  // Reduced motion skips the staged reveal and shows every phase at once.
+  const [stage,setStage]=useState(()=>window.matchMedia("(prefers-reduced-motion: reduce)").matches?TRACE_STAGES.length:1),[open,setOpen]=useState(true);
+  useEffect(()=>{
+    if(!active||stage>=TRACE_STAGES.length)return;
+    const timer=window.setTimeout(()=>setStage(value=>value+1),1100);
+    return()=>window.clearTimeout(timer);
+  },[active,stage]);
+  const settled=elapsed!==null;
+  return <div className="aquascape-chat-trace" data-settled={settled||undefined}>
+    <button type="button" className="aquascape-chat-trace-head" aria-expanded={open} onClick={()=>setOpen(value=>!value)}>
+      <ChevronRight className="aquascape-chat-trace-chevron" size={13}/>
+      <span className="aquascape-chat-trace-label">{elapsed!==null?`Composed in ${elapsed.toFixed(1)}s`:"Composing your aquarium…"}</span>
+    </button>
+    {open&&<ol className="aquascape-chat-trace-steps">{TRACE_STAGES.slice(0,settled?TRACE_STAGES.length:stage).map((label,index)=>{
+      const done=settled||index<stage-1;
+      return <li key={label} data-done={done||undefined}><span className="aquascape-chat-trace-mark">{done&&<Check size={9}/>}</span>{label}</li>;
+    })}</ol>}
+  </div>;
+}
+
 export function AquascapeChat({brief,scene,photos,onGenerated,onBrowseReferences,onAttachPhoto}:{brief:string;scene:SceneRecord;photos:AquascapePhoto[];onGenerated:(result:GeneratedAquascape)=>boolean;onBrowseReferences:()=>void;onAttachPhoto:(file:File)=>Promise<void>}) {
   const [context,setContext]=useState<ChatContext>("brief"),[draft,setDraft]=useState(""),[thread,setThread]=useState<ThreadItem[]>([]),[waiting,setWaiting]=useState(false);
+  const [promptLength,setPromptLength]=useState(DREAM_PROMPT.length),[deletingPrompt,setDeletingPrompt]=useState(false);
+  const [trace,setTrace]=useState<{id:string;elapsed:number|null}|null>(null);
   const input=useRef<HTMLInputElement>(null),fileInput=useRef<HTMLInputElement>(null),abort=useRef<AbortController|null>(null),threadRef=useRef(thread);threadRef.current=thread;
+  const sending=useRef(false);
   useEffect(()=>()=>abort.current?.abort(),[]);
+  useEffect(()=>{
+    if(thread.length||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+    const isComplete=promptLength===DREAM_PROMPT.length,isEmpty=promptLength===0;
+    const delay=isComplete&&!deletingPrompt?2800:isEmpty&&deletingPrompt?1400:deletingPrompt?150:190;
+    const timeout=window.setTimeout(()=>{
+      if(isComplete&&!deletingPrompt)setDeletingPrompt(true);
+      else if(isEmpty&&deletingPrompt)setDeletingPrompt(false);
+      else setPromptLength(length=>length+(deletingPrompt?-1:1));
+    },delay);
+    return()=>window.clearTimeout(timeout);
+  },[deletingPrompt,promptLength,thread.length]);
   const send=async()=>{
-    const text=draft.trim();if(!text||waiting)return;
+    const text=draft.trim();if(!text||sending.current)return;
+    sending.current=true;
     const userItem:ThreadItem={id:crypto.randomUUID(),kind:"user",body:text};
     const history=threadRef.current.slice(-12).map(item=>({role:item.kind==="user"?"user" as const:"assistant" as const,content:item.body.slice(0,1200)}));
     setThread(items=>[...items,userItem]);setDraft("");setWaiting(true);const controller=new AbortController();abort.current=controller;
+    const started=performance.now();setTrace({id:crypto.randomUUID(),elapsed:null});
     try{
       const images=await Promise.all(photos.slice(-MAX_AGENT_PHOTOS).map(encodePhoto));
       const response=await fetch("/api/aquascape/generate",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({message:text,scene,history,images}),signal:controller.signal});
@@ -47,7 +87,7 @@ export function AquascapeChat({brief,scene,photos,onGenerated,onBrowseReferences
     } catch(error) {
       if(controller.signal.aborted)return;
       setThread(items=>[...items,{id:crypto.randomUUID(),kind:"studio",label:"Generation stopped",sub:"No scene changes applied",body:error instanceof Error?error.message:"The aquarium could not be generated.",error:true}]);
-    } finally {if(abort.current===controller)abort.current=null;setWaiting(false);queueMicrotask(()=>input.current?.focus());}
+    } finally {if(abort.current===controller)abort.current=null;sending.current=false;setWaiting(false);setTrace(value=>value&&value.elapsed===null?{...value,elapsed:(performance.now()-started)/1000}:value);queueMicrotask(()=>input.current?.focus());}
   };
   const attach=async(file:File)=>{await onAttachPhoto(file);setContext("photos");input.current?.focus();};
   return <section className="aquascape-chat" aria-label="Aquascape assistant">
@@ -59,17 +99,16 @@ export function AquascapeChat({brief,scene,photos,onGenerated,onBrowseReferences
       <div className="aquascape-chat-actions">
         <Button type="button" variant="ghost" size="icon-xs" aria-label="Browse inspiration references" title="Browse inspiration references" onClick={onBrowseReferences}><Search size={15}/></Button>
         <Button type="button" variant="ghost" size="icon-xs" aria-label="Attach a reference photo" title="Attach a reference photo" onClick={()=>fileInput.current?.click()}><ImagePlus size={16}/></Button>
-        <input ref={fileInput} className="visually-hidden" type="file" accept="image/jpeg,image/png,image/webp" onChange={event=>{const file=event.target.files?.[0];event.target.value="";if(file)void attach(file);}}/>
+        <input ref={fileInput} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={event=>{const file=event.target.files?.[0];event.target.value="";if(file)void attach(file);}}/>
       </div>
     </header>
     <div className="aquascape-chat-thread" aria-live="polite" aria-busy={waiting}>
-      {!thread.length?<div className="aquascape-chat-empty"><Sparkles size={16}/><p>{context==="brief"?"Describe the aquarium you want me to build.":photos.length?`${photos.length} reference photo${photos.length===1?" is":"s are"} ready to guide the model.`:"Add a reference photo, then describe what matters."}</p><span>{context==="brief"?brief?"Your current brief will be used as scene context.":"I’ll compose the tank from editable catalog components.":"Up to four compressed photos are sent only when you generate."}</span></div>:thread.map(item=>item.kind==="user"?<div className="aquascape-chat-user" key={item.id}>{item.body}</div>:<article className="aquascape-chat-reply" data-error={item.error||undefined} key={item.id}><p><strong>{item.label}</strong><span>{item.sub}</span></p><div>{item.body}</div></article>)}
-      {waiting&&<div className="aquascape-chat-thinking"><span/><span/><span/><em>Composing your aquarium…</em></div>}
+      {!thread.length?<div className="aquascape-chat-empty"><p className="aquascape-chat-empty-prompt" aria-label={DREAM_PROMPT}>{DREAM_PROMPT.slice(0,promptLength)}</p></div>:thread.map(item=>item.kind==="user"?<div className="aquascape-chat-user" key={item.id}>{item.body}</div>:<article className="aquascape-chat-reply" data-error={item.error||undefined} key={item.id}><p><strong>{item.label}</strong><span>{item.sub}</span></p><div>{item.body}</div></article>)}
+      {trace&&<ThinkingTrace key={trace.id} active={waiting} elapsed={trace.elapsed}/>}
     </div>
     <div className="aquascape-chat-composer" onClick={()=>input.current?.focus()}>
       <input ref={input} value={draft} maxLength={3000} onChange={event=>setDraft(event.target.value)} onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();void send();}}} placeholder={context==="brief"?"Describe your aquascape…":"Describe how to use these photos…"} aria-label="Aquascape message"/>
       <Button type="button" size="icon-sm" aria-label="Generate aquarium" onClick={()=>void send()} disabled={!draft.trim()||waiting}><SendHorizontal size={16}/></Button>
     </div>
-    <p className="aquascape-chat-note">Generates editable local components · protected objects stay unchanged.</p>
   </section>;
 }

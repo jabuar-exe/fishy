@@ -25,10 +25,26 @@ export function applySculpt(group:T.Group,s:Sculpt) {
 }
 export function brushSculpt(s:Sculpt,world:T.Matrix4,center:T.Vector3,normal:T.Vector3,radius:number,amount:number,mode:BrushMode):{sculpt:Sculpt;changed:boolean} {
   if(!Number.isFinite(radius)||radius<.002||radius>2||!Number.isFinite(amount)||amount<=0||amount>.005||![...center.toArray(),...normal.toArray()].every(Number.isFinite))throw new Error("Invalid brush settings");
-  const values=dense(s),nextValues=values.map(v=>[...v] as [number,number,number]),inverse=world.clone().invert(),localCenter=center.clone().applyMatrix4(inverse),movement=center.clone().addScaledVector(normal,amount*(mode==="push"?-1:1)).applyMatrix4(inverse).sub(localCenter);let changed=false;
+  const values=dense(s),nextValues=values.map(v=>[...v] as [number,number,number]),inverse=world.clone().invert(),localCenter=center.clone().applyMatrix4(inverse),movement=center.clone().addScaledVector(normal,amount*(mode==="push"?-1:1)).applyMatrix4(inverse).sub(localCenter);
+  // A long, thin object such as driftwood can have a grid cell much wider than
+  // the intended brush. A radius-only lookup would then touch no lattice node
+  // at all. When that happens, use the control point with the strongest
+  // interpolation influence at the hit location; it always affects that point.
+  const controlPoint=(x:number,y:number,z:number,offset:[number,number,number])=>new T.Vector3(s.min[0]+x/8*(s.max[0]-s.min[0])+offset[0],s.min[1]+y/8*(s.max[1]-s.min[1])+offset[1],s.min[2]+z/8*(s.max[2]-s.min[2])+offset[2]).applyMatrix4(world);
+  let strongestBrushWeight=0;
+  for(let z=0;z<9;z++)for(let y=0;y<9;y++)for(let x=0;x<9;x++){const distance=controlPoint(x,y,z,values[index(x,y,z)]).distanceTo(center);if(distance<radius)strongestBrushWeight=Math.max(strongestBrushWeight,(1-distance/radius)**2);}
+  let fallback=-1;
+  // Sparse persisted offsets round to 1e-7 metres. A control point that only
+  // grazes the brush has too little falloff weight to survive that rounding.
+  if(strongestBrushWeight<.0001){
+    const normalised=localCenter.toArray().map((value,axis)=>T.MathUtils.clamp((value-s.min[axis])/(s.max[axis]-s.min[axis]),0,1)*8),lower=normalised.map(value=>Math.min(7,Math.floor(value))),fraction=normalised.map((value,axis)=>value-lower[axis]);
+    let strongest=-1;
+    for(let z=0;z<2;z++)for(let y=0;y<2;y++)for(let x=0;x<2;x++){const weight=(x?fraction[0]:1-fraction[0])*(y?fraction[1]:1-fraction[1])*(z?fraction[2]:1-fraction[2]);if(weight>strongest){strongest=weight;fallback=index(lower[0]+x,lower[1]+y,lower[2]+z);}}
+  }
+  let changed=false;
   for(let z=0;z<9;z++)for(let y=0;y<9;y++)for(let x=0;x<9;x++) {
-    const i=index(x,y,z),old=values[i],point=new T.Vector3(s.min[0]+x/8*(s.max[0]-s.min[0]),s.min[1]+y/8*(s.max[1]-s.min[1]),s.min[2]+z/8*(s.max[2]-s.min[2])).add(new T.Vector3(...old)).applyMatrix4(world),distance=point.distanceTo(center);if(distance>=radius)continue;
-    const weight=(1-distance/radius)**2;
+    const i=index(x,y,z),old=values[i],distance=controlPoint(x,y,z,old).distanceTo(center);if(distance>=radius&&i!==fallback)continue;
+    const weight=i===fallback?1:(1-distance/radius)**2;
     for(let axis=0;axis<3;axis++) {
       let delta=movement.getComponent(axis)*weight;
       if(mode==="smooth"){let sum=0,count=0;for(const [dx,dy,dz] of [[-1,0,0],[1,0,0],[0,-1,0],[0,1,0],[0,0,-1],[0,0,1]]){const a=x+dx,b=y+dy,c=z+dz;if(a>=0&&a<9&&b>=0&&b<9&&c>=0&&c<9){sum+=values[index(a,b,c)][axis];count++;}}delta=(sum/count-old[axis])*weight*Math.min(.5,amount/.005);}
@@ -39,7 +55,7 @@ export function brushSculpt(s:Sculpt,world:T.Matrix4,center:T.Vector3,normal:T.V
 }
 export function sculptChanged(s:Sculpt){return s.nodes.some(v=>v.offset.some(n=>n!==0));}
 export function minimumBrushRadius(s:Sculpt,world:T.Matrix4) {
-  const values=dense(s);let radius=0;const box=new T.Box3(),point=new T.Vector3();
-  for(let z=0;z<8;z++)for(let y=0;y<8;y++)for(let x=0;x<8;x++){box.makeEmpty();for(let dz=0;dz<2;dz++)for(let dy=0;dy<2;dy++)for(let dx=0;dx<2;dx++){const a=x+dx,b=y+dy,c=z+dz,v=values[index(a,b,c)];point.set(s.min[0]+a/8*(s.max[0]-s.min[0])+v[0],s.min[1]+b/8*(s.max[1]-s.min[1])+v[1],s.min[2]+c/8*(s.max[2]-s.min[2])+v[2]).applyMatrix4(world);box.expandByPoint(point);}radius=Math.max(radius,box.getSize(point).length());}
-  return Math.max(.002,Math.ceil(radius*1.02*1000)/1000);
+  // brushSculpt falls back to the hit cell's strongest control point, so this
+  // is a true interaction limit rather than the diagonal of the coarsest cell.
+  void s;void world;return .002;
 }

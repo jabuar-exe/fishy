@@ -1,13 +1,15 @@
 import {z} from "zod";
-import {catalogDescriptor,catalogEntries,type CatalogEntry} from "./catalog.ts";
-import {fitObject,outsideObjects} from "./geometry.ts";
+import {catalogDescriptor,catalogEntries,isOrganicCatalogEntry,type CatalogEntry} from "./catalog.ts";
+import {fitObject,outsideObjects,separatePlacements} from "./geometry.ts";
 import {sceneSchema,validateScene,type SceneRecord} from "./scene.ts";
 import {COMPOSITIONS,MAINTENANCE,MOODS} from "./design.ts";
 
 export const MAX_AGENT_IMAGES=4;
 export const MAX_IMAGE_DATA_URL_BYTES=2_600_000;
 
-const supportedCatalog=catalogEntries.filter(entry=>entry.status==="supported_procedural");
+// The composition agent only arranges organic materials. Floor profiles and
+// mounted equipment remain explicitly user-installed tank systems.
+const supportedCatalog=catalogEntries.filter(entry=>entry.status==="supported_procedural"&&isOrganicCatalogEntry(entry));
 const supportedIds=new Set(supportedCatalog.map(entry=>entry.id));
 const imageSchema=z.object({
   name:z.string().trim().min(1).max(180),
@@ -162,16 +164,18 @@ export function materializeAquascapePlan(current:SceneRecord,plan:AquascapePlan,
     object.size*=component.scale;
     return fitObject(object,scene,true);
   });
+  // Planned coordinates carry no collision awareness, so ease overlapping bases apart in place.
+  const placed=separatePlacements(generated,protectedObjects,scene);
   // The model names its focal object by component index; resolve it to the id we just minted.
-  const focal=generated[validPlan.design.focalIndex]??generated[0];
+  const focal=placed[validPlan.design.focalIndex]??placed[0];
   const design={
     composition:validPlan.design.composition,focalObjectId:focal.id,sightline:validPlan.design.sightline,
     openForegroundMin:validPlan.design.openForegroundMin,mood:validPlan.design.mood,
     maintenanceTier:validPlan.design.maintenanceTier,story:validPlan.design.story,
   };
-  const next=validateScene({...scene,name:validPlan.title,brief:message,design,objects:[...protectedObjects,...generated]});
+  const next=validateScene({...scene,name:validPlan.title,brief:message,design,objects:[...protectedObjects,...placed]});
   if(outsideObjects(next).length)throw new AquascapeAgentError("invalid_plan","Generated components did not fit safely inside the tank.");
-  return {scene:next,componentCount:generated.length,preservedProtected:protectedObjects.length,summary:validPlan.summary};
+  return {scene:next,componentCount:placed.length,preservedProtected:protectedObjects.length,summary:validPlan.summary};
 }
 
 export async function generateAquascape(input:unknown,options:{apiKey:string;model?:string;fetcher?:typeof fetch;userIdentifier?:string}){

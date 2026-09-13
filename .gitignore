@@ -20,6 +20,12 @@ site/.codex/
 site/outputs/
 site/work/
 
+# Coding-assistant operational state and local publish snapshots
+.omc/
+.omx/
+site-publish-*/
+fishy-release.tar.gz
+
 # Downloaded third-party photo corpora stay local
 facebook_fishtank_photos/
 iaplc/images/

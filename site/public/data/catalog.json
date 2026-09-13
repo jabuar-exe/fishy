@@ -128,13 +128,13 @@
     },
     {
       "id": "wood-ancient-juniper",
-      "name": "Ancient Juniper Wood (layout reference)",
+      "name": "Ancient Juniper Wood (procedural layout model)",
       "category": "wood",
       "tradeName": "Ancient juniper wood",
       "source": {"url": "https://tropica.com/ProductMedia/Layouts/L114/1071_UK.pdf", "publisher": "Tropica", "opened": true, "facts": "Tropica's Layout 114 names ancient juniper wood as decoration and describes hardscape whose wood tilt follows stream flow."},
       "identityNote": "A layout label, not a supplier material specification or a botanical chain-of-custody claim.",
       "visualForm": "Weathered, directional conifer-like branch/root silhouette oriented with a flow line.",
-      "geometry": {"kind": "proposed procedural approximation", "controls": {"flowAxisDeg": [-35, 35], "leanConsistency": [0.6, 1], "branchStreamline": [0.45, 0.95], "weathering": [0.35, 0.85], "branchCount": [3, 18], "exposure": [0.2, 0.8]}},
+      "geometry": {"kind": "identity-bearing procedural layout model", "controls": {"flowAxisDeg": [-35, 35], "leanConsistency": [0.6, 1], "branchStreamline": [0.45, 0.95], "weathering": [0.35, 0.85], "branchCount": [3, 18], "exposure": [0.2, 0.8]}},
       "placementUse": "Directional stream composition: orient primary limbs and companion stones along the same current axis.",
       "safety": "This is an inspiration/layout reference, not purchasing or safety documentation. Verify any real juniper-labelled wood separately."
     },
@@ -196,7 +196,7 @@
       "geometry": {"kind": "proposed procedural approximation", "controls": {"stemDensity": [0.35, 1], "canopyHeight": [0.04, 0.12], "leafAspect": [1.5, 3], "redVioletMix": [0.45, 0.95], "trimPlane": [0, 1]}},
       "placementUse": "Foreground accent in large layouts or compact colour block in small aquariums.",
       "care": {"provenance": "Tropica product page", "growth": "medium", "heightCm": "5–10+", "light": "medium", "co2": "medium"},
-      "nameNote": "Cultivar; visual shader is an approximation, not a colour guarantee."
+      "nameNote": "Cultivar; a compact red-violet, opposite-leaved stem model is an approximation, not a colour guarantee."
     },
     {
       "id": "plant-cryptocoryne-wendtii-green",
