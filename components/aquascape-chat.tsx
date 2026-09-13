@@ -13,6 +13,7 @@ export type GeneratedAquascape={scene:SceneRecord;summary:string;baseRevision:nu
 
 const MAX_AGENT_PHOTOS=4;
 const MAX_ENCODED_BLOB=1_800_000;
+const DREAM_PROMPT="Describe your dream aquascape";
 
 function blobDataUrl(blob:Blob){return new Promise<string>((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>typeof reader.result==="string"?resolve(reader.result):reject(new Error("Could not prepare the reference photo."));reader.onerror=()=>reject(new Error("Could not read the reference photo."));reader.readAsDataURL(blob);});}
 
@@ -30,9 +31,21 @@ async function encodePhoto(photo:AquascapePhoto){
 
 export function AquascapeChat({brief,scene,photos,onGenerated,onBrowseReferences,onAttachPhoto}:{brief:string;scene:SceneRecord;photos:AquascapePhoto[];onGenerated:(result:GeneratedAquascape)=>boolean;onBrowseReferences:()=>void;onAttachPhoto:(file:File)=>Promise<void>}) {
   const [context,setContext]=useState<ChatContext>("brief"),[draft,setDraft]=useState(""),[thread,setThread]=useState<ThreadItem[]>([]),[waiting,setWaiting]=useState(false);
+  const [promptLength,setPromptLength]=useState(DREAM_PROMPT.length),[deletingPrompt,setDeletingPrompt]=useState(false);
   const input=useRef<HTMLInputElement>(null),fileInput=useRef<HTMLInputElement>(null),abort=useRef<AbortController|null>(null),threadRef=useRef(thread);threadRef.current=thread;
   const sending=useRef(false);
   useEffect(()=>()=>abort.current?.abort(),[]);
+  useEffect(()=>{
+    if(thread.length||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+    const isComplete=promptLength===DREAM_PROMPT.length,isEmpty=promptLength===0;
+    const delay=isComplete&&!deletingPrompt?2800:isEmpty&&deletingPrompt?1400:deletingPrompt?150:190;
+    const timeout=window.setTimeout(()=>{
+      if(isComplete&&!deletingPrompt)setDeletingPrompt(true);
+      else if(isEmpty&&deletingPrompt)setDeletingPrompt(false);
+      else setPromptLength(length=>length+(deletingPrompt?-1:1));
+    },delay);
+    return()=>window.clearTimeout(timeout);
+  },[deletingPrompt,promptLength,thread.length]);
   const send=async()=>{
     const text=draft.trim();if(!text||sending.current)return;
     sending.current=true;
@@ -65,7 +78,7 @@ export function AquascapeChat({brief,scene,photos,onGenerated,onBrowseReferences
       </div>
     </header>
     <div className="aquascape-chat-thread" aria-live="polite" aria-busy={waiting}>
-      {!thread.length?<div className="aquascape-chat-empty"><p>Describe your dream aquascape</p></div>:thread.map(item=>item.kind==="user"?<div className="aquascape-chat-user" key={item.id}>{item.body}</div>:<article className="aquascape-chat-reply" data-error={item.error||undefined} key={item.id}><p><strong>{item.label}</strong><span>{item.sub}</span></p><div>{item.body}</div></article>)}
+      {!thread.length?<div className="aquascape-chat-empty"><p className="aquascape-chat-empty-prompt" aria-label={DREAM_PROMPT}>{DREAM_PROMPT.slice(0,promptLength)}</p></div>:thread.map(item=>item.kind==="user"?<div className="aquascape-chat-user" key={item.id}>{item.body}</div>:<article className="aquascape-chat-reply" data-error={item.error||undefined} key={item.id}><p><strong>{item.label}</strong><span>{item.sub}</span></p><div>{item.body}</div></article>)}
       {waiting&&<div className="aquascape-chat-thinking"><span/><span/><span/><em>Composing your aquarium…</em></div>}
     </div>
     <div className="aquascape-chat-composer" onClick={()=>input.current?.focus()}>
