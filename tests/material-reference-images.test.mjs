@@ -46,3 +46,10 @@ test("the desktop configuration tray has an accessible resize control",()=>{
   assert.match(page,/onPointerDown=\{beginLeftResize\}/);
   assert.match(page,/onKeyDown=\{resizeLeftWithKey\}/);
 });
+
+test("the configuration tabs share their row with the left-panel hide action",()=>{
+  const page=readFileSync(resolve(root,"app/page.tsx"),"utf8");
+  assert.match(page,/className="dock-navigation"/);
+  assert.match(page,/aria-label="Hide left panel"/);
+  assert.doesNotMatch(page,/<span>Aquascape<\/span>/);
+});
