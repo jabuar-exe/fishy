@@ -28,14 +28,14 @@ function branch(points:Vec3[],start:number,end:number,material:T.Material,seed=0
   return new T.Mesh(geometry,material);
 }
 
-function leaf(origin:Vec3,direction:Vec3,length:number,width:number,material:T.Material,options:{wave?:number;lobes?:number;round?:number;curl?:number;seed?:number}={}) {
+function leaf(origin:Vec3,direction:Vec3,length:number,width:number,material:T.Material,options:{wave?:number;lobes?:number;round?:number;curl?:number;seed?:number;color?:[number,number,number]}={}) {
   const rows=14,columns=6,positions:number[]=[],uv:number[]=[],indices:number[]=[],colors:number[]=[];
   const wave=options.wave??0,lobes=options.lobes??0,round=options.round??.72,curl=options.curl??.1,seed=options.seed??0;
   for(let row=0;row<=rows;row++)for(let column=0;column<=columns;column++){
     const t=row/rows,s=column/columns*2-1;
     const taper=Math.pow(Math.max(0,Math.sin(Math.PI*Math.pow(t,round))),.64)*(1+lobes*.16*Math.sin(t*Math.PI*6));
     const x=s*width*taper*(1+wave*.18*Math.sin(t*Math.PI*7+seed)),y=t*length,z=curl*length*Math.sin(t*Math.PI)*(.22+.78*s*s)+wave*width*Math.sin(t*Math.PI*5+seed)*s;
-    positions.push(x,y,z);uv.push((s+1)/2,t);const tone=.82+.16*Math.sin(seed+t*3.1+s*.8);colors.push(tone,.9+.08*tone,.76+.18*tone);
+    positions.push(x,y,z);uv.push((s+1)/2,t);const tone=.82+.16*Math.sin(seed+t*3.1+s*.8),color=options.color??[tone,.9+.08*tone,.76+.18*tone];colors.push(...color);
   }
   for(let row=0;row<rows;row++)for(let column=0;column<columns;column++){const a=row*(columns+1)+column,b=a+columns+1;indices.push(a,b,a+1,b,b+1,a+1);}
   const geometry=new T.BufferGeometry();geometry.setAttribute("position",new T.Float32BufferAttribute(positions,3));geometry.setAttribute("uv",new T.Float32BufferAttribute(uv,2));geometry.setAttribute("color",new T.Float32BufferAttribute(colors,3));geometry.setIndex(indices);geometry.computeVertexNormals();
@@ -82,6 +82,23 @@ function directionalWood(group:T.Group,material:T.Material,rand:()=>number,ghost
   addRootlets(group,[-.13,.03,.012],ghost?6:4,.1,.025,material,rand);
 }
 
+/** A low, weathered conifer-root silhouette for the documented layout material. */
+function ancientJuniper(group:T.Group,material:T.Material,rand:()=>number) {
+  const trunk:Vec3[]=[[-.18,.011,.024],[-.125,.03,.008],[-.055,.068,-.012],[.025,.118,-.006],[.115,.146,.02],[.19,.132,.046]];
+  group.add(branch(trunk,.025,.006,material,29,48,13));
+  const forks:[number,Vec3[]][]=[
+    [43,[[-.065,.063,-.01],[-.09,.115,-.024],[-.122,.162,-.04],[-.158,.192,-.052]]],
+    [47,[[.012,.11,-.006],[.052,.172,-.035],[.096,.22,-.046],[.143,.245,-.04]]],
+    [53,[[.09,.14,.016],[.128,.183,.045],[.173,.198,.075],[.22,.188,.098]]]
+  ];
+  for(const [seed,points] of forks)group.add(branch(points,.011,.0022,material,seed,31,9));
+  for(let i=0;i<10;i++){
+    const t=.12+i*.075,base:Vec3=[-.18+.37*t,.011+.137*t,.024+.022*t],side=i%2?1:-1,reach=.06+rand()*.055;
+    group.add(branch([base,[base[0]+.018,base[1]+.025+rand()*.017,base[2]+side*.018],[base[0]+reach,base[1]+.042+rand()*.045,base[2]+side*(.036+rand()*.035)]],.0044,.00075,material,61+i,17,7));
+  }
+  for(let i=0;i<6;i++){const a=-2.55+i*.82+(rand()-.5)*.18;group.add(branch([[-.12,.025,.014],[-.12+Math.cos(a)*.055,.008,-.002+Math.sin(a)*.035],[-.12+Math.cos(a)*(.1+rand()*.04),.003,-.002+Math.sin(a)*(.065+rand()*.025)]],.006,.0011,material,84+i,17,7));}
+}
+
 function dragonWood(group:T.Group,material:T.Material,rand:()=>number) {
   group.add(branch([[-.13,.014,.02],[-.075,.035,-.012],[-.02,.065,.01],[.045,.07,-.006],[.115,.025,.018]],.03,.016,material,8,40,14));
   for(let i=0;i<8;i++){const a=i/8*Math.PI*2,base:Vec3=[-.035+(rand()-.5)*.04,.04+(i%3)*.012,(rand()-.5)*.025];group.add(branch([base,[base[0]+Math.cos(a)*.045,base[1]+.035+rand()*.04,base[2]+Math.sin(a)*.04],[base[0]+Math.cos(a)*(.095+rand()*.045),base[1]+.055+rand()*.085,base[2]+Math.sin(a)*(.075+rand()*.04)]],.008,.0017,material,30+i,23,8));}
@@ -111,8 +128,14 @@ function rhizomePlant(group:T.Group,material:T.Material,rand:()=>number,buce=fal
 }
 
 function alternanthera(group:T.Group,material:T.Material,rand:()=>number) {
-  for(let i=0;i<15;i++){const x=(rand()-.5)*.07,z=(rand()-.5)*.045,h=.055+rand()*.055,bend=(rand()-.5)*.018;group.add(stem([[x,0,z],[x+bend*.3,h*.55,z],[x+bend,h,z+(rand()-.5)*.01]],.0013,material,i));
-    for(let node=1;node<=4;node++){const y=h*node/5,a=(i*.9+node*.7)%Math.PI,origin:Vec3=[x+bend*node/5,y,z];for(const side of [-1,1])group.add(leaf(origin,[Math.cos(a)*side,.2,Math.sin(a)*side],.024,.0075,material,{round:.84,curl:.08,seed:i*7+node}));}
+  const crimson:[number,number,number]=[1.08,.54,.72],plum:[number,number,number]=[.92,.43,.66],young:[number,number,number]=[1.1,.67,.76];
+  for(let i=0;i<25;i++){
+    const baseAngle=rand()*Math.PI*2,radius=Math.sqrt(rand())*.052,x=Math.cos(baseAngle)*radius,z=Math.sin(baseAngle)*radius,h=.048+rand()*.035,bend=(rand()-.5)*.018,drift=(rand()-.5)*.014;
+    group.add(stem([[x,.002,z],[x+bend*.18,h*.34,z+drift*.14],[x+bend*.58,h*.7,z+drift*.58],[x+bend,h,z+drift]],.00082,material,i));
+    for(let node=1;node<=4;node++){
+      const t=node/5,y=h*t,a=baseAngle+node*Math.PI/2+(rand()-.5)*.34,origin:Vec3=[x+bend*t,y,z+drift*t],tone=node===4?young:(i+node)%3?crimson:plum,leafLength=.013+rand()*.004;
+      for(const side of [-1,1])group.add(leaf(origin,[Math.cos(a)*side,.26+rand()*.14,Math.sin(a)*side],leafLength,.0027+rand()*.0008,material,{round:.48,curl:.025,wave:.07,seed:i*11+node*3+side,color:tone}));
+    }
   }
 }
 
@@ -153,6 +176,7 @@ export function buildCatalogModel(o:CatalogObject,group:T.Group,material:T.Mater
     case "wood-talawa": directionalWood(group,material,rand);break;
     case "wood-ghost": directionalWood(group,material,rand,true);break;
     case "wood-dragon": dragonWood(group,material,rand);break;
+    case "wood-ancient-juniper": ancientJuniper(group,material,rand);break;
     case "plant-micranthemum-monte-carlo": monteCarlo(group,material,rand);break;
     case "plant-glossostigma-elatinoides": monteCarlo(group,material,rand,true);break;
     case "plant-anubias-petite": rhizomePlant(group,material,rand);break;

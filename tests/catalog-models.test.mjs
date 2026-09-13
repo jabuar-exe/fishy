@@ -15,7 +15,7 @@ const metrics=object=>{
 
 test("every addable material has deterministic identity-bearing detailed geometry",()=>{
   const entries=catalogEntries.filter(entry=>entry.status==="supported_procedural"),hashes=new Set(),scene=initialScene();
-  assert.equal(entries.length,19);
+  assert.equal(entries.length,20);
   for(const entry of entries){
     const object=catalogDescriptor(entry,"sample"),first=metrics(object),second=metrics(structuredClone(object));
     assert.deepEqual(first,second,`${entry.id} must rebuild deterministically`);

@@ -87,6 +87,11 @@
   font-size: 11px;
 }
 
+/* Match the editable title text inset so both project labels share an edge. */
+.studio .project-title > span {
+  padding-inline-start: 4px;
+}
+
 /* ReUI-compatible primitive variants used by the workspace. */
 .studio [data-slot="button"] {
   border-color: var(--reui-line-strong);

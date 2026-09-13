@@ -53,3 +53,8 @@ test("the configuration tabs share their row with the left-panel hide action",()
   assert.match(page,/aria-label="Hide left panel"/);
   assert.doesNotMatch(page,/<span>Aquascape<\/span>/);
 });
+
+test("the reference photo area omits the removed session-detail helper text",()=>{
+  const page=readFileSync(resolve(root,"app/page.tsx"),"utf8");
+  assert.doesNotMatch(page,/Kept in this session\. The four most recent are compressed and sent when you generate\./);
+});

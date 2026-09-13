@@ -16,7 +16,7 @@ Performed through the actual local editor at localhost:5176, separate from the p
 - Focused Depth 30→40 + Cmd+S saved revision 7, retaining width 60 and height 36.
 - Focused Height 10 + Cmd+S rejected protected-wood overflow. Height remained 36, revision remained 7, unsaved state and error remained visible; no misleading follow-on save occurred.
 - Added a catalog plant with a new stable UUID. Apply fern→broadleaf retained UUID, position, rotation, size, protection and color. Add kept Assets open. Undo/redo advanced revisions.
-- Ancient Juniper exposes source/Save reference only, no Add. No selected plant makes Apply to selected plant disabled.
+- Ancient Juniper has an addable, directional weathered-root model. No selected plant makes Apply to selected plant disabled.
 - Searched 615 references for Tropica, opened credited results, and saved a reference to the canonical scene. Source photographs are not hosted.
 - All three original GLBs loaded; orbit changed the view. Originals are explicitly view-only.
 - At 1440×900, Layers/Assets/Ideas and Properties/Conversation flank the dominant canvas.

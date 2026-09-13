@@ -31,9 +31,11 @@ async function encodePhoto(photo:AquascapePhoto){
 export function AquascapeChat({brief,scene,photos,onGenerated,onBrowseReferences,onAttachPhoto}:{brief:string;scene:SceneRecord;photos:AquascapePhoto[];onGenerated:(result:GeneratedAquascape)=>boolean;onBrowseReferences:()=>void;onAttachPhoto:(file:File)=>Promise<void>}) {
   const [context,setContext]=useState<ChatContext>("brief"),[draft,setDraft]=useState(""),[thread,setThread]=useState<ThreadItem[]>([]),[waiting,setWaiting]=useState(false);
   const input=useRef<HTMLInputElement>(null),fileInput=useRef<HTMLInputElement>(null),abort=useRef<AbortController|null>(null),threadRef=useRef(thread);threadRef.current=thread;
+  const sending=useRef(false);
   useEffect(()=>()=>abort.current?.abort(),[]);
   const send=async()=>{
-    const text=draft.trim();if(!text||waiting)return;
+    const text=draft.trim();if(!text||sending.current)return;
+    sending.current=true;
     const userItem:ThreadItem={id:crypto.randomUUID(),kind:"user",body:text};
     const history=threadRef.current.slice(-12).map(item=>({role:item.kind==="user"?"user" as const:"assistant" as const,content:item.body.slice(0,1200)}));
     setThread(items=>[...items,userItem]);setDraft("");setWaiting(true);const controller=new AbortController();abort.current=controller;
@@ -47,7 +49,7 @@ export function AquascapeChat({brief,scene,photos,onGenerated,onBrowseReferences
     } catch(error) {
       if(controller.signal.aborted)return;
       setThread(items=>[...items,{id:crypto.randomUUID(),kind:"studio",label:"Generation stopped",sub:"No scene changes applied",body:error instanceof Error?error.message:"The aquarium could not be generated.",error:true}]);
-    } finally {if(abort.current===controller)abort.current=null;setWaiting(false);queueMicrotask(()=>input.current?.focus());}
+    } finally {if(abort.current===controller)abort.current=null;sending.current=false;setWaiting(false);queueMicrotask(()=>input.current?.focus());}
   };
   const attach=async(file:File)=>{await onAttachPhoto(file);setContext("photos");input.current?.focus();};
   return <section className="aquascape-chat" aria-label="Aquascape assistant">
@@ -70,6 +72,5 @@ export function AquascapeChat({brief,scene,photos,onGenerated,onBrowseReferences
       <input ref={input} value={draft} maxLength={3000} onChange={event=>setDraft(event.target.value)} onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();void send();}}} placeholder={context==="brief"?"Describe your aquascape…":"Describe how to use these photos…"} aria-label="Aquascape message"/>
       <Button type="button" size="icon-sm" aria-label="Generate aquarium" onClick={()=>void send()} disabled={!draft.trim()||waiting}><SendHorizontal size={16}/></Button>
     </div>
-    <p className="aquascape-chat-note">Generates editable local components · protected objects stay unchanged.</p>
   </section>;
 }
