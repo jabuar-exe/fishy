@@ -2,7 +2,8 @@ import registry from "../public/data/catalog-registry.json" with {type:"json"};
 import type {SceneObject,SceneRecord} from "./scene";
 import {fitObject} from "./geometry.ts";
 
-export type CatalogEntry={id:string;displayLabel:string;kind:"wood"|"plant";browseTags:string[];placementRole:string;rendererForm:string;status:string;source:{url:string;publisher:string};identityCaveat:string;renderingLimit:string};
+export type CatalogReferenceImage={src:string;alt:string;scope:string;sourceUrl:string;author:string;license:string;licenseUrl:string};
+export type CatalogEntry={id:string;displayLabel:string;kind:"wood"|"plant";browseTags:string[];placementRole:string;rendererForm:string;status:string;source:{url:string;publisher:string};identityCaveat:string;renderingLimit:string;referenceImage:CatalogReferenceImage};
 export const catalogEntries=registry.entries as CatalogEntry[];
 
 /** One descriptor for thumbnails, interactive samples and the Add transaction. */

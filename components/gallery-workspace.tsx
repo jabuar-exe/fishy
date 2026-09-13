@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export type GalleryReference = {
   id: string;
@@ -48,16 +49,27 @@ function SourceLink({ entry }: { entry: GalleryReference }) {
   try {
     const url = new URL(entry.sourceUrl);
     allowed = url.protocol === "https:" && !url.username && !url.password &&
-      ["iaplc.com", "tropica.com"].includes(url.hostname) &&
+      ["iaplc.com"].includes(url.hostname) &&
       !/\/image\/|\/wp-content\/|\.(jpe?g|png|webp|svg)(?:$|\?)/i.test(url.pathname);
   } catch { /* Source is optional for an original or session photo. */ }
   return allowed ? <a href={entry.sourceUrl} target="_blank" rel="noopener noreferrer">Open {entry.provider}<ArrowUpRight size={15} /></a> : null;
 }
 
-function ReferenceImage({ src, alt }: { src: string; alt: string }) {
+function ReferenceImage({ src, alt, onUnavailable }: { src: string; alt: string; onUnavailable?: () => void }) {
   const [failed, setFailed] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   if (failed) return <div className="gallery-image-failure" role="status">Image unavailable. Choose another reference.</div>;
-  return <img src={src} alt={alt} loading="lazy" decoding="async" onError={() => setFailed(true)} />;
+  return <div className={`gallery-image ${loaded ? "is-loaded" : ""}`} aria-busy={!loaded}>
+    {!loaded && <div className="gallery-image-loader" aria-hidden="true" />}
+    <img src={src} alt={alt} loading="lazy" decoding="async" onLoad={() => setLoaded(true)} onError={() => { if (onUnavailable) onUnavailable(); else setFailed(true); }} />
+  </div>;
+}
+
+function GalleryLoadingScreen() {
+  return <div className="gallery-loading" role="status" aria-live="polite">
+    <div className="gallery-loading-copy"><span className="gallery-loading-orbit" aria-hidden="true" /><div><h3>Curating aquascapes</h3><p>Preparing image-rich references for your next layout.</p></div></div>
+    <div className="gallery-loading-grid" aria-hidden="true">{Array.from({ length: 6 }, (_, index) => <div className="gallery-loading-card" key={index}><Skeleton className="gallery-loading-image" /><Skeleton className="gallery-loading-line gallery-loading-line-title" /><Skeleton className="gallery-loading-line" /></div>)}</div>
+  </div>;
 }
 
 export function GalleryWorkspace({ entries, savedIds, onSave, creation }: {
@@ -78,7 +90,8 @@ export function GalleryWorkspace({ entries, savedIds, onSave, creation }: {
   const [error, setError] = useState("");
   const [loadingPhoto, setLoadingPhoto] = useState<"creation" | "reference" | null>(null);
   const [iaplcImages, setIaplcImages] = useState<Record<string, string>>({});
-  const [iaplcImagesReady, setIaplcImagesReady] = useState(false);
+  const [iaplcImagesState, setIaplcImagesState] = useState<"loading" | "ready" | "unavailable">("loading");
+  const [unavailablePreviews, setUnavailablePreviews] = useState<Set<string>>(() => new Set());
   const urls = useRef(new Set<string>());
   const alive = useRef(true);
   const uploadBusy = useRef(false);
@@ -95,6 +108,13 @@ export function GalleryWorkspace({ entries, savedIds, onSave, creation }: {
 
   useEffect(() => {
     const controller = new AbortController();
+    const startedAt = performance.now();
+    let releaseTimer: number | undefined;
+    let disposed = false;
+    const settle = (state: "ready" | "unavailable") => {
+      const remaining = Math.max(0, 480 - (performance.now() - startedAt));
+      releaseTimer = window.setTimeout(() => { if (!disposed) setIaplcImagesState(state); }, remaining);
+    };
     fetch("/data/iaplc-images.json", { signal: controller.signal })
       .then(response => {
         if (!response.ok) throw new Error("IAPLC photographs are temporarily unavailable.");
@@ -103,21 +123,24 @@ export function GalleryWorkspace({ entries, savedIds, onSave, creation }: {
       .then(payload => {
         if (!payload.images || typeof payload.images !== "object" || Array.isArray(payload.images)) throw new Error("Invalid IAPLC photograph index.");
         setIaplcImages(payload.images as Record<string, string>);
-        setIaplcImagesReady(true);
+        settle("ready");
       })
       .catch(err => {
         if (err instanceof DOMException && err.name === "AbortError") return;
-        setIaplcImagesReady(true);
+        settle("unavailable");
       });
-    return () => controller.abort();
+    return () => { disposed = true; controller.abort(); if (releaseTimer) window.clearTimeout(releaseTimer); };
   }, []);
 
   const allEntries = useMemo<DisplayReference[]>(() => [
     ...originals,
-    ...entries.map(entry => ({ ...entry, preview: entry.provider === "IAPLC" ? iaplcImages[entry.id] : undefined })),
-  ], [entries, iaplcImages]);
+    ...entries.flatMap(entry => {
+      const preview = entry.provider === "IAPLC" ? iaplcImages[entry.id] : undefined;
+      return typeof preview === "string" && preview ? [{ ...entry, preview }] : [];
+    }),
+  ].filter(entry => !unavailablePreviews.has(entry.id)), [entries, iaplcImages, unavailablePreviews]);
   const providers = useMemo(() => [...new Set(allEntries.map(entry => entry.provider))], [allEntries]);
-  const years = useMemo(() => [...new Set(entries.map(entry => entry.year).filter((y): y is number => typeof y === "number"))].sort((a, b) => b - a), [entries]);
+  const years = useMemo(() => [...new Set(allEntries.map(entry => entry.year).filter((y): y is number => typeof y === "number"))].sort((a, b) => b - a), [allEntries]);
   const filtered = useMemo(() => {
     const terms = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
     return allEntries.filter(entry => {
@@ -202,6 +225,7 @@ export function GalleryWorkspace({ entries, savedIds, onSave, creation }: {
     return <Button variant="outline" size="sm" disabled={saved || savedIds.length >= 50} title={savedIds.length >= 50 && !saved ? "50 saved ideas reached. Remove one in Ideas to save another." : undefined} onClick={() => onSave(entry.id)}>{saved ? "Saved to ideas" : "Save idea"}</Button>;
   };
   const selectedPhoto = selected?.provider === "Your photos" ? referencePhoto?.url : selected?.preview;
+  const markPreviewUnavailable = (id: string) => setUnavailablePreviews(current => current.has(id) ? current : new Set([...current, id]));
 
   return <section className="gallery-workspace" aria-label="Reference gallery">
     {error && <div className="gallery-error" role="alert"><span>{error}</span><Button variant="ghost" size="icon-sm" aria-label="Dismiss photo error" onClick={() => setError("")}><X size={16} /></Button></div>}
@@ -217,9 +241,9 @@ export function GalleryWorkspace({ entries, savedIds, onSave, creation }: {
         <label>Rank<select aria-label="Gallery rank" value={rank} onChange={e => { setRank(e.target.value); setPage(0); }}><option value="all">All ranks</option><option value="1">Grand prize</option><option value="10">Top 10</option><option value="60">Top 60</option><option value="100">Top 100</option></select></label>
         <label className="gallery-saved-filter"><input type="checkbox" checked={savedOnly} onChange={e => { setSavedOnly(e.target.checked); setPage(0); }} />Saved ideas</label>
       </div>
-      <div className="gallery-results-heading"><span role="status">{filtered.length.toLocaleString()} references</span><span>{iaplcImagesReady ? "IAPLC photographs shown with permission." : "Loading IAPLC photographs…"}</span></div>
-      {filtered.length ? <div className="gallery-grid">{filtered.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE).map(entry => <Card role="article" className={`gallery-card ${entry.preview ? "gallery-card-original" : ""}`} key={entry.id}>
-        {entry.preview && <div className="gallery-thumbnail"><ReferenceImage key={entry.preview} src={entry.preview} alt={entry.provider === "IAPLC" ? `${titleOf(entry)} by ${entry.creator || "entrant not listed"}` : `${entry.title}, original Fishy render`} /></div>}
+      <div className="gallery-results-heading">{iaplcImagesState === "loading" ? <><span role="status">Preparing preview cards</span><span>Every gallery entry includes an aquascape image.</span></> : <><span role="status">{filtered.length.toLocaleString()} references</span><span>{iaplcImagesState === "ready" ? "Only image-backed aquascapes are shown." : "Showing original studies while the photo archive is unavailable."}</span></>}</div>
+      {iaplcImagesState === "loading" ? <GalleryLoadingScreen /> : filtered.length ? <div className="gallery-grid">{filtered.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE).map((entry, index) => <Card role="article" className="gallery-card" key={entry.id} style={{ animationDelay: `${80 + Math.min(index, 8) * 48}ms` }}>
+        <div className="gallery-thumbnail"><ReferenceImage key={entry.preview} src={entry.preview!} alt={entry.provider === "IAPLC" ? `${titleOf(entry)} by ${entry.creator || "entrant not listed"}` : `${entry.title}, original Fishy render`} onUnavailable={() => markPreviewUnavailable(entry.id)} /></div>
         <CardContent className="gallery-card-body">
           <div className="gallery-card-meta"><span>{entry.provider}</span><span>{entry.year ?? entry.dimensions ?? "Layout study"}</span></div>
           {entry.rank != null && <Badge className="gallery-rank" variant="secondary">{entry.rank === 1 ? "Grand prize" : `World rank ${String(entry.rank).padStart(3, "0")}`}</Badge>}
@@ -228,7 +252,7 @@ export function GalleryWorkspace({ entries, savedIds, onSave, creation }: {
           <div className="gallery-card-actions"><Button variant="secondary" size="sm" className="gallery-compare-button" onClick={e => compare(entry, e.currentTarget)} aria-label={`Compare with ${titleOf(entry)}`}><Columns2 size={15} />Compare</Button>{saveButton(entry)}<SourceLink entry={entry} /></div>
         </CardContent>
       </Card>)}</div> : <Empty className="gallery-empty"><EmptyHeader><EmptyTitle>No matching references</EmptyTitle><EmptyDescription>Try a different creator, year, or source.</EmptyDescription></EmptyHeader><EmptyContent><Button variant="outline" onClick={() => { setQuery(""); setProvider("all"); setYear("all"); setRank("all"); setSavedOnly(false); setPage(0); }}>Clear filters</Button></EmptyContent></Empty>}
-      <nav className="gallery-pagination" aria-label="Gallery pages"><Button variant="outline" size="sm" disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>Previous</Button><span>Page {currentPage + 1} of {pages}</span><Button variant="outline" size="sm" disabled={currentPage + 1 >= pages} onClick={() => setPage(currentPage + 1)}>Next</Button></nav>
+      {iaplcImagesState !== "loading" && <nav className="gallery-pagination" aria-label="Gallery pages"><Button variant="outline" size="sm" disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>Previous</Button><span>Page {currentPage + 1} of {pages}</span><Button variant="outline" size="sm" disabled={currentPage + 1 >= pages} onClick={() => setPage(currentPage + 1)}>Next</Button></nav>}
     </div>
     {selected && <div className="gallery-comparison">
       <header className="gallery-comparison-header"><Button variant="outline" size="sm" onClick={back}><ArrowLeft size={16} />Gallery</Button><h2 ref={comparisonHeading} tabIndex={-1}>Side by side</h2>{saveButton(selected)}</header>

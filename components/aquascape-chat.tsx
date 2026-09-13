@@ -59,7 +59,7 @@ export function AquascapeChat({brief,scene,photos,onGenerated,onBrowseReferences
       <div className="aquascape-chat-actions">
         <Button type="button" variant="ghost" size="icon-xs" aria-label="Browse inspiration references" title="Browse inspiration references" onClick={onBrowseReferences}><Search size={15}/></Button>
         <Button type="button" variant="ghost" size="icon-xs" aria-label="Attach a reference photo" title="Attach a reference photo" onClick={()=>fileInput.current?.click()}><ImagePlus size={16}/></Button>
-        <input ref={fileInput} className="visually-hidden" type="file" accept="image/jpeg,image/png,image/webp" onChange={event=>{const file=event.target.files?.[0];event.target.value="";if(file)void attach(file);}}/>
+        <input ref={fileInput} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={event=>{const file=event.target.files?.[0];event.target.value="";if(file)void attach(file);}}/>
       </div>
     </header>
     <div className="aquascape-chat-thread" aria-live="polite" aria-busy={waiting}>

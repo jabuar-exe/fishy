@@ -1,6 +1,7 @@
 import * as T from "three";
 import type {SceneObject,Vec3} from "./scene";
 import {surfaceMaterial} from "./surface-materials.ts";
+import {buildCatalogModel} from "./catalog-models.ts";
 
 // Persisted sculpt fields declare fishy-object-v11. Keep this geometry immutable;
 // future base geometry needs a new generator identifier and explicit migration.
@@ -27,9 +28,12 @@ function detailedLeaf(leaf:T.Mesh,index:number) {
   geo.translate(-center.x,-center.y,-center.z);geo.scale(target.x/Math.max(size.x,1e-9),target.y/Math.max(size.y,1e-9),target.z/Math.max(size.z,1e-9));geo.translate(destination.x,destination.y,destination.z);geo.computeVertexNormals();
   leaf.geometry=geo;leaf.position.set(0,0,0);leaf.rotation.set(0,0,0);leaf.scale.set(1,1,1);
 }
-export function buildObjectBaseV11(o:Pick<SceneObject,"kind"|"form"|"color">):T.Group {
+export function buildObjectBaseV11(o:Pick<SceneObject,"kind"|"form"|"color"|"catalogId">):T.Group {
   const g=new T.Group(), mat=surfaceMaterial(o.kind,o.color);
-  if(o.kind==="wood") {
+  if(buildCatalogModel(o,g,mat)) {
+    // Catalog objects use identity-bearing geometry; legacy scene objects retain
+    // the frozen v11 generic generator below for save/sculpt compatibility.
+  } else if(o.kind==="wood") {
     const form=o.form;
     if(form==="stump") {
       g.add(tube([[0,.014,0],[.025,.07,0],[.012,.14,-.02]],.024,mat));
