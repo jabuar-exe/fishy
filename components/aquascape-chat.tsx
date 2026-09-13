@@ -1,7 +1,7 @@
 "use client";
 
 import {useEffect,useRef,useState} from "react";
-import {ImagePlus,Search,SendHorizontal,Sparkles} from "lucide-react";
+import {ImagePlus,Search,SendHorizontal} from "lucide-react";
 import type {SceneRecord} from "@/lib/scene";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
@@ -63,7 +63,7 @@ export function AquascapeChat({brief,scene,photos,onGenerated,onBrowseReferences
       </div>
     </header>
     <div className="aquascape-chat-thread" aria-live="polite" aria-busy={waiting}>
-      {!thread.length?<div className="aquascape-chat-empty"><Sparkles size={16}/><p>{context==="brief"?"Describe the aquarium you want me to build.":photos.length?`${photos.length} reference photo${photos.length===1?" is":"s are"} ready to guide the model.`:"Add a reference photo, then describe what matters."}</p><span>{context==="brief"?brief?"Your current brief will be used as scene context.":"I’ll compose the tank from editable catalog components.":"Up to four compressed photos are sent only when you generate."}</span></div>:thread.map(item=>item.kind==="user"?<div className="aquascape-chat-user" key={item.id}>{item.body}</div>:<article className="aquascape-chat-reply" data-error={item.error||undefined} key={item.id}><p><strong>{item.label}</strong><span>{item.sub}</span></p><div>{item.body}</div></article>)}
+      {!thread.length?<div className="aquascape-chat-empty"><p>Describe your dream aquascape</p></div>:thread.map(item=>item.kind==="user"?<div className="aquascape-chat-user" key={item.id}>{item.body}</div>:<article className="aquascape-chat-reply" data-error={item.error||undefined} key={item.id}><p><strong>{item.label}</strong><span>{item.sub}</span></p><div>{item.body}</div></article>)}
       {waiting&&<div className="aquascape-chat-thinking"><span/><span/><span/><em>Composing your aquarium…</em></div>}
     </div>
     <div className="aquascape-chat-composer" onClick={()=>input.current?.focus()}>
