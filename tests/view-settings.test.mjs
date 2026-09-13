@@ -1,0 +1,8 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {PerspectiveCamera} from 'three';
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
+import {configureTankOrbit,keepCameraAboveTank,validateRoomFile,validateRoomDimensions,initialViewSettings} from '../lib/view-settings.ts';
+test('orbit cannot go below the tank, including after downward pan and damping',()=>{const camera=new PerspectiveCamera(),orbit=new OrbitControls(camera,null);configureTankOrbit(orbit);orbit.enableDamping=true;for(const targetY of [-10,-.5,0,.2,5])for(const y of [-8,-.1,0,2]){orbit.target.set(0,targetY,0);camera.position.set(.5,y,.4);for(let frame=0;frame<20;frame++){orbit.update();keepCameraAboveTank(camera,orbit);assert(camera.position.y>=.001-1e-9);assert(orbit.target.y>=.001-1e-9);assert(camera.position.y>=orbit.target.y-1e-9);}}});
+test('room photos reject disallowed types, large files and unsafe image dimensions',()=>{for(const type of ['image/jpeg','image/png','image/webp'])assert.doesNotThrow(()=>validateRoomFile({type,size:1024}));for(const type of ['image/svg+xml','text/html','image/gif',''])assert.throws(()=>validateRoomFile({type,size:1024}));for(const size of [0,10*1024*1024+1])assert.throws(()=>validateRoomFile({type:'image/png',size}));assert.doesNotThrow(()=>validateRoomDimensions(6000,4000));for(const [w,h] of [[6001,4000],[0,3],[Infinity,2],[NaN,3]])assert.throws(()=>validateRoomDimensions(w,h));});
+test('background starts in dark studio without a retained photo',()=>{assert.deepEqual(initialViewSettings(),{mode:'dark',photo:null,zoom:100,x:50,y:50});const a=initialViewSettings();a.x=20;assert.equal(initialViewSettings().x,50);});
