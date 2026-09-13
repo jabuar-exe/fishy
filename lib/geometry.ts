@@ -24,6 +24,39 @@ export function fitObject(o:SceneObject,s:SceneRecord,allowScale:boolean):SceneO
   const delta=new T.Vector3();for(const axis of ["x","y","z"] as const){if(b.min[axis]<tank.min[axis])delta[axis]=tank.min[axis]-b.min[axis];else if(b.max[axis]>tank.max[axis])delta[axis]=tank.max[axis]-b.max[axis];}
   n.position=n.position.map((p,i)=>p+delta.getComponent(i)) as Vec3;return n;
 }
+/** Footprints are deliberately thin: foliage and branches are expected to interleave, so only
+ *  the base of each component is kept clear of its neighbours. */
+const FOOTPRINT_THINNESS=.3,MIN_FOOTPRINT_RADIUS=.01,SEPARATION_PASSES=24;
+export function footprintRadius(o:SceneObject) {const s=boundsOf(o).getSize(new T.Vector3());return Math.max(MIN_FOOTPRINT_RADIUS,Math.max(s.x,s.z)*.5*FOOTPRINT_THINNESS);}
+/** Best-effort XZ relaxation so generated components do not materialize inside one another.
+ *  Never throws: a scene too dense to fully resolve simply ends up as spread as the budget allows. */
+export function separatePlacements(movable:SceneObject[],fixed:SceneObject[],scene:SceneRecord):SceneObject[] {
+  const moving=movable.map(o=>({x:o.position[0],z:o.position[2],radius:footprintRadius(o)}));
+  const anchored=fixed.map(o=>({x:o.position[0],z:o.position[2],radius:footprintRadius(o)}));
+  const nudge=(a:{x:number;z:number;radius:number},b:{x:number;z:number;radius:number},share:number,seed:number)=>{
+    const gap=a.radius+b.radius;let dx=a.x-b.x,dz=a.z-b.z,distance=Math.hypot(dx,dz);
+    if(!(distance<gap))return false;
+    // Exactly coincident centres carry no direction; fan them out on the golden angle instead.
+    if(distance<1e-6){dx=Math.cos(seed*2.399963);dz=Math.sin(seed*2.399963);distance=0;}
+    else{dx/=distance;dz/=distance;}
+    const shortfall=gap-distance;a.x+=dx*shortfall*share;a.z+=dz*shortfall*share;
+    if(share<1){b.x-=dx*shortfall*share;b.z-=dz*shortfall*share;}
+    return true;
+  };
+  for(let pass=0;pass<SEPARATION_PASSES;pass++) {
+    let settled=true;
+    for(let i=0;i<moving.length;i++) {
+      for(let j=i+1;j<moving.length;j++)if(nudge(moving[i],moving[j],.5,i*moving.length+j))settled=false;
+      for(const other of anchored)if(nudge(moving[i],other,1,i))settled=false;
+    }
+    if(settled)break;
+  }
+  return movable.map((o,index)=>{
+    const {x,z}=moving[index];
+    if(!Number.isFinite(x)||!Number.isFinite(z)||(x===o.position[0]&&z===o.position[2]))return o;
+    try{return fitObject({...o,position:[x,o.position[1],z] as Vec3},scene,true);}catch{return o;}
+  });
+}
 export function resizeTank(scene:SceneRecord,tank:SceneRecord["tank"]) {
   const next={...scene,tank};const boundary=tankBounds(next),outside=new Set(scene.objects.filter(o=>!boundary.containsBox(boundsOf(o))).map(o=>o.id)),changed:string[]=[];
   next.objects=scene.objects.map(o=>{

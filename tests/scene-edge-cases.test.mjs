@@ -137,6 +137,56 @@ test("saved history envelope restores bounded undo and redo snapshots with its s
   assert.equal(storage.getItem(SAVE_KEY), raw);
 });
 
+test("v5 saves migrate into the installed-system scene contract without rewriting the original",()=>{
+  const legacy={...initialScene(),schema:5,builder:"fishy-browser-3"};
+  delete legacy.equipment;
+  const raw=JSON.stringify({scene:legacy,past:[legacy],future:[]});
+  const storage=memoryStorage(new Map([["fishy.studio.scene.v5",raw]]));
+  const restored=readSavedScene(storage);
+  assert.equal(restored.scene.schema,6);assert.equal(restored.scene.builder,"fishy-browser-4");assert.deepEqual(restored.scene.equipment,[]);
+  assert.equal(restored.raw,null);assert.equal(storage.getItem("fishy.studio.scene.v5"),raw);
+});
+
+test("installed equipment must resolve to a matching catalog product and its required mount",()=>{
+  const scene=initialScene();
+  const filter={id:"filter-1",kind:"filter",catalogId:"filter-oase-biomaster-150",mount:"rear-glass",offset:0,enabled:true};
+  const light={id:"light-1",kind:"light",catalogId:"light-ada-solar-rgb-ii",mount:"pendant",offset:0,enabled:true};
+  assert.deepEqual(validateScene({...scene,equipment:[filter,light]}).equipment,[filter,light]);
+  assert.throws(()=>validateScene({...scene,equipment:[{...filter,catalogId:"filter-unknown"}]}),/Unknown installable equipment catalog ID/);
+  assert.throws(()=>validateScene({...scene,equipment:[{...filter,kind:"light"}]}),/kind must match its catalog product/);
+  assert.throws(()=>validateScene({...scene,equipment:[{...filter,mount:"rear-rim"}]}),/required mount/);
+  assert.throws(()=>validateScene({...scene,equipment:[{id:"wide-light",kind:"light",catalogId:"light-fluval-plant-46",mount:"rim-bar",offset:0,enabled:true}]}),/fits 91–115 cm-wide/);
+});
+
+test("substrate selection must resolve to a known substrate product",()=>{
+  const scene=initialScene();
+  assert.equal(validateScene({...scene,substrateCatalogId:"substrate-ada-amazonia-v2"}).substrateCatalogId,"substrate-ada-amazonia-v2");
+  assert.throws(()=>validateScene({...scene,substrateCatalogId:"substrate-unknown"}),/known substrate product/);
+  assert.throws(()=>validateScene({...scene,substrateCatalogId:"filter-fluval-207"}),/known substrate product/);
+});
+
+test("direct scene validation enforces per-kind equipment limits",()=>{
+  const scene=initialScene();
+  const filters=Array.from({length:7},(_,index)=>({id:`filter-${index}`,kind:"filter",catalogId:"filter-fluval-207",mount:"rear-glass",offset:-.75+index*.25,enabled:true}));
+  const lights=Array.from({length:5},(_,index)=>({id:`light-${index}`,kind:"light",catalogId:"light-ada-aquasky-rgb-ii-60",mount:"rim-bar",offset:-.7+index*.35,enabled:true}));
+  assert.throws(()=>validateScene({...scene,equipment:filters}),/at most 6 installed filters/);
+  assert.throws(()=>validateScene({...scene,equipment:lights}),/at most 4 installed lights/);
+});
+
+test("same-mount equipment offsets must leave physical horizontal clearance",()=>{
+  const scene=initialScene(),makeFilter=(id,offset)=>({id,kind:"filter",catalogId:"filter-fluval-207",mount:"rear-glass",offset,enabled:true});
+  assert.throws(()=>validateScene({...scene,equipment:[makeFilter("left",0),makeFilter("right",.1)]}),/overlap/);
+  assert.equal(validateScene({...scene,equipment:[makeFilter("left",-.7),makeFilter("right",.7)]}).equipment.length,2);
+});
+
+test("v5 migration rejects v6-only installed-system and substrate catalog fields",()=>{
+  const legacy={...initialScene(),schema:5,builder:"fishy-browser-3"};
+  delete legacy.equipment;
+  assert.equal(validateScene(legacy).schema,6);
+  assert.throws(()=>validateScene({...legacy,equipment:[]}));
+  assert.throws(()=>validateScene({...legacy,substrateCatalogId:"substrate-ada-amazonia-ver2"}));
+});
+
 test("scene identity cannot be empty or replaced by a commit", () => {
   const scene=initialScene();
   assert.throws(()=>validateScene({...scene,id:""}));

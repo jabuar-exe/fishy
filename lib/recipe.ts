@@ -213,6 +213,8 @@ export function toRecipe(scene: SceneRecord, options: { interpretation?: string 
   if (substrate !== scene.substrate) {
     assumptions.push(`Substrate reduced from ${round(scene.substrate * 100, 1)} cm to ${round(substrate * 100, 1)} cm: a recipe caps it at 30% of tank height.`);
   }
+  if (scene.substrateCatalogId) assumptions.push("Selected substrate product is retained as browser-side floor metadata; the Blender recipe transfers only its visual depth envelope.");
+  if (scene.equipment.length) assumptions.push(`${scene.equipment.length} installed filter/light system${scene.equipment.length===1?"":"s"} omitted from the Blender object recipe; their browser-only mounting, flow, and lighting behavior is not represented as loose hardscape.`);
 
   const used = new Set<string>();
   const idMap = new Map<string, string>();

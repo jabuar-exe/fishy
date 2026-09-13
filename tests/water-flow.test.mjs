@@ -35,6 +35,26 @@ test('no-flux boundaries and displacement limiting stay finite after a stalled f
   assert(Math.abs(total(water.heights))<1e-7);
 });
 
+test('mounted filter sources create bounded directional surface forcing',()=>{
+  const source={position:[.2,.04],direction:[0,1],radius:.22,strength:.65,frequency:1.1,turbulence:.8};
+  const water=new WaterFlow(21,15,.8,.4,{initialDisturbance:0,sources:[source]});
+  const near=water.sampleCurrent(.2,.04),far=water.sampleCurrent(.9,.9);
+  assert(near[1]>.6,'filter outlet should have a forward current');
+  assert(Math.hypot(...far)<Math.hypot(...near),'current should decay away from the outlet');
+  for(let i=0;i<240;i++)water.advance(1/120);
+  assert(water.heights.some(height=>Math.abs(height)>1e-7),'filter should disturb the rendered surface');
+  assert(Math.abs(total(water.heights))<1e-7,'surface forcing must not create water volume');
+});
+
+test('an explicitly empty source list stays calm while omitted sources preserve the legacy inlet',()=>{
+  const calm=new WaterFlow(15,9,.7,.35,{initialDisturbance:0,sources:[]});
+  const legacy=new WaterFlow(15,9,.7,.35,{initialDisturbance:0});
+  for(let i=0;i<120;i++){calm.advance(1/120);legacy.advance(1/120);}
+  assert.equal(peak(calm.heights),0,'installed-equipment mode with no active filter must not invent a source');
+  assert(peak(legacy.heights)>1e-7,'omitting sources must retain the legacy default inlet');
+  calm.setSources([]);calm.advance(1/60);assert.equal(peak(calm.heights),0);
+});
+
 test('invalid grids and unstable parameter signs are rejected',()=>{
   assert.throws(()=>new WaterFlow(1,8,.6,.3),/at least two/);
   assert.throws(()=>new WaterFlow(8,8,.6,.3,{fixedTimeStep:0}),/stable positive/);

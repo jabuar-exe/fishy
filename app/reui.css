@@ -19,6 +19,7 @@
   --reui-accent-strong: #0f554a;
   --reui-accent-soft: #e4f1e9;
   --reui-danger: #a84335;
+  --reui-brand-gradient: linear-gradient(100deg, #0d6b5e 0%, #159b7c 50%, #287bb8 100%);
   --reui-radius: 10px;
   --reui-shadow: 0 1px 2px rgb(24 34 30 / 5%), 0 8px 24px rgb(24 34 30 / 6%);
 }
@@ -43,7 +44,22 @@
   letter-spacing: -1.2px;
 }
 
+.studio .brand > span {
+  color: var(--reui-accent);
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .studio .brand > span {
+    background: var(--reui-brand-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
 .studio .topbar nav {
+  flex-shrink: 0;
   gap: 4px;
   padding: 3px;
   border: 1px solid var(--reui-line);
@@ -72,13 +88,21 @@
 }
 
 .studio .project-title input {
-  width: clamp(132px, 17vw, 264px);
+  width: clamp(132px, 11vw, 188px);
   min-height: 26px;
   padding: 0 4px;
   border-radius: 5px;
   color: var(--reui-ink);
   font-size: 14px;
   font-weight: 650;
+}
+
+@media (forced-colors: active) {
+  .studio .brand > span {
+    background: none;
+    color: LinkText;
+    -webkit-text-fill-color: currentColor;
+  }
 }
 
 .studio .project-title > span,
@@ -674,6 +698,10 @@
   background: var(--reui-surface);
 }
 
+.aquascape-chat-composer input:focus-visible {
+  outline: 0;
+}
+
 .aquascape-chat-composer button {
   border-radius: 7px;
 }
@@ -787,6 +815,31 @@
     bottom: 14px;
     width: calc(100% - 24px);
   }
+}
+
+.reset-confirm-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.reset-confirm-actions button {
+  flex: 1;
+}
+
+.studio .reset-tank-section {
+  background: #eef5f2;
+}
+
+.studio .reset-tank-button {
+  border-color: #6f988f;
+  background: #1c7366;
+  color: #fff;
+}
+
+.studio .reset-tank-button:hover:not(:disabled) {
+  border-color: #15584e;
+  background: #155f55;
 }
 
 @media (prefers-reduced-motion: reduce) {

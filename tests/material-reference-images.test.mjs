@@ -2,11 +2,12 @@ import assert from "node:assert/strict";
 import {existsSync,readFileSync} from "node:fs";
 import {resolve} from "node:path";
 import test from "node:test";
+import {catalogEntries,isOrganicCatalogEntry,isSystemCatalogEntry} from "../lib/catalog.ts";
 
 const root=resolve(import.meta.dirname,"..");
 const registry=JSON.parse(readFileSync(resolve(root,"public/data/catalog-registry.json"),"utf8"));
 
-test("every Materials entry has a local, attributed real reference photo",()=>{
+test("the original photographed Materials entries retain local attribution",()=>{
   assert.equal(registry.entries.length,20);
   for(const entry of registry.entries){
     const image=entry.referenceImage;
@@ -18,6 +19,26 @@ test("every Materials entry has a local, attributed real reference photo",()=>{
     const file=resolve(root,"public",image.src.slice(1));
     assert.ok(existsSync(file),`${entry.id} image file is missing`);
     assert.deepEqual([...readFileSync(file).subarray(0,3)],[0xff,0xd8,0xff],`${entry.id} must be a JPEG reference photo`);
+  }
+});
+
+test("expanded material catalog has 30 organic additions and 10 products per installed-system section",()=>{
+  assert.equal(catalogEntries.length,80);
+  assert.equal(catalogEntries.filter(isOrganicCatalogEntry).length,50);
+  for(const kind of ["substrate","filter","light"]){
+    const entries=catalogEntries.filter(entry=>entry.kind===kind);
+    assert.equal(entries.length,10,`${kind} needs ten real-world counterparts`);
+    for(const entry of entries){
+      assert.ok(isSystemCatalogEntry(entry));
+      assert.equal(entry.system.type,kind);
+      assert.match(entry.source.url,/^https:\/\//);
+      assert.match(entry.identityCaveat,/./);
+      assert.match(entry.renderingLimit,/./);
+    }
+  }
+  for(const entry of catalogEntries.slice(20,50)){
+    assert.ok(isOrganicCatalogEntry(entry));
+    assert.match(entry.source.url,/^https:\/\//);
   }
 });
 
@@ -33,11 +54,14 @@ test("Weeping Moss uses its exact, reusable Flickr reference",()=>{
 test("Materials cards render 3D model previews and reveal real reference photos on demand",()=>{
   const page=readFileSync(resolve(root,"app/page.tsx"),"utf8");
   assert.match(page,/useMaterialThumbnails\(catalog,materialsVisible&&!realSampleOpen\)/);
-  assert.match(page,/src=\{materialThumbnails\[c\.id\]\}/);
+  assert.match(page,/src=\{materialThumbnails\[entry\.id\]\}/);
   assert.match(page,/3D model preview of/);
   assert.match(page,/Inspect real sample/);
   assert.match(page,/Real reference photo ·/);
   assert.match(page,/candidate\.referenceImage\.sourceUrl/);
+  assert.match(page,/label:"Substrate"/);
+  assert.match(page,/label:"Filters"/);
+  assert.match(page,/label:"Light"/);
 });
 
 test("the desktop configuration tray has an accessible resize control",()=>{

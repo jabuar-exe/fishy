@@ -106,6 +106,48 @@ function dragonWood(group:T.Group,material:T.Material,rand:()=>number) {
   for(let i=0;i<5;i++){const ring=new T.Mesh(new T.TorusGeometry(.007+i*.0007,.0016,6,12),material);ring.position.set(-.08+i*.035,.035+(i%2)*.018,.027);ring.rotation.x=Math.PI/2+(i%2)*.35;ring.scale.set(1,1.4,1);group.add(ring);}
 }
 
+function knotClusters(group:T.Group,material:T.Material,count:number,spread:number,seed:number) {
+  for(let i=0;i<count;i++){
+    const a=i/count*Math.PI*2+seed*.13,knot=new T.Mesh(new T.DodecahedronGeometry(.012+(i%3)*.003,2),material);
+    knot.position.set(-.03+Math.cos(a)*spread,.026+(i%4)*.012,Math.sin(a)*spread*.55);knot.scale.set(1.35,.8,1);knot.rotation.set(a*.3,a,a*.2);group.add(knot);
+  }
+}
+
+function bogwood(group:T.Group,material:T.Material,rand:()=>number) {
+  mopani(group,material,rand);group.scale.set(1.08,.82,1.04);knotClusters(group,material,5,.038,3);
+}
+
+function sinkingWood(group:T.Group,material:T.Material,rand:()=>number) {
+  mopani(group,material,rand,true);group.scale.set(.78,.7,.92);knotClusters(group,material,7,.032,8);
+}
+
+function stoneWood(group:T.Group,material:T.Material,rand:()=>number) {
+  mopani(group,material,rand);group.scale.set(.82,.74,1.04);knotClusters(group,material,11,.045,13);
+}
+
+function mangroveRoot(group:T.Group,material:T.Material,rand:()=>number) {
+  directionalWood(group,material,rand);group.scale.set(.83,1.08,1.1);
+  for(let i=0;i<9;i++){const a=-1.2+i*.3,root:Vec3=[-.1+(i%3)*.028,.035,(i-4)*.009];group.add(branch([root,[root[0]+Math.cos(a)*.045,.014,root[2]+Math.sin(a)*.04],[root[0]+Math.cos(a)*.105,.002,root[2]+Math.sin(a)*.085]],.006,.0012,material,110+i,18,7));}
+}
+
+function elderRoot(group:T.Group,material:T.Material,rand:()=>number) {
+  directionalWood(group,material,rand,true);group.scale.set(.95,.85,1.2);
+  for(let i=0;i<8;i++){const side=i%2?1:-1,x=-.14+i*.035;group.add(branch([[x,.035,(rand()-.5)*.02],[x+.025,.07+rand()*.025,side*.04],[x+.07,.09+rand()*.045,side*(.075+rand()*.035)]],.0032,.00055,material,130+i,23,6));}
+}
+
+function petiteWood(group:T.Group,material:T.Material,rand:()=>number) {
+  spiderWood(group,material,rand);group.scale.set(.62,.58,.62);
+}
+
+function desertRoots(group:T.Group,material:T.Material,rand:()=>number) {
+  spiderWood(group,material,rand,true);group.scale.set(1.08,.82,1.18);
+}
+
+function stripedWood(group:T.Group,material:T.Material,rand:()=>number) {
+  ancientJuniper(group,material,rand);group.scale.set(1,.82,.86);
+  for(let i=0;i<7;i++){const ridge=new T.Mesh(new T.TorusGeometry(.018+i*.004,.0011,5,18,.9),material);ridge.position.set(-.13+i*.045,.035+i*.014,.025);ridge.rotation.set(Math.PI/2,.3,.55);group.add(ridge);}
+}
+
 function runners(group:T.Group,count:number,spreadX:number,spreadZ:number,material:T.Material,rand:()=>number) {
   for(let i=0;i<count;i++){const x=(rand()-.5)*spreadX,z=(rand()-.5)*spreadZ;group.add(stem([[x-.02,.002,z],[x,.003,z+(rand()-.5)*.015],[x+.025,.002,z+(rand()-.5)*.02]],.0007,material,i));}
 }
@@ -163,9 +205,123 @@ function bolbitis(group:T.Group,material:T.Material,rand:()=>number) {
   for(let i=0;i<13;i++){const a=i/13*Math.PI*2,h=.085+rand()*.075,base:Vec3=[(rand()-.5)*.05,.01,(rand()-.5)*.025],tip:Vec3=[base[0]+Math.cos(a)*.045,h,base[2]+Math.sin(a)*.045];group.add(stem([base,[base[0]+Math.cos(a)*.015,h*.5,base[2]+Math.sin(a)*.015],tip],.001,material,i));for(let j=1;j<=7;j++){const t=j/8,origin:Vec3=[T.MathUtils.lerp(base[0],tip[0],t),T.MathUtils.lerp(base[1],tip[1],t),T.MathUtils.lerp(base[2],tip[2],t)],side=j%2?1:-1,scale=Math.sin(Math.PI*t);group.add(leaf(origin,[Math.cos(a+Math.PI/2)*side,.1,Math.sin(a+Math.PI/2)*side],.029*scale,.0065*scale,material,{lobes:.8,wave:.28,round:.8,curl:.06,seed:i*11+j}));}}
 }
 
+function layeredRock(group:T.Group,material:T.Material,rand:()=>number,profile:"porous"|"crag"|"weathered"|"faceted"|"fractured"|"mountain"|"rounded"|"basalt"|"stratified"|"vesicular") {
+  const geometry=new T.IcosahedronGeometry(.058,7),positions=geometry.getAttribute("position");
+  const scale={porous:[1.12,.66,.84],crag:[.86,1.32,.68],weathered:[1.2,.62,.92],faceted:[1.04,.8,.8],fractured:[1.18,.68,.78],mountain:[1.28,.92,.72],rounded:[1.18,.72,.96],basalt:[1.1,.76,.9],stratified:[1.3,.75,.72],vesicular:[1.05,.78,.88]}[profile];
+  for(let i=0;i<positions.count;i++){
+    const x=positions.getX(i),y=positions.getY(i),z=positions.getZ(i),angle=Math.atan2(z,x);
+    const grain=1+(rand()-.5)*.17+.08*Math.sin(angle*5+y*51);
+    const layers=profile==="stratified"||profile==="mountain"?1+.1*Math.sin(y*92+x*34):1;
+    positions.setXYZ(i,x*scale[0]*grain,y*scale[1]*grain*layers+.04,z*scale[2]*grain);
+  }
+  geometry.computeVertexNormals();group.add(new T.Mesh(geometry,material));
+  const shoulder=new T.Mesh(geometry.clone(),material);shoulder.position.set(profile==="crag"?.022:-.026,.008,profile==="stratified"?.02:-.014);shoulder.scale.set(.62,.58,.66);shoulder.rotation.y=.48+rand()*.7;group.add(shoulder);
+  const chips=profile==="porous"||profile==="vesicular"?12:profile==="crag"?7:6;
+  for(let i=0;i<chips;i++){
+    const a=rand()*Math.PI*2,r=.026+rand()*.047,chip=new T.Mesh(new T.DodecahedronGeometry(.006+rand()*.009,0),material);
+    chip.position.set(Math.cos(a)*r,.017+rand()*.055,Math.sin(a)*r*.72);chip.rotation.set(rand()*2,rand()*2,rand()*2);chip.scale.setScalar(.65+rand()*.65);group.add(chip);
+  }
+}
+
+function stemCanopy(group:T.Group,material:T.Material,rand:()=>number,profile:"rotala-round"|"rotala-hra"|"ludwigia"|"limnophila") {
+  const count=profile==="limnophila"?27:profile==="ludwigia"?22:23;
+  for(let i=0;i<count;i++){
+    const a=rand()*Math.PI*2,r=Math.sqrt(rand())*.06,x=Math.cos(a)*r,z=Math.sin(a)*r,h=(profile==="limnophila"?.07:.075)+rand()*.08,bend=(rand()-.5)*.026;
+    group.add(stem([[x,.003,z],[x+bend*.2,h*.4,z+(rand()-.5)*.012],[x+bend,h,z+(rand()-.5)*.02]],.00085,material,i));
+    const nodes=profile==="limnophila"?7:profile==="rotala-hra"?6:5;
+    for(let node=1;node<=nodes;node++){
+      const t=node/(nodes+1),origin:Vec3=[x+bend*t,h*t,z],leafCount=profile==="limnophila"?5:2;
+      for(let side=0;side<leafCount;side++){
+        const angle=(profile==="limnophila"?side/leafCount*Math.PI*2:Math.PI/2+side*Math.PI)+(rand()-.5)*.22;
+        const length=profile==="limnophila"?.015:profile==="rotala-hra"?.022:.017+rand()*.005;
+        const width=profile==="limnophila"?.0015:profile==="rotala-hra"?.0022:profile==="ludwigia"?.0046:.0035;
+        const round=profile==="limnophila"?.9:profile==="rotala-round"?.82:profile==="ludwigia"?.68:.42;
+        group.add(leaf(origin,[Math.cos(angle),.18+rand()*.18,Math.sin(angle)],length,width,material,{round,curl:profile==="rotala-hra"?.1:.03,wave:.12,seed:i*11+node*3+side}));
+      }
+    }
+  }
+}
+
+function pinnatifida(group:T.Group,material:T.Material,rand:()=>number) {
+  const shoots=15;addRootlets(group,[0,.006,0],8,.052,.014,material,rand);
+  for(let i=0;i<shoots;i++){
+    const a=i/shoots*Math.PI*2,h=.045+rand()*.075,base:Vec3=[(rand()-.5)*.07,.006,(rand()-.5)*.04];
+    group.add(stem([base,[base[0]+Math.cos(a)*.018,h*.5,base[2]+Math.sin(a)*.018],[base[0]+Math.cos(a)*.034,h,base[2]+Math.sin(a)*.034]],.0009,material,i));
+    for(let node=1;node<=4;node++){const t=node/5,origin:Vec3=[base[0]+Math.cos(a)*.034*t,h*t,base[2]+Math.sin(a)*.034*t];for(const side of [-1,1])group.add(leaf(origin,[Math.cos(a+Math.PI/2)*side,.22,Math.sin(a+Math.PI/2)*side],.028,.0065,material,{lobes:1,wave:.34,round:.72,curl:.1,seed:i*9+node+side}));}
+  }
+}
+
+function staurogyne(group:T.Group,material:T.Material,rand:()=>number) {
+  runners(group,8,.085,.055,material,rand);
+  for(let i=0;i<22;i++){const x=(rand()-.5)*.085,z=(rand()-.5)*.055,h=.025+rand()*.045,b=(rand()-.5)*.018;group.add(stem([[x,.002,z],[x+b,h,z]],.0009,material,i));for(let node=1;node<=3;node++){const t=node/4,origin:Vec3=[x+b*t,h*t,z];for(const side of [-1,1])group.add(leaf(origin,[side,.3,(node%2?1:-1)*.18],.016,.0048,material,{round:.7,curl:.04,seed:i*7+node+side}));}}
+}
+
+function pogostemonHelferi(group:T.Group,material:T.Material,rand:()=>number) {
+  runners(group,5,.055,.04,material,rand);
+  for(let crown=0;crown<7;crown++){const cx=(rand()-.5)*.065,cz=(rand()-.5)*.045;for(let i=0;i<10;i++){const a=i/10*Math.PI*2+(crown%2)*.22,length=.025+rand()*.018;group.add(leaf([cx,.003,cz],[Math.cos(a)*.82,.5,Math.sin(a)*.82],length,.0042,material,{wave:1.25,lobes:.28,round:.68,curl:.3,seed:crown*13+i}));}}
+}
+
+function helanthium(group:T.Group,material:T.Material,rand:()=>number) {
+  runners(group,14,.11,.07,material,rand);
+  for(let i=0;i<48;i++){const x=(rand()-.5)*.11,z=(rand()-.5)*.07,h=.03+rand()*.06,lean=(rand()-.5)*.025;group.add(leaf([x,.002,z],[lean,.98,(rand()-.5)*.14],h,.0018,material,{round:.92,curl:.08,wave:.16,seed:i}));}
+}
+
+function javaMoss(group:T.Group,material:T.Material,rand:()=>number) {
+  runners(group,12,.105,.065,material,rand);
+  for(let i=0;i<34;i++){const base:Vec3=[(rand()-.5)*.095,.003,(rand()-.5)*.06],a=rand()*Math.PI*2,h=.018+rand()*.04,tip:Vec3=[base[0]+Math.cos(a)*.03,h,base[2]+Math.sin(a)*.03];group.add(stem([base,[base[0]+Math.cos(a)*.012,h*.48,base[2]+Math.sin(a)*.012],tip],.00055,material,i));for(let node=1;node<=5;node++){const t=node/6,origin:Vec3=[T.MathUtils.lerp(base[0],tip[0],t),T.MathUtils.lerp(base[1],tip[1],t),T.MathUtils.lerp(base[2],tip[2],t)];for(const side of [-1,1])group.add(leaf(origin,[Math.cos(a+Math.PI/2)*side,.25,Math.sin(a+Math.PI/2)*side],.0065,.002,material,{round:.82,curl:.03,seed:i*7+node+side}));}}
+}
+
+function vallisneria(group:T.Group,material:T.Material,rand:()=>number) {
+  runners(group,10,.09,.06,material,rand);
+  for(let i=0;i<36;i++){
+    const x=(rand()-.5)*.09,z=(rand()-.5)*.06,h=.11+rand()*.12,lean=(rand()-.5)*.07;
+    group.add(branch([[x,.002,z],[x+lean*.15,h*.32,z+(rand()-.5)*.014],[x+lean*.7,h*.72,z+(rand()-.5)*.02],[x+lean,h,z+(rand()-.5)*.027]],.001,.00025,material,i,18,5));
+  }
+}
+
+function expandedCatalogModel(id:string,group:T.Group,material:T.Material,rand:()=>number) {
+  const modeled=(morphology:string,build:()=>void)=>{build();group.userData.morphology=morphology;return true;};
+  switch(id){
+    case "wood-bogwood": return modeled("stout-broken-bogwood",()=>bogwood(group,material,rand));
+    case "wood-mangrove-root": return modeled("buttressed-mangrove-root-fan",()=>mangroveRoot(group,material,rand));
+    case "wood-desert-roots": return modeled("pale-open-fine-root-fan",()=>desertRoots(group,material,rand));
+    case "wood-wio-sinking": return modeled("compact-gnarled-sinking-core",()=>sinkingWood(group,material,rand));
+    case "wood-wio-neptune": return modeled("smooth-pale-directional-branches",()=>directionalWood(group,material,rand,true));
+    case "wood-wio-dragonscale": return modeled("cavity-ridged-thick-core",()=>dragonWood(group,material,rand));
+    case "wood-wio-petite": return modeled("nano-fine-open-forks",()=>petiteWood(group,material,rand));
+    case "wood-wio-stone": return modeled("dense-knotted-short-root-core",()=>stoneWood(group,material,rand));
+    case "wood-wio-elder": return modeled("dark-slender-root-whips",()=>elderRoot(group,material,rand));
+    case "wood-wio-striped": return modeled("longitudinal-ridged-flowing-trunk",()=>stripedWood(group,material,rand));
+    case "rock-dragon-stone": return modeled("pitted-layered-fissures",()=>layeredRock(group,material,rand,"porous"));
+    case "rock-dragon-peaks": return modeled("tall-craggy-narrow-peak",()=>layeredRock(group,material,rand,"crag"));
+    case "rock-elephant-skin": return modeled("folded-rounded-weathered-surface",()=>layeredRock(group,material,rand,"weathered"));
+    case "rock-fire-stone": return modeled("angular-warm-facets",()=>layeredRock(group,material,rand,"faceted"));
+    case "rock-mermaid-rose": return modeled("low-rose-fracture-planes",()=>layeredRock(group,material,rand,"fractured"));
+    case "rock-mountain-stone": return modeled("wide-angular-mountain-strata",()=>layeredRock(group,material,rand,"mountain"));
+    case "rock-black-river": return modeled("smooth-water-rounded-oval",()=>layeredRock(group,material,rand,"rounded"));
+    case "rock-black-abyss": return modeled("near-black-irregular-mass",()=>layeredRock(group,material,rand,"basalt"));
+    case "rock-blue-mountain": return modeled("blue-grey-horizontal-ridge",()=>layeredRock(group,material,rand,"stratified"));
+    case "rock-wio-midnight": return modeled("near-black-vesicular-lava",()=>layeredRock(group,material,rand,"vesicular"));
+    case "plant-rotala-rotundifolia": return modeled("upright-opposite-rounded-leaf-stems",()=>stemCanopy(group,material,rand,"rotala-round"));
+    case "plant-rotala-hra": return modeled("arching-narrow-leaf-stems",()=>stemCanopy(group,material,rand,"rotala-hra"));
+    case "plant-ludwigia-super-red": return modeled("dense-broad-opposite-leaf-stems",()=>stemCanopy(group,material,rand,"ludwigia"));
+    case "plant-hygrophila-pinnatifida": return modeled("creeping-deeply-lobed-shoots",()=>pinnatifida(group,material,rand));
+    case "plant-staurogyne-repens": return modeled("compact-creeping-opposite-leaf-bush",()=>staurogyne(group,material,rand));
+    case "plant-limnophila-sessiliflora": return modeled("upright-feathery-leaf-whorls",()=>stemCanopy(group,material,rand,"limnophila"));
+    case "plant-pogostemon-helferi": return modeled("compact-waved-star-rosettes",()=>pogostemonHelferi(group,material,rand));
+    case "plant-helanthium-tenellum": return modeled("short-ribbon-runner-lawn",()=>helanthium(group,material,rand));
+    case "plant-vallisneria-nana": return modeled("long-narrow-basal-ribbons",()=>vallisneria(group,material,rand));
+    case "plant-taxiphyllum-barbieri": return modeled("irregular-small-leaved-branching-mat",()=>javaMoss(group,material,rand));
+    default:return false;
+  }
+}
+
 /** Adds a deterministic catalog-specific model. Generic scene objects return false. */
 export function buildCatalogModel(o:CatalogObject,group:T.Group,material:T.Material) {
   const id=o.catalogId;if(!id)return false;const rand=seedFor(id);
+  if(expandedCatalogModel(id,group,material,rand)){
+    group.userData.catalogModel=id;group.userData.modelDetail="species-specific-procedural-v2";return true;
+  }
   switch(id){
     case "wood-spider": spiderWood(group,material,rand);break;
     case "wood-red-moor": spiderWood(group,material,rand,true);break;
