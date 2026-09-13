@@ -11,7 +11,7 @@ Written 13 September 2026 after scraping https://iaplc.com/e/. Data and scraper 
 - Entry photo rules that define a canonical aquarium photograph: whole tank, straight from the front, uncropped, unretouched, at least 1500 px wide.
 - Nothing else. No tank dimensions, plant lists, fish lists, equipment or scores per entry. Anything Fishy says about an entry's contents is inference from the image.
 
-**Constraint that shapes everything:** The [IAPLC gallery](https://iaplc.com/gallery/en/) requires ADA consent for republishing entry works on the internet. The [current application rules](https://iaplc.com/e/application/) distinguish entrants' copyright from 2024 onward from ADA's usage and publication rights; it is inaccurate to say ADA owns every original entry image. The deployed Fishy site must not host, embed or hot-link these photographs without permission. Local analysis and links to official source pages remain the current project approach.
+**Image permission:** On 13 September 2026, the project owner confirmed that Fishy has permission to display the IAPLC entry photographs. The Gallery now shows the validated IAPLC photographs in cards and in the side-by-side comparison. The [current application rules](https://iaplc.com/e/application/) distinguish entrants' copyright from 2024 onward from ADA's usage and publication rights; Fishy retains creator, year, rank, country, and source attribution with each image.
 
 ## Use now (fits the current build)
 
@@ -30,11 +30,11 @@ Written 13 September 2026 after scraping https://iaplc.com/e/. Data and scraper 
 
 4. **Composition vocabulary for GPT-Image-2.5 prompts.** Top entries cluster into a few recognizable schemes: triangular (mass on one side sloping down), concave or U-shaped (open center, mass at both sides), convex or island (mass in the center), and diorama or forced-perspective (paths, cliffs, tree forms). Describing the target scheme in words is safer than conditioning on an ADA image, and it keeps proposals inside geometry the recipe schema can express.
 
-5. **Gallery and comparison workspace.** Search the validated references by entrant, country, title or year; filter by source, year, rank and saved ideas. Save an entry to the current design without changing the aquarium. Compare the current 3D scene or a supplied tank photo with an original Fishy render or a supplied reference photo. IAPLC selections show attributed metadata and an official source link beside the creation; the competition photograph opens externally. Supplied photos stay in the browser session and are not uploaded or included in saved scenes. Full IAPLC photo comparison inside Fishy remains dependent on reuse permission.
+5. **Gallery and comparison workspace.** Search the validated references by entrant, country, title or year; filter by source, year, rank and saved ideas. Save an entry to the current design without changing the aquarium. Compare the current 3D scene or a supplied tank photo directly with an IAPLC entry photograph, an original Fishy render, or a supplied reference photo. Supplied photos stay in the browser session and are not uploaded or included in saved scenes.
 
 ## Hold for later (matches the deferred "inspiration" layer)
 
-- **Permissioned photographic archive.** The metadata browser is implemented. A grid of actual competition photographs, including embedded or hot-linked photos, still requires a documented reuse permission. Ordinary browsing access is not such permission. Ranked source data does not reliably supply award tiers beyond corroborated Grand Prize records.
+- **Image reliability and enrichment.** The permissioned photographic archive is implemented. A source image can still become temporarily unavailable if IAPLC changes its image endpoints, so Fishy retains the attributed metadata and source link as a fallback. Ranked source data does not reliably supply award tiers beyond corroborated Grand Prize records.
 - **Style tagging.** Run Astra once over the top 60 per year locally to tag composition scheme, dominant hardscape type and approximate open-foreground ratio. Store only the tags, not the images. That becomes a searchable design catalog without redistributing copyrighted pixels.
 - **Judge-style critique mode.** Full six-criterion scoring only becomes honest once the product handles biology, which is out of scope today.
 

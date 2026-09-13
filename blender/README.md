@@ -18,6 +18,51 @@ Both panels also live in the Fishy sidebar. Blender's sidebar category strip som
 
 The command-line runner also supports multiple references, measured-dimension labeling, and a revision call using a prior run's renders. See ASTRA_RUN_RESULTS.md for examples. The optional `--backend api` uses `OPENAI_API_KEY` from the local environment; the demonstrated runs used `--backend codex`.
 
+## Build a browser design in Blender
+
+The browser editor exports a recipe this folder builds directly, so an aquarium
+composed in the web app becomes a native, editable Blender tank. No model call
+is involved: the conversion is pure geometry, which is why it stays off the web
+request path (see `../design-lab/PRODUCT_DIRECTION.md`).
+
+1. In the editor, open the project menu (`...`) and choose **Export Blender
+   recipe**. That writes `fishy-recipe-revision-<n>.json`. **Export scene data**
+   still writes the browser scene itself, which `scene-to-recipe.mjs` also accepts.
+2. Build it:
+
+```sh
+/Users/joshuabanzon/Applications/Blender.app/Contents/MacOS/Blender \
+  --background --factory-startup --python-exit-code 1 \
+  --python blender/build_recipe.py -- \
+  --recipe ~/Downloads/fishy-recipe-revision-7.json \
+  --output /tmp/aquarium.blend --render-dir /tmp/previews
+```
+
+To convert an exported *scene* rather than a recipe, run the converter first:
+
+```sh
+node --experimental-strip-types site/scripts/scene-to-recipe.mjs \
+  ~/Downloads/fishy-revision-7.json -o /tmp/recipe.json
+```
+
+`site/lib/recipe.ts` owns the conversion and mirrors `scene_recipe.py`:
+the browser is Y-up with the origin at the floor centre, a recipe is Z-up with
+the origin at the front-left-bottom corner, so `x = site_x + width/2`,
+`y = depth/2 - site_z`, `z = site_y`. Recipe schema v2 requires a `design`
+block; the web agent now returns one with every generated aquarium, and a scene
+that carries none gets one derived from its own geometry and declared as an
+assumption.
+
+**What does not cross over.** A recipe carries approximate asset envelopes, a
+yaw and a seed, not the browser's mesh. Blender regenerates `rock`,
+`branchwood`, `grass` and `bush` procedurally inside each envelope, so the built
+tank matches the composition, footprint and scale rather than the exact
+silhouette. Sculpt edits transfer as bounds only, and per-object colour does not
+transfer. The exporter refuses rather than repairs: because a recipe rotates the
+whole pre-yaw box while the browser fits the actual rotated mesh, a steeply
+yawed long branch can need more depth than the tank has, and that export fails
+naming the object instead of silently shrinking it.
+
 ## Design principles and review
 
 Design quality is the core consideration (see `../DESIGN_PRINCIPLES.md`). The generation prompt carries the eight principles, and recipe schema version 2 requires a `design` block: composition scheme, focal object, sightline, open-foreground target, mood, maintenance tier, and story. Version 1 recipes from earlier runs still load and build.

@@ -1,0 +1,694 @@
+/*
+ * Fishy’s ReUI layer
+ *
+ * ReUI composes the same shadcn primitives already present in this project.
+ * These rules give every existing workspace surface the same button, card,
+ * badge, field, and grouped-action language without introducing a parallel UI
+ * framework or changing the editor's interaction model.
+ */
+
+:root {
+  --reui-ink: #18221e;
+  --reui-subtle-ink: #627069;
+  --reui-surface: #ffffff;
+  --reui-surface-muted: #f6f8f5;
+  --reui-surface-strong: #edf3ee;
+  --reui-line: #d7dfd8;
+  --reui-line-strong: #bdcac0;
+  --reui-accent: #17695d;
+  --reui-accent-strong: #0f554a;
+  --reui-accent-soft: #e4f1e9;
+  --reui-danger: #a84335;
+  --reui-radius: 10px;
+  --reui-shadow: 0 1px 2px rgb(24 34 30 / 5%), 0 8px 24px rgb(24 34 30 / 6%);
+}
+
+.studio {
+  background: #f1f4f0;
+  color: var(--reui-ink);
+}
+
+/* App header and workspace navigation */
+.studio .topbar {
+  min-height: 64px;
+  padding-inline: clamp(14px, 2.2vw, 32px);
+  gap: clamp(12px, 2vw, 28px);
+  border-bottom-color: var(--reui-line);
+  box-shadow: 0 1px 0 rgb(24 34 30 / 2%);
+}
+
+.studio .brand {
+  font-size: 24px;
+  font-weight: 650;
+  letter-spacing: -1.2px;
+}
+
+.studio .topbar nav {
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid var(--reui-line);
+  border-radius: var(--reui-radius);
+  background: var(--reui-surface-muted);
+}
+
+.studio .topbar nav button {
+  min-height: 34px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 550;
+}
+
+.studio .topbar nav button[aria-current="page"] {
+  background: var(--reui-surface);
+  color: var(--reui-ink);
+  box-shadow: 0 1px 2px rgb(24 34 30 / 8%);
+}
+
+.studio .project-title {
+  position: relative;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+}
+
+.studio .project-title input {
+  width: clamp(132px, 17vw, 264px);
+  min-height: 26px;
+  padding: 0 4px;
+  border-radius: 5px;
+  color: var(--reui-ink);
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.studio .project-title > span,
+.studio .save-state {
+  color: var(--reui-subtle-ink);
+  font-size: 11px;
+}
+
+/* ReUI-compatible primitive variants used by the workspace. */
+.studio [data-slot="button"] {
+  border-color: var(--reui-line-strong);
+  border-radius: 8px;
+  color: var(--reui-ink);
+  font-weight: 550;
+  box-shadow: 0 1px 1px rgb(24 34 30 / 3%);
+}
+
+.studio [data-slot="button"][data-variant="default"] {
+  border-color: var(--reui-accent);
+  background: var(--reui-accent);
+  color: #fff;
+  box-shadow: 0 1px 2px rgb(15 85 74 / 20%);
+}
+
+.studio [data-slot="button"][data-variant="default"]:hover:not(:disabled) {
+  border-color: var(--reui-accent-strong);
+  background: var(--reui-accent-strong);
+  color: #fff;
+}
+
+.studio [data-slot="button"][data-variant="outline"] {
+  background: var(--reui-surface);
+}
+
+.studio [data-slot="button"][data-variant="outline"]:hover:not(:disabled),
+.studio [data-slot="button"][data-variant="secondary"]:hover:not(:disabled) {
+  border-color: #a9b9ad;
+  background: var(--reui-surface-strong);
+}
+
+.studio [data-slot="button"][data-variant="ghost"] {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+
+.studio [data-slot="button"][data-variant="ghost"]:hover:not(:disabled) {
+  background: var(--reui-surface-strong);
+  color: var(--reui-accent-strong);
+}
+
+.studio [data-slot="button"]:focus-visible,
+.studio input:focus-visible,
+.studio textarea:focus-visible,
+.studio select:focus-visible {
+  outline: 3px solid rgb(23 105 93 / 22%);
+  outline-offset: 2px;
+}
+
+.studio [data-slot="button-group"] {
+  overflow: hidden;
+  border: 1px solid var(--reui-line);
+  border-radius: 9px;
+  background: var(--reui-surface);
+  box-shadow: 0 1px 2px rgb(24 34 30 / 6%);
+}
+
+.studio [data-slot="button-group"] [data-slot="button"] {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.studio [data-slot="badge"] {
+  border-color: #c8d9cd;
+  background: var(--reui-accent-soft);
+  color: var(--reui-accent-strong);
+  font-weight: 600;
+}
+
+.studio [data-slot="badge"][data-variant="outline"] {
+  border-color: var(--reui-line-strong);
+  background: var(--reui-surface);
+  color: var(--reui-subtle-ink);
+}
+
+.studio [data-slot="card"] {
+  gap: 0;
+  border-color: var(--reui-line);
+  border-radius: var(--reui-radius);
+  background: var(--reui-surface);
+  box-shadow: var(--reui-shadow);
+}
+
+.studio [data-slot="card-header"] {
+  gap: 5px;
+  padding: 18px 18px 0;
+}
+
+.studio [data-slot="card-title"] {
+  color: var(--reui-ink);
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.studio [data-slot="card-description"] {
+  color: var(--reui-subtle-ink);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.studio [data-slot="card-content"] {
+  padding: 16px 18px 18px;
+}
+
+.studio [data-slot="card-footer"] {
+  padding: 0 18px 18px;
+}
+
+/* The editor's left tray uses card sections instead of a continuous settings wall. */
+.studio .left-panel {
+  background: #f3f6f2;
+}
+
+.studio .tray-title {
+  padding: 20px 18px 12px;
+  color: var(--reui-ink);
+  font-size: 18px;
+  font-weight: 680;
+}
+
+.studio .dock-tab-list {
+  height: auto !important;
+  margin: 0 14px 12px;
+  padding: 3px !important;
+  gap: 2px !important;
+  border: 1px solid var(--reui-line);
+  border-radius: var(--reui-radius);
+  background: var(--reui-surface-muted);
+}
+
+.studio .dock-tab-list button {
+  min-height: 34px;
+  border-radius: 7px;
+  color: var(--reui-subtle-ink);
+  font-size: 13px;
+  font-weight: 560;
+}
+
+.studio .dock-tab-list button[data-state="active"] {
+  background: var(--reui-surface) !important;
+  color: var(--reui-accent) !important;
+  box-shadow: 0 1px 2px rgb(24 34 30 / 8%);
+}
+
+.studio .dock-content {
+  padding: 0 14px 18px;
+}
+
+.studio .dock-content > .panel-section,
+.studio .dock-content > .catalog-panel,
+.studio .object-config-card .panel-section,
+.studio .mobile-sheet .panel-section,
+.studio .mobile-sheet .catalog-panel {
+  margin-top: 10px;
+  padding: 16px;
+  border: 1px solid var(--reui-line);
+  border-radius: var(--reui-radius);
+  background: var(--reui-surface);
+  box-shadow: 0 1px 2px rgb(24 34 30 / 3%);
+}
+
+.studio .dock-content > .panel-section + .panel-section,
+.studio .object-config-card .panel-section + .panel-section,
+.studio .mobile-sheet .panel-section + .panel-section {
+  padding-top: 16px;
+}
+
+.studio .panel-section h2.section-title,
+.studio .catalog-panel > .section-title {
+  color: var(--reui-ink);
+  font-size: 18px;
+  letter-spacing: -0.25px;
+}
+
+.studio .panel-section h2,
+.studio .panel-section h3,
+.studio .catalog-entry h3,
+.studio .reference-card h3 {
+  color: var(--reui-ink);
+}
+
+.studio .micro,
+.studio .section-intro,
+.studio .panel-section p,
+.studio .catalog-entry p,
+.studio .reference-card p {
+  color: var(--reui-subtle-ink);
+}
+
+.studio .number-field input,
+.studio .search-field,
+.studio .search-field input,
+.studio select,
+.studio textarea,
+.studio .gallery-filters .gallery-search {
+  border-color: var(--reui-line-strong);
+  border-radius: 8px;
+  background: var(--reui-surface);
+  color: var(--reui-ink);
+}
+
+.studio .number-field input:focus,
+.studio .search-field:focus-within,
+.studio .gallery-filters .gallery-search:focus-within,
+.studio select:focus,
+.studio textarea:focus {
+  border-color: var(--reui-accent);
+  box-shadow: 0 0 0 3px rgb(23 105 93 / 12%);
+  outline: 0;
+}
+
+.studio .tank-presets,
+.studio .placement-tools,
+.studio .object-direct-actions,
+.studio .catalog-actions {
+  gap: 8px;
+}
+
+.studio .tank-presets button,
+.studio .placement-tools button,
+.studio .object-direct-actions button,
+.studio .catalog-actions button,
+.studio .reference-actions button {
+  border-color: var(--reui-line-strong);
+  background: var(--reui-surface);
+  font-weight: 560;
+}
+
+.studio .tank-presets button:hover:not(:disabled),
+.studio .placement-tools button:hover:not(:disabled),
+.studio .object-direct-actions button:hover:not(:disabled),
+.studio .catalog-actions button:hover:not(:disabled),
+.studio .reference-actions button:hover:not(:disabled) {
+  border-color: var(--reui-accent);
+  background: var(--reui-accent-soft);
+  color: var(--reui-accent-strong);
+}
+
+.studio .object-direct-actions .primary,
+.studio .catalog-actions .primary,
+.studio .reference-actions .primary {
+  border-color: var(--reui-accent);
+  background: var(--reui-accent);
+  color: #fff;
+}
+
+.studio .catalog-entry,
+.studio .reference-card,
+.studio .saved-reference {
+  margin-top: 9px;
+  padding: 14px;
+  border: 1px solid var(--reui-line);
+  border-radius: 8px;
+  background: var(--reui-surface-muted);
+}
+
+.studio .saved-reference {
+  color: var(--reui-ink);
+}
+
+.studio .material-choice {
+  border-color: var(--reui-line);
+  border-radius: 9px;
+  box-shadow: 0 1px 1px rgb(24 34 30 / 3%);
+}
+
+.studio .material-choice:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: #a5b9aa;
+  background: var(--reui-surface);
+  box-shadow: var(--reui-shadow);
+}
+
+.studio .material-choice[aria-pressed="true"] {
+  border-color: var(--reui-accent);
+  background: var(--reui-accent-soft);
+  box-shadow: 0 0 0 1px var(--reui-accent);
+}
+
+/* Tool controls stay over the canvas, but now read as a compact ReUI toolbar. */
+.studio .canvas-toolbar > div {
+  gap: 0;
+  overflow: hidden;
+  border-color: rgb(224 233 225 / 88%);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 94%);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 16%);
+  backdrop-filter: blur(12px);
+}
+
+.studio .canvas-toolbar button {
+  min-height: 36px;
+  border-radius: 7px;
+  color: #31433a;
+}
+
+.studio .canvas-toolbar button:hover:not(:disabled),
+.studio .canvas-toolbar button[aria-pressed="true"] {
+  background: var(--reui-accent-soft);
+  color: var(--reui-accent-strong);
+}
+
+.studio .camera-pill {
+  border-color: rgb(230 239 233 / 35%);
+  border-radius: 999px;
+  background: rgb(17 29 33 / 72%);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 14%);
+}
+
+.studio .object-config-card {
+  right: 20px;
+  top: 84px;
+  bottom: 22px;
+  width: min(312px, calc(100% - 40px));
+  max-height: none;
+  padding: 10px;
+  border-color: var(--reui-line);
+  border-radius: 14px;
+  box-shadow: 0 16px 42px rgb(0 0 0 / 20%);
+}
+
+.studio .object-config-card .panel-section {
+  margin-top: 0;
+}
+
+/* Gallery: cards, filters, comparisons, and empty states. */
+.studio .gallery-section {
+  background: #f1f4f0;
+}
+
+.studio .gallery-view-tabs {
+  margin: 18px clamp(16px, 3vw, 44px) 0;
+  padding: 3px;
+  border: 1px solid var(--reui-line);
+  border-radius: var(--reui-radius);
+  background: var(--reui-surface-muted);
+}
+
+.studio .gallery-view-tabs button[data-state="active"] {
+  background: var(--reui-surface);
+  color: var(--reui-accent);
+  box-shadow: 0 1px 2px rgb(24 34 30 / 8%);
+}
+
+.studio .gallery-workspace {
+  background: #f1f4f0;
+}
+
+.studio .gallery-header h2 {
+  color: var(--reui-ink);
+  font-size: clamp(26px, 3vw, 34px);
+  font-weight: 680;
+  letter-spacing: -0.8px;
+}
+
+.studio .gallery-card,
+.studio .gallery-compare-pane {
+  border-color: var(--reui-line);
+  border-radius: var(--reui-radius);
+  box-shadow: var(--reui-shadow);
+}
+
+.studio .gallery-card {
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.studio .gallery-card:hover {
+  transform: translateY(-2px);
+  border-color: #b7c9bb;
+  box-shadow: 0 2px 3px rgb(24 34 30 / 5%), 0 16px 30px rgb(24 34 30 / 10%);
+}
+
+.studio .gallery-thumbnail {
+  border-bottom: 1px solid var(--reui-line);
+  background: #17292a;
+}
+
+.studio .gallery-card-meta,
+.studio .gallery-rank {
+  color: var(--reui-subtle-ink);
+}
+
+.studio .gallery-rank {
+  display: inline-flex;
+  width: fit-content;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: var(--reui-accent-soft);
+  color: var(--reui-accent-strong);
+  font-weight: 650;
+}
+
+.studio .gallery-card-actions .gallery-compare-button,
+.studio .gallery-card-actions button,
+.studio .gallery-pagination button,
+.studio .gallery-photo-input {
+  border-color: var(--reui-line-strong);
+  border-radius: 8px;
+  background: var(--reui-surface);
+  color: var(--reui-ink);
+  font-weight: 570;
+}
+
+.studio .gallery-card-actions .gallery-compare-button:hover:not(:disabled),
+.studio .gallery-card-actions button:hover:not(:disabled),
+.studio .gallery-pagination button:hover:not(:disabled),
+.studio .gallery-photo-input:hover {
+  border-color: var(--reui-accent);
+  background: var(--reui-accent-soft);
+  color: var(--reui-accent-strong);
+}
+
+.studio .gallery-empty,
+.studio [data-slot="empty"] {
+  border: 1px dashed var(--reui-line-strong);
+  border-radius: var(--reui-radius);
+  background: var(--reui-surface);
+  box-shadow: none;
+}
+
+.studio .gallery-error,
+.studio .error-banner {
+  border-color: #e1b8ad;
+  background: #fff7f4;
+  color: #7f3428;
+  box-shadow: 0 10px 30px rgb(75 40 31 / 13%);
+}
+
+/* Conversational brief and its composer share the same panel language. */
+.studio .chat-panel {
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.studio .aquascape-chat {
+  min-height: 350px;
+  border: 0;
+  border-radius: inherit;
+  box-shadow: none;
+}
+
+.studio .aquascape-chat-header {
+  padding: 8px;
+  border-bottom-color: var(--reui-line);
+  background: var(--reui-surface-muted);
+}
+
+.studio .aquascape-chat-tabs {
+  padding: 2px;
+  border: 1px solid var(--reui-line);
+  border-radius: 8px;
+  background: var(--reui-surface);
+}
+
+.studio .aquascape-chat-tabs button[aria-selected="true"] {
+  border-radius: 6px;
+  background: var(--reui-accent-soft);
+  color: var(--reui-accent-strong);
+}
+
+.studio .aquascape-chat-user {
+  border: 1px solid #c6dbcc;
+  border-radius: 11px 11px 3px 11px;
+  background: var(--reui-accent-soft);
+}
+
+.studio .aquascape-chat-reply > div {
+  max-width: 92%;
+  padding: 9px 10px;
+  border: 1px solid var(--reui-line);
+  border-radius: 3px 11px 11px;
+  background: var(--reui-surface-muted);
+}
+
+.studio .aquascape-chat-composer {
+  margin: 8px;
+  border-color: var(--reui-line-strong);
+  border-radius: 10px;
+  background: var(--reui-surface);
+}
+
+.studio .aquascape-chat-composer button {
+  border-radius: 7px;
+}
+
+/* Originals and mobile navigation stay visually tied to the same component system. */
+.studio .originals-bar {
+  top: 20px;
+  left: 24px;
+  right: 24px;
+}
+
+.studio .originals-bar > div {
+  padding: 10px 12px;
+  border: 1px solid rgb(230 239 233 / 22%);
+  border-radius: var(--reui-radius);
+  background: rgb(17 29 33 / 72%);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 14%);
+  backdrop-filter: blur(12px);
+}
+
+.studio .originals-bar button {
+  border-color: rgb(230 239 233 / 22%);
+  border-radius: 9px;
+  background: rgb(17 29 33 / 72%);
+  color: #edf5ef;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 14%);
+}
+
+.studio .showcase-options {
+  gap: 10px;
+}
+
+.studio .showcase-options button {
+  border-radius: var(--reui-radius);
+  background: rgb(18 33 34 / 90%);
+  backdrop-filter: blur(10px);
+}
+
+.studio .showcase-options button:hover,
+.studio .showcase-options button[aria-pressed="true"] {
+  border-color: #bce6d9;
+  background: rgb(28 70 62 / 94%);
+}
+
+.studio .mobile-nav {
+  gap: 5px;
+  padding: 7px 9px calc(7px + env(safe-area-inset-bottom));
+  border-top-color: var(--reui-line);
+  background: var(--reui-surface);
+}
+
+.studio .mobile-nav button {
+  border: 1px solid transparent;
+  border-radius: 9px;
+  color: var(--reui-subtle-ink);
+}
+
+.studio .mobile-nav button:hover {
+  border-color: var(--reui-line);
+  background: var(--reui-surface-muted);
+  color: var(--reui-accent-strong);
+}
+
+.studio .statusbar {
+  border-top-color: var(--reui-line);
+  background: var(--reui-surface-muted);
+  color: var(--reui-subtle-ink);
+}
+
+@media (max-width: 799px) {
+  .studio .topbar {
+    min-height: 56px;
+    padding-inline: 10px;
+  }
+
+  .studio .topbar nav {
+    padding: 2px;
+  }
+
+  .studio .topbar nav button {
+    min-height: 32px;
+    padding-inline: 8px;
+  }
+
+  .studio .mobile-sheet {
+    background: #f3f6f2;
+  }
+
+  .studio .mobile-sheet .sheet-scroll {
+    padding: 0 12px 14px;
+  }
+
+  .studio .object-config-card {
+    right: 10px;
+    top: 66px;
+    bottom: 12px;
+    width: calc(100% - 20px);
+  }
+
+  .studio .gallery-view-tabs {
+    margin: 12px 14px 0;
+  }
+
+  .studio .originals-bar {
+    top: 12px;
+    left: 12px;
+    right: 12px;
+  }
+
+  .studio .showcase-options {
+    bottom: 14px;
+    width: calc(100% - 24px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studio .gallery-card,
+  .studio .material-choice {
+    transition: none;
+  }
+}

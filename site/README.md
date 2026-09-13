@@ -114,11 +114,26 @@ Replace the filename with the pending migration and `DB` with your D1 binding na
 - `npm run dev`: start the Vite/Vinext development server
 - `npm run build`: build the deployable Sites artifact
 - `npm run start`: preview the built Worker locally with D1/R2 support
+- `npm test`: run the scene, geometry, and aquascape-agent test suite
 - `npm run db:generate`: generate Drizzle migrations after schema changes
 
 When using the Sites plugin, follow its skill instructions for installation, builds, and publishing. These npm commands remain available for standalone use.
 
 The portable build runs Vinext directly without a host `timeout` command. The managed-linux build uses `scripts/build-verified.sh` and its existing `SITES_BUILD_TIMEOUT` setting.
+
+## Aquarium generation
+
+The aquascape assistant posts the current validated scene, recent chat context, and up to four client-compressed reference photos to `/api/aquascape/generate`. The server uses the OpenAI Responses API with Structured Outputs, then materializes the plan exclusively from supported entries in `public/data/catalog-registry.json`. Existing protected scene objects are retained unchanged, generated geometry is fitted to the tank, and the browser applies the result through the normal revision and undo transaction.
+
+Copy `.env.example` to `.env.local` for local development and set `OPENAI_API_KEY` there. Never expose the key through a `NEXT_PUBLIC_` variable. Production requests require a signed-in ChatGPT user unless `FISHY_ALLOW_ANONYMOUS_GENERATION=true` is explicitly configured; `FISHY_ALLOWED_USER_IDS` can further restrict access.
+
+## Blender recipe export
+
+Project menu → **Export Blender recipe** writes a `fishy.recipe.v2` document that
+`blender/build_recipe.py` builds into a native editable tank. `lib/recipe.ts`
+owns the conversion and `scripts/scene-to-recipe.mjs` runs it headlessly on an
+exported scene. See `../blender/README.md` for the build command and the limits
+of what transfers.
 
 ## Learn More
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./reui.css";
 
 export const metadata: Metadata = {
   title: "Fishy — Aquascape Studio",

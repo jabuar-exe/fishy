@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {sculptSchema} from "./sculpt.ts";
+import {designSchema} from "./design.ts";
 
 export const BUILDER = "fishy-browser-3";
 export const SAVE_KEY = "fishy.studio.scene.v5";
@@ -16,19 +17,21 @@ export const objectSchema = z.object({
   sculpt: sculptSchema.optional(),
 }).strict().refine(o=>!o.sculpt||(o.sculpt.basis.kind===o.kind&&o.sculpt.basis.form===o.form),"Reset sculpt before changing the base form").transform(o=>{if(!o.sculpt?.nodes.length)delete o.sculpt;return o;});
 export const sceneSchema = z.object({
-  schema: z.literal(5), builder: z.literal(BUILDER), id: z.string().min(1).max(100),
+  schema: z.literal(5), builder: z.literal(BUILDER), id: z.string().min(1).max(100), name: z.string().trim().min(1).max(120).default("Riverbend study"),
   revision: z.number().int().min(0).max(MAX_REVISION), units: z.literal("metres"),
   coordinates: z.literal("Y-up; X right; Z toward front; origin floor centre"),
   tank: z.object({ width: z.number().min(.1).max(3), depth: z.number().min(.1).max(3), height: z.number().min(.1).max(3), source: z.enum(["assumed", "user-entered"]) }),
   substrate: z.number().min(0).max(.05), objects: z.array(objectSchema).max(32),
   references: z.array(z.string().max(120)).max(50), brief: z.string().max(3000),
+  /** Declared design intent. Optional so existing saves load; required by the Blender recipe. */
+  design: designSchema.optional(),
 }).strict().superRefine((s, ctx) => { if(new Set(s.objects.map(o=>o.id)).size!==s.objects.length)ctx.addIssue({code:"custom",message:"Duplicate object IDs"});if(s.objects.reduce((n,o)=>n+(o.sculpt?.nodes.length??0),0)>8192)ctx.addIssue({code:"custom",message:"Scene sculpt detail limit reached. Reset an unused sculpt before adding more."}); });
 export type SceneObject = z.infer<typeof objectSchema>;
 export type SceneRecord = z.infer<typeof sceneSchema>;
 export type Vec3 = [number, number, number];
 export function initialScene(): SceneRecord {
   const item=(id:string,name:string,kind:SceneObject["kind"],p:Vec3,form:string,color:string,size=1):SceneObject=>({id,name,kind,position:p,rotation:[0,0,0],form,color,size,protected:false});
-  return {schema:5,builder:BUILDER,id:"riverbend",revision:1,units:"metres",coordinates:"Y-up; X right; Z toward front; origin floor centre",tank:{width:.6,depth:.3,height:.36,source:"assumed"},substrate:.03,references:[],brief:"",objects:[
+  return {schema:5,builder:BUILDER,id:"riverbend",name:"Riverbend study",revision:1,units:"metres",coordinates:"Y-up; X right; Z toward front; origin floor centre",tank:{width:.6,depth:.3,height:.36,source:"assumed"},substrate:.03,references:[],brief:"",objects:[
     {...item("wood-arch","River wood","wood",[-.01,.035,-.01],"arch","#805636"),protected:true},
     item("rock-left","Left stone","rock",[-.16,.03,.055],"faceted","#777969",1),
     item("rock-right","Right stone","rock",[.17,.03,-.015],"faceted","#62675c",.85),

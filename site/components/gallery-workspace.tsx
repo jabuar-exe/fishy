@@ -2,6 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ArrowLeft, ArrowUpRight, Columns2, ImagePlus, Search, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 
 export type GalleryReference = {
   id: string;
@@ -53,7 +57,7 @@ function SourceLink({ entry }: { entry: GalleryReference }) {
 function ReferenceImage({ src, alt }: { src: string; alt: string }) {
   const [failed, setFailed] = useState(false);
   if (failed) return <div className="gallery-image-failure" role="status">Image unavailable. Choose another reference.</div>;
-  return <img src={src} alt={alt} onError={() => setFailed(true)} />;
+  return <img src={src} alt={alt} loading="lazy" decoding="async" onError={() => setFailed(true)} />;
 }
 
 export function GalleryWorkspace({ entries, savedIds, onSave, creation }: {
@@ -73,6 +77,8 @@ export function GalleryWorkspace({ entries, savedIds, onSave, creation }: {
   const [referencePhoto, setReferencePhoto] = useState<LocalPhoto | null>(null);
   const [error, setError] = useState("");
   const [loadingPhoto, setLoadingPhoto] = useState<"creation" | "reference" | null>(null);
+  const [iaplcImages, setIaplcImages] = useState<Record<string, string>>({});
+  const [iaplcImagesReady, setIaplcImagesReady] = useState(false);
   const urls = useRef(new Set<string>());
   const alive = useRef(true);
   const uploadBusy = useRef(false);
@@ -87,7 +93,29 @@ export function GalleryWorkspace({ entries, savedIds, onSave, creation }: {
     return () => { alive.current = false; uploadVersion.current++; owned.forEach(url => URL.revokeObjectURL(url)); owned.clear(); };
   }, []);
 
-  const allEntries = useMemo<DisplayReference[]>(() => [...originals, ...entries], [entries]);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/data/iaplc-images.json", { signal: controller.signal })
+      .then(response => {
+        if (!response.ok) throw new Error("IAPLC photographs are temporarily unavailable.");
+        return response.json() as Promise<{ images?: unknown }>;
+      })
+      .then(payload => {
+        if (!payload.images || typeof payload.images !== "object" || Array.isArray(payload.images)) throw new Error("Invalid IAPLC photograph index.");
+        setIaplcImages(payload.images as Record<string, string>);
+        setIaplcImagesReady(true);
+      })
+      .catch(err => {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        setIaplcImagesReady(true);
+      });
+    return () => controller.abort();
+  }, []);
+
+  const allEntries = useMemo<DisplayReference[]>(() => [
+    ...originals,
+    ...entries.map(entry => ({ ...entry, preview: entry.provider === "IAPLC" ? iaplcImages[entry.id] : undefined })),
+  ], [entries, iaplcImages]);
   const providers = useMemo(() => [...new Set(allEntries.map(entry => entry.provider))], [allEntries]);
   const years = useMemo(() => [...new Set(entries.map(entry => entry.year).filter((y): y is number => typeof y === "number"))].sort((a, b) => b - a), [entries]);
   const filtered = useMemo(() => {
@@ -142,13 +170,15 @@ export function GalleryWorkspace({ entries, savedIds, onSave, creation }: {
     }
   };
 
-  const photoInput = (side: "creation" | "reference", label: string) => <label className="gallery-photo-input">
-    <ImagePlus size={16} /><span>{loadingPhoto === side ? "Opening photo…" : label}</span>
-    <input type="file" aria-label={label} accept="image/jpeg,image/png,image/webp" disabled={loadingPhoto !== null} onChange={event => {
-      const file = event.target.files?.[0]; event.target.value = "";
-      if (file) void attach(file, side);
-    }} />
-  </label>;
+  const photoInput = (side: "creation" | "reference", label: string) => <Button asChild variant="outline" size="sm" className="gallery-photo-input">
+    <label>
+      <ImagePlus size={16} /><span>{loadingPhoto === side ? "Opening photo…" : label}</span>
+      <input type="file" aria-label={label} accept="image/jpeg,image/png,image/webp" disabled={loadingPhoto !== null} onChange={event => {
+        const file = event.target.files?.[0]; event.target.value = "";
+        if (file) void attach(file, side);
+      }} />
+    </label>
+  </Button>;
 
   const compare = (entry: DisplayReference, button: HTMLButtonElement) => {
     uploadVersion.current++;
@@ -169,12 +199,12 @@ export function GalleryWorkspace({ entries, savedIds, onSave, creation }: {
   const saveButton = (entry: GalleryReference) => {
     if (entry.provider === "Your photos" || entry.provider === "Fishy originals") return null;
     const saved = savedIds.includes(entry.id);
-    return <button disabled={saved || savedIds.length >= 50} title={savedIds.length >= 50 && !saved ? "50 saved ideas reached. Remove one in Ideas to save another." : undefined} onClick={() => onSave(entry.id)}>{saved ? "Saved to ideas" : "Save idea"}</button>;
+    return <Button variant="outline" size="sm" disabled={saved || savedIds.length >= 50} title={savedIds.length >= 50 && !saved ? "50 saved ideas reached. Remove one in Ideas to save another." : undefined} onClick={() => onSave(entry.id)}>{saved ? "Saved to ideas" : "Save idea"}</Button>;
   };
   const selectedPhoto = selected?.provider === "Your photos" ? referencePhoto?.url : selected?.preview;
 
   return <section className="gallery-workspace" aria-label="Reference gallery">
-    {error && <div className="gallery-error" role="alert"><span>{error}</span><button aria-label="Dismiss photo error" onClick={() => setError("")}><X size={16} /></button></div>}
+    {error && <div className="gallery-error" role="alert"><span>{error}</span><Button variant="ghost" size="icon-sm" aria-label="Dismiss photo error" onClick={() => setError("")}><X size={16} /></Button></div>}
     <div className="gallery-browse" hidden={comparing}>
       <header className="gallery-header">
         <div><h2 ref={galleryHeading} tabIndex={-1}>Gallery</h2><p>Find a reference. Compare it with your creation.</p></div>
@@ -187,34 +217,34 @@ export function GalleryWorkspace({ entries, savedIds, onSave, creation }: {
         <label>Rank<select aria-label="Gallery rank" value={rank} onChange={e => { setRank(e.target.value); setPage(0); }}><option value="all">All ranks</option><option value="1">Grand prize</option><option value="10">Top 10</option><option value="60">Top 60</option><option value="100">Top 100</option></select></label>
         <label className="gallery-saved-filter"><input type="checkbox" checked={savedOnly} onChange={e => { setSavedOnly(e.target.checked); setPage(0); }} />Saved ideas</label>
       </div>
-      <div className="gallery-results-heading"><span role="status">{filtered.length.toLocaleString()} references</span><span>Competition photos open at their source.</span></div>
-      {filtered.length ? <div className="gallery-grid">{filtered.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE).map(entry => <article className={`gallery-card ${entry.preview ? "gallery-card-original" : ""}`} key={entry.id}>
-        {entry.preview && <div className="gallery-thumbnail"><ReferenceImage key={entry.preview} src={entry.preview} alt={`${entry.title}, original Fishy render`} /></div>}
-        <div className="gallery-card-body">
+      <div className="gallery-results-heading"><span role="status">{filtered.length.toLocaleString()} references</span><span>{iaplcImagesReady ? "IAPLC photographs shown with permission." : "Loading IAPLC photographs…"}</span></div>
+      {filtered.length ? <div className="gallery-grid">{filtered.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE).map(entry => <Card role="article" className={`gallery-card ${entry.preview ? "gallery-card-original" : ""}`} key={entry.id}>
+        {entry.preview && <div className="gallery-thumbnail"><ReferenceImage key={entry.preview} src={entry.preview} alt={entry.provider === "IAPLC" ? `${titleOf(entry)} by ${entry.creator || "entrant not listed"}` : `${entry.title}, original Fishy render`} /></div>}
+        <CardContent className="gallery-card-body">
           <div className="gallery-card-meta"><span>{entry.provider}</span><span>{entry.year ?? entry.dimensions ?? "Layout study"}</span></div>
-          {entry.rank != null && <span className="gallery-rank">{entry.rank === 1 ? "Grand prize" : `World rank ${String(entry.rank).padStart(3, "0")}`}</span>}
+          {entry.rank != null && <Badge className="gallery-rank" variant="secondary">{entry.rank === 1 ? "Grand prize" : `World rank ${String(entry.rank).padStart(3, "0")}`}</Badge>}
           <h3>{titleOf(entry)}</h3><p>{entry.creator || "Entrant not listed"}{entry.country ? ` · ${entry.country}` : ""}</p>
           {entry.designLesson && <p className="gallery-lesson">{entry.designLesson}</p>}
-          <div className="gallery-card-actions"><button className="gallery-compare-button" onClick={e => compare(entry, e.currentTarget)} aria-label={`Compare with ${titleOf(entry)}`}><Columns2 size={15} />Compare</button>{saveButton(entry)}<SourceLink entry={entry} /></div>
-        </div>
-      </article>)}</div> : <div className="gallery-empty"><h3>No matching references</h3><p>Try a different creator, year, or source.</p><button onClick={() => { setQuery(""); setProvider("all"); setYear("all"); setRank("all"); setSavedOnly(false); setPage(0); }}>Clear filters</button></div>}
-      <nav className="gallery-pagination" aria-label="Gallery pages"><button disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>Previous</button><span>Page {currentPage + 1} of {pages}</span><button disabled={currentPage + 1 >= pages} onClick={() => setPage(currentPage + 1)}>Next</button></nav>
+          <div className="gallery-card-actions"><Button variant="secondary" size="sm" className="gallery-compare-button" onClick={e => compare(entry, e.currentTarget)} aria-label={`Compare with ${titleOf(entry)}`}><Columns2 size={15} />Compare</Button>{saveButton(entry)}<SourceLink entry={entry} /></div>
+        </CardContent>
+      </Card>)}</div> : <Empty className="gallery-empty"><EmptyHeader><EmptyTitle>No matching references</EmptyTitle><EmptyDescription>Try a different creator, year, or source.</EmptyDescription></EmptyHeader><EmptyContent><Button variant="outline" onClick={() => { setQuery(""); setProvider("all"); setYear("all"); setRank("all"); setSavedOnly(false); setPage(0); }}>Clear filters</Button></EmptyContent></Empty>}
+      <nav className="gallery-pagination" aria-label="Gallery pages"><Button variant="outline" size="sm" disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>Previous</Button><span>Page {currentPage + 1} of {pages}</span><Button variant="outline" size="sm" disabled={currentPage + 1 >= pages} onClick={() => setPage(currentPage + 1)}>Next</Button></nav>
     </div>
     {selected && <div className="gallery-comparison">
-      <header className="gallery-comparison-header"><button onClick={back}><ArrowLeft size={16} />Gallery</button><h2 ref={comparisonHeading} tabIndex={-1}>Side by side</h2>{saveButton(selected)}</header>
+      <header className="gallery-comparison-header"><Button variant="outline" size="sm" onClick={back}><ArrowLeft size={16} />Gallery</Button><h2 ref={comparisonHeading} tabIndex={-1}>Side by side</h2>{saveButton(selected)}</header>
       <div className="gallery-compare-grid">
-        <section className="gallery-compare-pane" aria-label="Your creation">
-          <header><div><h3>Your creation</h3><p>{creationPhoto ? creationPhoto.name : "Current scene · orbit to inspect"}</p></div>{creationPhoto ? <button onClick={() => removePhoto("creation")}>Use current scene</button> : photoInput("creation", "Use my tank photo")}</header>
+        <Card className="gallery-compare-pane" aria-label="Your creation">
+          <header><div><h3>Your creation</h3><p>{creationPhoto ? creationPhoto.name : "Current scene · orbit to inspect"}</p></div>{creationPhoto ? <Button variant="outline" size="sm" onClick={() => removePhoto("creation")}>Use current scene</Button> : photoInput("creation", "Use my tank photo")}</header>
           <div className="gallery-creation-visual">{creationPhoto ? <ReferenceImage key={creationPhoto.url} src={creationPhoto.url} alt={`Your creation: ${creationPhoto.name}`} /> : creation}</div>
           <p className="gallery-pane-note">{creationPhoto ? "Your photo is only available in this session." : "Scene changes carry over from the editor."}</p>
-        </section>
-        <section className="gallery-compare-pane" aria-label="Selected reference">
-          <header><div><h3>{titleOf(selected)}</h3><p>{selected.creator || "Entrant not listed"}{selected.country ? ` · ${selected.country}` : ""}{selected.year ? ` · ${selected.year}` : ""}{selected.rank ? ` · Rank ${selected.rank}` : ""}</p></div>{selected.provider === "Your photos" && <button onClick={() => { removePhoto("reference"); back(); }}>Remove photo</button>}</header>
+        </Card>
+        <Card className="gallery-compare-pane" aria-label="Selected reference">
+          <header><div><h3>{titleOf(selected)}</h3><p>{selected.creator || "Entrant not listed"}{selected.country ? ` · ${selected.country}` : ""}{selected.year ? ` · ${selected.year}` : ""}{selected.rank ? ` · Rank ${selected.rank}` : ""}</p></div>{selected.provider === "Your photos" && <Button variant="outline" size="sm" onClick={() => { removePhoto("reference"); back(); }}>Remove photo</Button>}</header>
           <div className={`gallery-reference-visual ${selectedPhoto ? "" : "gallery-source-only"}`}>
-            {selectedPhoto ? <ReferenceImage key={selectedPhoto} src={selectedPhoto} alt={selected.provider === "Your photos" ? `Your reference photo: ${selected.title}` : `${selected.title}, original Fishy render`} /> : <div><span className="gallery-source-label">{selected.provider} reference</span><h3>View the photograph at its source</h3><p>{selected.sourceLocation ?? "Open the source page to see this layout."}</p><SourceLink entry={selected} /><p className="gallery-source-note">{selected.provider === "IAPLC" ? "IAPLC requires consent to reproduce entry photographs here." : "This reference links to its publisher; its photograph is not reproduced here."} Open the source in another window to compare alongside your creation.</p></div>}
+            {selectedPhoto ? <ReferenceImage key={selectedPhoto} src={selectedPhoto} alt={selected.provider === "Your photos" ? `Your reference photo: ${selected.title}` : selected.provider === "IAPLC" ? `${titleOf(selected)} by ${selected.creator || "entrant not listed"}` : `${selected.title}, original Fishy render`} /> : <div><span className="gallery-source-label">{selected.provider} reference</span><h3>View the photograph at its source</h3><p>{selected.sourceLocation ?? "Open the source page to see this layout."}</p><SourceLink entry={selected} /><p className="gallery-source-note">This reference links to its publisher; its photograph is not available in Fishy.</p></div>}
           </div>
-          <div className="gallery-pane-note"><span>{selected.provider === "Fishy originals" ? `Original Fishy render · ${selected.dimensions}` : selected.provider === "Your photos" ? "Your reference photo · this session only" : "Source metadata; tank dimensions and species are not inferred."}</span>{selected.provider !== "Your photos" && photoInput("reference", "Use my own reference photo")}</div>
-        </section>
+          <div className="gallery-pane-note"><span>{selected.provider === "Fishy originals" ? `Original Fishy render · ${selected.dimensions}` : selected.provider === "Your photos" ? "Your reference photo · this session only" : selected.provider === "IAPLC" && selectedPhoto ? "IAPLC entry photograph · displayed with permission" : "Source metadata; tank dimensions and species are not inferred."}</span>{selected.provider !== "Your photos" && photoInput("reference", "Use my own reference photo")}</div>
+        </Card>
       </div>
       <details className="gallery-study-guide"><summary>What to compare</summary><div className="gallery-study-grid">{studyPrompts.map(([heading, text]) => <div key={heading}><h3>{heading}</h3><p>{text}</p></div>)}</div><p>Fishy study prompts adapted from the <a href="https://iaplc.com/e/judging_criteria/" target="_blank" rel="noopener noreferrer">IAPLC judging criteria</a>. These are prompts for composition review, not contest scores or fish-health assessments.</p></details>
       <details className="gallery-photo-guide"><summary>Tips for comparison photos</summary><p>Photograph the whole tank straight from the front, keep the camera level, and avoid cropping. Aim for at least 1,500 pixels wide. Choose a photo you own or have permission to use. JPEG, PNG, or WebP; up to 10 MB and 24 megapixels. Nothing is uploaded or included in a saved scene.</p></details>
