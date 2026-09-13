@@ -30,9 +30,19 @@ test("Weeping Moss uses its exact, reusable Flickr reference",()=>{
   assert.match(image?.scope??"",/^Exact real-photo reference/);
 });
 
-test("Materials cards and detail sheet render the real reference photo with provenance",()=>{
+test("Materials cards render 3D model previews and reveal real reference photos on demand",()=>{
   const page=readFileSync(resolve(root,"app/page.tsx"),"utf8");
-  assert.match(page,/src=\{c\.referenceImage\.src\} alt=\{c\.referenceImage\.alt\}/);
+  assert.match(page,/useMaterialThumbnails\(catalog,materialsVisible&&!realSampleOpen\)/);
+  assert.match(page,/src=\{materialThumbnails\[c\.id\]\}/);
+  assert.match(page,/3D model preview of/);
+  assert.match(page,/Inspect real sample/);
   assert.match(page,/Real reference photo ·/);
   assert.match(page,/candidate\.referenceImage\.sourceUrl/);
+});
+
+test("the desktop configuration tray has an accessible resize control",()=>{
+  const page=readFileSync(resolve(root,"app/page.tsx"),"utf8");
+  assert.match(page,/aria-label="Resize configuration panel"/);
+  assert.match(page,/onPointerDown=\{beginLeftResize\}/);
+  assert.match(page,/onKeyDown=\{resizeLeftWithKey\}/);
 });
