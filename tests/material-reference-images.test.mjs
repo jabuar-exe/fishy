@@ -58,3 +58,8 @@ test("the reference photo area omits the removed session-detail helper text",()=
   const page=readFileSync(resolve(root,"app/page.tsx"),"utf8");
   assert.doesNotMatch(page,/Kept in this session\. The four most recent are compressed and sent when you generate\./);
 });
+
+test("the material browser omits the removed preview-summary helper text",()=>{
+  const page=readFileSync(resolve(root,"app/page.tsx"),"utf8");
+  assert.doesNotMatch(page,/3D procedural previews; real samples available to inspect/);
+});

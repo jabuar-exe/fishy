@@ -138,7 +138,6 @@ export default function Home() {
         <div hidden={realSampleOpen&&!!candidate&&materialsVisible}>
           <label className="search-field"><Search size={16}/><input aria-label="Search catalog" placeholder="Find a material" value={catQuery} onChange={e=>setCatQuery(e.target.value)}/></label>
           <div className="filter-chips">{["all","wood","plant"].map(c=><button key={c} aria-pressed={catCategory===c} onClick={()=>setCatCategory(c)}>{c==="all"?"All":c==="wood"?"Wood":"Plants"} <span>{catalog.filter(entry=>c==="all"||entry.kind===c).length}</span></button>)}</div>
-          <p className="micro">{cats.length} materials · 3D procedural previews; real samples available to inspect</p>
           <div className="material-grid">{cats.map(c=><button className="material-choice" key={c.id} aria-pressed={candidate?.id===c.id} onClick={()=>{setCandidateId(c.id);setRealSampleOpen(false);}}>
             <span className="form-preview">
               {c.status==="supported_procedural"?materialThumbnails[c.id]?<img src={materialThumbnails[c.id]} alt={`3D model preview of ${c.displayLabel}`}/>:<span className="material-preview-status">{materialThumbnailsFailed?"3D preview unavailable":"Preparing 3D preview…"}</span>:<span className="material-preview-status">Reference only</span>}
