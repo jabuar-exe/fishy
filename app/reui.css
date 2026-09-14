@@ -829,12 +829,29 @@
 
 .studio .reset-tank-section {
   background: #eef5f2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 16px 20px;
+}
+
+.studio .reset-tank-section h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0;
+}
+
+.studio .reset-tank-section .micro {
+  margin-top: 0;
 }
 
 .studio .reset-tank-button {
   border-color: #6f988f;
   background: #1c7366;
   color: #fff;
+  min-height: 44px;
+  margin-top: 8px;
 }
 
 .studio .reset-tank-button:hover:not(:disabled) {
