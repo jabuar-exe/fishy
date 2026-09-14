@@ -1,6 +1,9 @@
 import { mkdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadLocalEnvironment } from "./load-local-environment.mjs";
+
+loadLocalEnvironment();
 
 export const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 const runtimeRoot = process.env.SITES_RUNTIME_ROOT || path.join(projectRoot, ".sites-runtime");

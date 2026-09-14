@@ -1,18 +1,22 @@
 "use client";
 
 import {useEffect,useRef,useState} from "react";
-import {Check,ChevronRight,ImagePlus,Search,SendHorizontal} from "lucide-react";
+import {Check,ChevronRight,ImageIcon,ImagePlus,Search,SendHorizontal,Square} from "lucide-react";
 import type {SceneRecord} from "@/lib/scene";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 
 type ThreadItem={id:string;kind:"user"|"studio";body:string;label?:string;sub?:string;error?:boolean};
 type ChatContext="brief"|"photos";
-export type AquascapePhoto={url:string;name:string;size:number;file:File};
-export type GeneratedAquascape={scene:SceneRecord;summary:string;baseRevision:number;componentCount:number;preservedProtected:number;model:string};
+export type AquascapePhoto={id:string;url:string;name:string;size:number;file:File};
+export type AquascapeInspiration={id:string;title:string;creator?:string;designLesson?:string;plantNames:string[];imageUrl?:string};
+export type InfluenceReceipt={kind:"inspiration"|"photo";id:string;reason:string};
+export type GeneratedAquascape={scene:SceneRecord;summary:string;baseRevision:number;componentCount:number;preservedProtected:number;model:string;attempts:number;fallback:false;influencesUsed:InfluenceReceipt[]};
 
 const MAX_AGENT_PHOTOS=4;
-const MAX_ENCODED_BLOB=1_800_000;
+// Four JPEG blobs at this limit remain below both the route's 9 MB body cap and
+// its 8.5 MB data-URL validation cap after base64 expansion.
+const MAX_ENCODED_BLOB=1_500_000;
 const DREAM_PROMPT="Describe your dream aquascape";
 
 function blobDataUrl(blob:Blob){return new Promise<string>((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>typeof reader.result==="string"?resolve(reader.result):reject(new Error("Could not prepare the reference photo."));reader.onerror=()=>reject(new Error("Could not read the reference photo."));reader.readAsDataURL(blob);});}
@@ -25,7 +29,7 @@ async function encodePhoto(photo:AquascapePhoto){
     let blob=await render(width,height,.82);
     if(blob.size>MAX_ENCODED_BLOB){width=Math.max(1,Math.round(width*.72));height=Math.max(1,Math.round(height*.72));blob=await render(width,height,.68);}
     if(blob.size>MAX_ENCODED_BLOB)throw new Error(`${photo.name} is too detailed to send safely. Use a smaller crop.`);
-    return {name:photo.name,dataUrl:await blobDataUrl(blob)};
+    return {id:photo.id,name:photo.name,dataUrl:await blobDataUrl(blob)};
   } finally {bitmap.close();}
 }
 
@@ -52,7 +56,7 @@ function ThinkingTrace({active,elapsed}:{active:boolean;elapsed:number|null}) {
   </div>;
 }
 
-export function AquascapeChat({brief,scene,photos,onGenerated,onBrowseReferences,onAttachPhoto}:{brief:string;scene:SceneRecord;photos:AquascapePhoto[];onGenerated:(result:GeneratedAquascape)=>boolean;onBrowseReferences:()=>void;onAttachPhoto:(file:File)=>Promise<void>}) {
+export function AquascapeChat({scene,photos,inspirations,onGenerated,onBrowseReferences,onAttachPhoto}:{scene:SceneRecord;photos:AquascapePhoto[];inspirations:AquascapeInspiration[];onGenerated:(result:GeneratedAquascape)=>boolean;onBrowseReferences:()=>void;onAttachPhoto:(file:File)=>Promise<void>}) {
   const [context,setContext]=useState<ChatContext>("brief"),[draft,setDraft]=useState(""),[thread,setThread]=useState<ThreadItem[]>([]),[waiting,setWaiting]=useState(false);
   const [promptLength,setPromptLength]=useState(DREAM_PROMPT.length),[deletingPrompt,setDeletingPrompt]=useState(false);
   const [trace,setTrace]=useState<{id:string;elapsed:number|null}|null>(null);
@@ -78,16 +82,23 @@ export function AquascapeChat({brief,scene,photos,onGenerated,onBrowseReferences
     setThread(items=>[...items,userItem]);setDraft("");setWaiting(true);const controller=new AbortController();abort.current=controller;
     const started=performance.now();setTrace({id:crypto.randomUUID(),elapsed:null});
     try{
-      const images=await Promise.all(photos.slice(-MAX_AGENT_PHOTOS).map(encodePhoto));
-      const response=await fetch("/api/aquascape/generate",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({message:text,scene,history,images}),signal:controller.signal});
+      const images=await Promise.all(photos.map(encodePhoto));
+      const response=await fetch("/api/aquascape/generate",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({requestId:crypto.randomUUID(),message:text,scene,history,images,inspirations}),signal:controller.signal});
       const result=await response.json().catch(()=>null) as (GeneratedAquascape&{ok?:boolean;error?:string})|null;
       if(!response.ok||!result?.ok)throw new Error(result?.error||"The aquarium agent could not complete this design.");
       if(!onGenerated(result))throw new Error("The scene changed while the aquarium was being generated. Review the current scene and try again.");
-      setThread(items=>[...items,{id:crypto.randomUUID(),kind:"studio",label:"Aquarium generated",sub:`${result.componentCount} components`,body:result.summary}]);
+      const referenceCount=result.influencesUsed.filter(item=>item.kind==="inspiration").length,photoCount=result.influencesUsed.filter(item=>item.kind==="photo").length;
+      const receipt=[referenceCount?`${referenceCount} saved idea${referenceCount===1?"":"s"}`:"",photoCount?`${photoCount} photo${photoCount===1?"":"s"}`:""].filter(Boolean).join(" · ");
+      const usedNames=result.influencesUsed.map(item=>item.kind==="inspiration"?inspirations.find(source=>source.id===item.id)?.title:photos.find(photo=>photo.id===item.id)?.name).filter((value):value is string=>!!value);
+      const attribution=usedNames.length?`\n\nInfluences used: ${usedNames.join(" · ")}.`:"";
+      setThread(items=>[...items,{id:crypto.randomUUID(),kind:"studio",label:`Aquarium generated${result.attempts>1?` after ${result.attempts} attempts`:""}`,sub:`${result.componentCount} components${receipt?` · influenced by ${receipt}`:""}`,body:result.summary+attribution}]);
     } catch(error) {
-      if(controller.signal.aborted)return;
+      if(controller.signal.aborted){
+        setThread(items=>[...items,{id:crypto.randomUUID(),kind:"studio",label:"Generation cancelled",sub:"No scene changes applied",body:"Your current aquarium was kept unchanged.",error:true}]);
+        return;
+      }
       setThread(items=>[...items,{id:crypto.randomUUID(),kind:"studio",label:"Generation stopped",sub:"No scene changes applied",body:error instanceof Error?error.message:"The aquarium could not be generated.",error:true}]);
-    } finally {if(abort.current===controller)abort.current=null;sending.current=false;setWaiting(false);setTrace(value=>value&&value.elapsed===null?{...value,elapsed:(performance.now()-started)/1000}:value);queueMicrotask(()=>input.current?.focus());}
+    } finally {if(abort.current===controller)abort.current=null;sending.current=false;setWaiting(false);setTrace(value=>controller.signal.aborted?null:value&&value.elapsed===null?{...value,elapsed:(performance.now()-started)/1000}:value);queueMicrotask(()=>input.current?.focus());}
   };
   const attach=async(file:File)=>{await onAttachPhoto(file);setContext("photos");input.current?.focus();};
   return <section className="aquascape-chat" aria-label="Aquascape assistant">
@@ -102,13 +113,14 @@ export function AquascapeChat({brief,scene,photos,onGenerated,onBrowseReferences
         <input ref={fileInput} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={event=>{const file=event.target.files?.[0];event.target.value="";if(file)void attach(file);}}/>
       </div>
     </header>
+    {Boolean(inspirations.length||photos.length)&&<p className="aquascape-chat-context" role="status">{inspirations.length?`${inspirations.length} saved idea${inspirations.length===1?"":"s"} included`:""}{inspirations.length&&photos.length?" · ":""}{photos.length?<span className="aquascape-chat-photo-hint" aria-label={`${Math.min(photos.length,MAX_AGENT_PHOTOS)} reference photo${Math.min(photos.length,MAX_AGENT_PHOTOS)===1?"":"s"} attached`} title={`${Math.min(photos.length,MAX_AGENT_PHOTOS)} reference photo${Math.min(photos.length,MAX_AGENT_PHOTOS)===1?"":"s"} attached`}><ImageIcon aria-hidden="true" size={15}/><span aria-hidden="true">{Math.min(photos.length,MAX_AGENT_PHOTOS)}</span></span>:null}</p>}
     <div className="aquascape-chat-thread" aria-live="polite" aria-busy={waiting}>
       {!thread.length?<div className="aquascape-chat-empty"><p className="aquascape-chat-empty-prompt" aria-label={DREAM_PROMPT}>{DREAM_PROMPT.slice(0,promptLength)}</p></div>:thread.map(item=>item.kind==="user"?<div className="aquascape-chat-user" key={item.id}>{item.body}</div>:<article className="aquascape-chat-reply" data-error={item.error||undefined} key={item.id}><p><strong>{item.label}</strong><span>{item.sub}</span></p><div>{item.body}</div></article>)}
       {trace&&<ThinkingTrace key={trace.id} active={waiting} elapsed={trace.elapsed}/>}
     </div>
     <div className="aquascape-chat-composer" onClick={()=>input.current?.focus()}>
       <input ref={input} value={draft} maxLength={3000} onChange={event=>setDraft(event.target.value)} onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();void send();}}} placeholder={context==="brief"?"Describe your aquascape…":"Describe how to use these photos…"} aria-label="Aquascape message"/>
-      <Button type="button" size="icon-sm" aria-label="Generate aquarium" onClick={()=>void send()} disabled={!draft.trim()||waiting}><SendHorizontal size={16}/></Button>
+      <Button type="button" size="icon-sm" className={waiting?"aquascape-chat-stop":undefined} aria-label={waiting?"Stop generation":"Generate aquarium"} title={waiting?"Stop generation":"Generate aquarium"} onClick={()=>waiting?abort.current?.abort():void send()} disabled={!waiting&&!draft.trim()}>{waiting?<Square size={14} fill="currentColor" aria-hidden="true"/>:<SendHorizontal size={16}/>}</Button>
     </div>
   </section>;
 }

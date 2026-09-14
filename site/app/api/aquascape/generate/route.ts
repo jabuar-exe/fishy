@@ -56,11 +56,11 @@ export async function POST(request:Request){
     const apiKey=process.env.OPENAI_API_KEY;
     if(!apiKey)throw new RequestError(503,"Aquarium generation is not configured yet.");
     const body=aquascapeRequestSchema.parse(await readJson(request));
-    const result=await generateAquascape(body,{apiKey,model:process.env.OPENAI_MODEL,userIdentifier:await safetyIdentifier(identity)});
+    const result=await generateAquascape(body,{apiKey,model:process.env.OPENAI_MODEL,userIdentifier:await safetyIdentifier(identity),signal:request.signal});
     return json({ok:true,baseRevision:body.scene.revision,...result});
   } catch(error) {
     if(error instanceof RequestError)return json({ok:false,error:error.message},error.status);
-    if(error instanceof AquascapeAgentError)return json({ok:false,error:error.message},error.code==="invalid_plan"?422:502);
+    if(error instanceof AquascapeAgentError)return json({ok:false,error:error.message,retryable:error.retryable},error.code==="invalid_plan"?422:error.code==="unavailable"?499:502);
     if(error instanceof Error&&error.name==="ZodError")return json({ok:false,error:"The aquarium request contains invalid or unsupported data."},400);
     return json({ok:false,error:"Aquarium generation failed safely. Please try again."},500);
   }

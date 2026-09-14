@@ -232,7 +232,7 @@ export function GalleryWorkspace({ entries, savedIds, onSave, creation }: {
     <div className="gallery-browse" hidden={comparing}>
       <header className="gallery-header">
         <div><h2 ref={galleryHeading} tabIndex={-1}>Gallery</h2><p>Find a reference. Compare it with your creation.</p></div>
-        <div>{photoInput("reference", "Compare my reference photo")}<small>Photos stay in this session.</small></div>
+        <div>{photoInput("reference", "Compare my reference photo")}</div>
       </header>
       <div className="gallery-filters">
         <label className="gallery-search"><Search size={18} /><input aria-label="Search gallery" placeholder="Creator, country, title, or year" value={query} onChange={e => { setQuery(e.target.value); setPage(0); }} /></label>
@@ -241,7 +241,7 @@ export function GalleryWorkspace({ entries, savedIds, onSave, creation }: {
         <label>Rank<select aria-label="Gallery rank" value={rank} onChange={e => { setRank(e.target.value); setPage(0); }}><option value="all">All ranks</option><option value="1">Grand prize</option><option value="10">Top 10</option><option value="60">Top 60</option><option value="100">Top 100</option></select></label>
         <label className="gallery-saved-filter"><input type="checkbox" checked={savedOnly} onChange={e => { setSavedOnly(e.target.checked); setPage(0); }} />Saved ideas</label>
       </div>
-      <div className="gallery-results-heading">{iaplcImagesState === "loading" ? <><span role="status">Preparing preview cards</span><span>Every gallery entry includes an aquascape image.</span></> : <><span role="status">{filtered.length.toLocaleString()} references</span><span>{iaplcImagesState === "ready" ? "Only image-backed aquascapes are shown." : "Showing original studies while the photo archive is unavailable."}</span></>}</div>
+      <div className="gallery-results-heading">{iaplcImagesState === "loading" ? <span role="status">Preparing preview cards</span> : <span role="status">{filtered.length.toLocaleString()} references</span>}</div>
       {iaplcImagesState === "loading" ? <GalleryLoadingScreen /> : filtered.length ? <div className="gallery-grid">{filtered.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE).map((entry, index) => <Card role="article" className="gallery-card" key={entry.id} style={{ animationDelay: `${80 + Math.min(index, 8) * 48}ms` }}>
         <div className="gallery-thumbnail"><ReferenceImage key={entry.preview} src={entry.preview!} alt={entry.provider === "IAPLC" ? `${titleOf(entry)} by ${entry.creator || "entrant not listed"}` : `${entry.title}, original Fishy render`} onUnavailable={() => markPreviewUnavailable(entry.id)} /></div>
         <CardContent className="gallery-card-body">

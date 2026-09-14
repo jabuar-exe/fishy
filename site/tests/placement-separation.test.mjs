@@ -6,7 +6,7 @@ import {boundsOf,footprintRadius,outsideObjects,separatePlacements} from "../lib
 import {initialScene} from "../lib/scene.ts";
 
 const design={composition:"triangular",focalIndex:0,sightline:"Open from the front right toward the branch.",openForegroundMin:.4,mood:"lush",maintenanceTier:"medium",story:"A shaded riverbank under an overhanging branch."};
-const planWith=components=>({title:"Separation study",summary:"A layout used to exercise placement separation.",design,components});
+const planWith=components=>({title:"Separation study",summary:"A layout used to exercise placement separation.",design,components,influencesUsed:[]});
 const component=(catalogId,name,x,z)=>({catalogId,name,x,z,scale:1,rotationDegrees:0});
 const generatedOf=result=>result.scene.objects.filter(object=>!object.protected);
 const gap=(a,b)=>Math.hypot(a.position[0]-b.position[0],a.position[2]-b.position[2]);
