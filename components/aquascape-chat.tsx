@@ -93,9 +93,12 @@ export function AquascapeChat({scene,photos,inspirations,onGenerated,onBrowseRef
       const attribution=usedNames.length?`\n\nInfluences used: ${usedNames.join(" · ")}.`:"";
       setThread(items=>[...items,{id:crypto.randomUUID(),kind:"studio",label:`Aquarium generated${result.attempts>1?` after ${result.attempts} attempts`:""}`,sub:`${result.componentCount} components${receipt?` · influenced by ${receipt}`:""}`,body:result.summary+attribution}]);
     } catch(error) {
-      if(controller.signal.aborted)return;
+      if(controller.signal.aborted){
+        setThread(items=>[...items,{id:crypto.randomUUID(),kind:"studio",label:"Generation cancelled",sub:"No scene changes applied",body:"Your current aquarium was kept unchanged.",error:true}]);
+        return;
+      }
       setThread(items=>[...items,{id:crypto.randomUUID(),kind:"studio",label:"Generation stopped",sub:"No scene changes applied",body:error instanceof Error?error.message:"The aquarium could not be generated.",error:true}]);
-    } finally {if(abort.current===controller)abort.current=null;sending.current=false;setWaiting(false);setTrace(value=>value&&value.elapsed===null?{...value,elapsed:(performance.now()-started)/1000}:value);queueMicrotask(()=>input.current?.focus());}
+    } finally {if(abort.current===controller)abort.current=null;sending.current=false;setWaiting(false);setTrace(value=>controller.signal.aborted?null:value&&value.elapsed===null?{...value,elapsed:(performance.now()-started)/1000}:value);queueMicrotask(()=>input.current?.focus());}
   };
   const attach=async(file:File)=>{await onAttachPhoto(file);setContext("photos");input.current?.focus();};
   return <section className="aquascape-chat" aria-label="Aquascape assistant">
