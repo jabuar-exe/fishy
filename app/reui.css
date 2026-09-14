@@ -331,9 +331,12 @@
   outline: 0;
 }
 
-.studio .material-browser .search-field:focus-within {
+.studio .materials-panel .search-field:focus-within,
+.studio .materials-panel .search-field input:focus,
+.studio .materials-panel .search-field input:focus-visible {
   border-color: var(--reui-line-strong);
   box-shadow: none;
+  outline: 0;
 }
 
 .studio .tank-presets,
