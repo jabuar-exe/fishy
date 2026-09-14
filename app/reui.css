@@ -331,6 +331,11 @@
   outline: 0;
 }
 
+.studio .material-browser .search-field:focus-within {
+  border-color: var(--reui-line-strong);
+  box-shadow: none;
+}
+
 .studio .tank-presets,
 .studio .placement-tools,
 .studio .object-direct-actions,
@@ -704,6 +709,31 @@
 
 .aquascape-chat-composer button {
   border-radius: 7px;
+}
+
+.aquascape-chat-photo-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 1px;
+  color: var(--reui-accent-strong);
+  vertical-align: -2px;
+}
+
+.aquascape-chat-photo-hint > span {
+  font-size: .75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.aquascape-chat-composer .aquascape-chat-stop {
+  background: var(--reui-ink);
+  color: var(--reui-surface);
+}
+
+.photo-included {
+  display: inline-flex;
+  align-items: center;
+  color: var(--reui-accent-strong);
 }
 
 /* Originals and mobile navigation stay visually tied to the same component system. */

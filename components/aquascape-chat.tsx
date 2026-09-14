@@ -1,7 +1,7 @@
 "use client";
 
 import {useEffect,useRef,useState} from "react";
-import {Check,ChevronRight,ImagePlus,Search,SendHorizontal} from "lucide-react";
+import {Check,ChevronRight,ImageIcon,ImagePlus,Search,SendHorizontal,Square} from "lucide-react";
 import type {SceneRecord} from "@/lib/scene";
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
@@ -113,15 +113,14 @@ export function AquascapeChat({scene,photos,inspirations,onGenerated,onBrowseRef
         <input ref={fileInput} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={event=>{const file=event.target.files?.[0];event.target.value="";if(file)void attach(file);}}/>
       </div>
     </header>
-    {(inspirations.length||photos.length)&&<p className="aquascape-chat-context" role="status">{inspirations.length?`${inspirations.length} saved idea${inspirations.length===1?"":"s"} included`:""}{inspirations.length&&photos.length?" · ":""}{photos.length?`${Math.min(photos.length,MAX_AGENT_PHOTOS)} photo${Math.min(photos.length,MAX_AGENT_PHOTOS)===1?"":"s"} included`:""}</p>}
+    {(inspirations.length||photos.length)&&<p className="aquascape-chat-context" role="status">{inspirations.length?`${inspirations.length} saved idea${inspirations.length===1?"":"s"} included`:""}{inspirations.length&&photos.length?" · ":""}{photos.length?<span className="aquascape-chat-photo-hint" aria-label={`${Math.min(photos.length,MAX_AGENT_PHOTOS)} reference photo${Math.min(photos.length,MAX_AGENT_PHOTOS)===1?"":"s"} attached`} title={`${Math.min(photos.length,MAX_AGENT_PHOTOS)} reference photo${Math.min(photos.length,MAX_AGENT_PHOTOS)===1?"":"s"} attached`}><ImageIcon aria-hidden="true" size={15}/><span aria-hidden="true">{Math.min(photos.length,MAX_AGENT_PHOTOS)}</span></span>:null}</p>}
     <div className="aquascape-chat-thread" aria-live="polite" aria-busy={waiting}>
       {!thread.length?<div className="aquascape-chat-empty"><p className="aquascape-chat-empty-prompt" aria-label={DREAM_PROMPT}>{DREAM_PROMPT.slice(0,promptLength)}</p></div>:thread.map(item=>item.kind==="user"?<div className="aquascape-chat-user" key={item.id}>{item.body}</div>:<article className="aquascape-chat-reply" data-error={item.error||undefined} key={item.id}><p><strong>{item.label}</strong><span>{item.sub}</span></p><div>{item.body}</div></article>)}
       {trace&&<ThinkingTrace key={trace.id} active={waiting} elapsed={trace.elapsed}/>}
     </div>
     <div className="aquascape-chat-composer" onClick={()=>input.current?.focus()}>
       <input ref={input} value={draft} maxLength={3000} onChange={event=>setDraft(event.target.value)} onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();void send();}}} placeholder={context==="brief"?"Describe your aquascape…":"Describe how to use these photos…"} aria-label="Aquascape message"/>
-      {waiting&&<Button type="button" variant="ghost" size="xs" aria-label="Cancel generation" onClick={()=>abort.current?.abort()}>Cancel</Button>}
-      <Button type="button" size="icon-sm" aria-label="Generate aquarium" onClick={()=>void send()} disabled={!draft.trim()||waiting}><SendHorizontal size={16}/></Button>
+      <Button type="button" size="icon-sm" className={waiting?"aquascape-chat-stop":undefined} aria-label={waiting?"Stop generation":"Generate aquarium"} title={waiting?"Stop generation":"Generate aquarium"} onClick={()=>waiting?abort.current?.abort():void send()} disabled={!waiting&&!draft.trim()}>{waiting?<Square size={14} fill="currentColor" aria-hidden="true"/>:<SendHorizontal size={16}/>}</Button>
     </div>
   </section>;
 }
