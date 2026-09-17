@@ -21,6 +21,7 @@ export const expandedOrganicProfiles:Record<string,OrganicProfile>={
   "rock-black-abyss":{type:"organic",nominalSizeCm:[8,30],scaleBasis:"supplier-piece",morphology:["near-black","irregular mass","sharp contrast"]},
   "rock-blue-mountain":{type:"organic",nominalSizeCm:[10,35],scaleBasis:"supplier-piece",morphology:["blue-grey","horizontal strata","ridge profile"]},
   "rock-wio-midnight":{type:"organic",nominalSizeCm:[8,30],scaleBasis:"supplier-piece",morphology:["vesicular pores","lava texture","near-black"]},
+  "rock-ryuoh-stone":{type:"organic",nominalSizeCm:[8,35],scaleBasis:"supplier-piece",morphology:["blue-grey tone","pale calcite seams","jagged stratification"]},
   "plant-rotala-rotundifolia":{type:"organic",nominalSizeCm:[15,30],scaleBasis:"mature-growth",morphology:["opposite leaves","round emersed leaf cue","upright stems"]},
   "plant-rotala-hra":{type:"organic",nominalSizeCm:[20,50],scaleBasis:"mature-growth",morphology:["narrow leaves","arching stems","orange-red tips"]},
   "plant-ludwigia-super-red":{type:"organic",nominalSizeCm:[20,50],scaleBasis:"mature-growth",morphology:["broad opposite leaves","dense stem bush","red foliage"]},
@@ -31,6 +32,10 @@ export const expandedOrganicProfiles:Record<string,OrganicProfile>={
   "plant-helanthium-tenellum":{type:"organic",nominalSizeCm:[5,15],scaleBasis:"mature-growth",morphology:["short ribbon leaves","runners","foreground lawn"]},
   "plant-vallisneria-nana":{type:"organic",nominalSizeCm:[30,80],scaleBasis:"mature-growth",morphology:["long narrow ribbons","basal rosette","runners"]},
   "plant-taxiphyllum-barbieri":{type:"organic",nominalSizeCm:[3,10],scaleBasis:"mature-growth",morphology:["irregular branching","small lateral leaves","attached mat"]},
+  "plant-echinodorus-bleherae":{type:"organic",nominalSizeCm:[20,50],scaleBasis:"mature-growth",morphology:["broad lanceolate leaves","strong midrib","large basal rosette"]},
+  "plant-microsorum-pteropus":{type:"organic",nominalSizeCm:[15,30],scaleBasis:"mature-growth",morphology:["creeping rhizome","wavy strap fronds","hardscape attachment"]},
+  "plant-cabomba-caroliniana":{type:"organic",nominalSizeCm:[30,80],scaleBasis:"mature-growth",morphology:["fan-shaped divided leaves","dense rounded whorls","upright stems"]},
+  "plant-sagittaria-subulata":{type:"organic",nominalSizeCm:[5,30],scaleBasis:"mature-growth",morphology:["tapered ribbon leaves","basal rosette","spreading runners"]},
 };
 
 const natural=(kind:OrganicCatalogKind,id:string,label:string,form:string,color:string,role:string,tags:string[],publisher:string,url:string,identity:string):CatalogEntry=>({
@@ -47,8 +52,8 @@ const substrate=(id:string,label:string,color:string,grain:string,depth:number,r
   system:{type:"substrate",grain,depth,roughness} satisfies SubstrateProfile,
 });
 
-const filter=(id:string,label:string,color:string,mount:"rear"|"rim",silhouette:"canister"|"hob",flowClass:FilterProfile["flowClass"],flowStrength:number,outlet:FilterProfile["outlet"],nominalDimensionsCm:FilterProfile["nominalDimensionsCm"],ratedFlowLph:number,compatibleVolumeLitres:FilterProfile["compatibleVolumeLitres"],publisher:string,url:string):CatalogEntry=>({
-  id,displayLabel:label,kind:"filter",browseTags:["filter",silhouette,flowClass.toLowerCase(),"water movement"],placementRole:mount==="rim"?"rear-rim mounted return":"rear-mounted intake and return",rendererForm:silhouette,status:"supported_procedural",color,
+const filter=(id:string,label:string,color:string,mount:"rear"|"rim"|"internal",silhouette:"canister"|"hob"|"internal",flowClass:FilterProfile["flowClass"],flowStrength:number,outlet:FilterProfile["outlet"],nominalDimensionsCm:FilterProfile["nominalDimensionsCm"],ratedFlowLph:number,compatibleVolumeLitres:FilterProfile["compatibleVolumeLitres"],publisher:string,url:string):CatalogEntry=>({
+  id,displayLabel:label,kind:"filter",browseTags:["filter",silhouette,flowClass.toLowerCase(),"water movement"],placementRole:mount==="rim"?"rear-rim mounted return":mount==="internal"?"rear-corner internal filter":"rear-mounted intake and return",rendererForm:silhouette,status:"supported_procedural",color,
   source:{publisher,url},identityCaveat:"Dimensions, fit band, pump output, and mounting follow the linked manufacturer source. The hoses are a procedural installation path, not a bespoke plumbing plan.",
   renderingLimit:"A rigid, dimensioned procedural housing, intake, and return. Fishy bounds the source-listed pump output into a stable visual water model rather than certifying performance.",
   system:{type:"filter",mount,silhouette,flowClass,flowStrength,outlet,nominalDimensionsCm,ratedFlowLph,compatibleVolumeLitres} satisfies FilterProfile,
@@ -83,6 +88,7 @@ export const catalogExpansion:CatalogEntry[]=[
   natural("rock","rock-black-abyss","CaribSea Black Abyss Stone","basalt","#252b2e","near-black irregular contrast rock",["black","irregular","contrast"],"CaribSea","https://caribsea.com/freshwater-substrates/","The visual name does not imply a tested geological classification."),
   natural("rock","rock-blue-mountain","CaribSea Blue Mountain Stone","stratified","#596e7d","blue-grey stratified ridge stone",["blue-grey","strata","ridge"],"CaribSea","https://caribsea.com/freshwater-substrates/","Strata direction and edge weathering are procedural."),
   natural("rock","rock-wio-midnight","WIO Midnight Stone","vesicular","#242529","jet-black porous lava hardscape",["lava","porous","midnight"],"WIO","https://www.wio.eco/product/midnight-stone-kit","The counterpart is a natural porous rock; individual cavities vary."),
+  natural("rock","rock-ryuoh-stone","WIO Ryuoh Stone","stratified","#6d7474","jagged blue-grey ridge with pale seams",["ryuoh","jagged","seamed"],"WIO","https://www.wio.eco/product/ryuoh-gravel","Natural seam placement and fracture profiles vary by piece."),
 
   natural("plant","plant-rotala-rotundifolia","Rotala rotundifolia","stem","#6d9a53","fine background stem grouping",["stem","green-red","background"],"Tropica","https://tropica.com/en/plants/plantdetails/Rotalarotundifolia%28033%29/4447","Growth colour changes with cultivation and light; the preview is a morphology cue."),
   natural("plant","plant-rotala-hra","Rotala h'ra","stem","#c35c47","warm red stem accent",["stem","red","accent"],"Tropica","https://tropica.com/en/plants/","Trade-name and colour response follow grow conditions, not a colour guarantee."),
@@ -94,6 +100,10 @@ export const catalogExpansion:CatalogEntry[]=[
   natural("plant","plant-helanthium-tenellum","Helanthium tenellum","grass","#78975a","short grassy foreground",["grass","foreground","runner"],"Tropica","https://tropica.com/en/plants/","The preview represents a planted clump rather than a spread rate."),
   natural("plant","plant-vallisneria-nana","Vallisneria nana","grass","#557e4a","long ribbon-leaf background",["ribbon","grass","background"],"Tropica","https://tropica.com/en/plants/","Leaf length depends on tank depth and cultivation."),
   natural("plant","plant-taxiphyllum-barbieri","Taxiphyllum barbieri","moss","#4c7d43","irregular Java moss attachment",["moss","attachment","texture"],"Tropica","https://tropica.com/en/plants/","Common-name moss morphology varies with flow and trimming."),
+  natural("plant","plant-echinodorus-bleherae","Echinodorus 'Bleherae'","broadleaf","#4f8244","large broadleaf background rosette",["amazon sword","broadleaf","background"],"Tropica","https://tropica.com/en/plants/plantdetails/Echinodorus%27Bleherae%27%28071%29/4512","Leaf stature depends on aquarium size, nutrition, and pruning."),
+  natural("plant","plant-microsorum-pteropus","Microsorum pteropus","fern","#46733c","rhizome-mounted Java fern",["java fern","epiphyte","wavy"],"Tropica","https://tropica.com/en/plants/","Frond shape is a representative mature-growth cue."),
+  natural("plant","plant-cabomba-caroliniana","Cabomba caroliniana","stem","#70a64f","dense rounded feathery background mass",["cabomba","feathery","whorl"],"Tropica","https://tropica.com/en/plants/","The procedural whorls represent the plant's fine divided foliage rather than every leaflet."),
+  natural("plant","plant-sagittaria-subulata","Sagittaria subulata","grass","#719653","runner-spreading ribbon foreground",["sagittaria","runner","ribbon"],"Tropica","https://tropica.com/en/plants/plantdetails/4530/4530","Leaf height and runner density vary with light and trimming."),
 
   substrate("substrate-ada-amazonia-v2","ADA Aqua Soil Amazonia Ver.2","#3a332c","dark porous granules",.045,.94,"ADA","https://www.adana.co.jp/en/release/detail?id=771"),
   substrate("substrate-ada-amazonia-powder","ADA Aqua Soil Amazonia Ver.2 Powder","#302b27","fine dark granules",.035,.92,"ADA","https://www.adana.co.jp/jp/contents/products/na_substrate/detail02.html"),
@@ -105,6 +115,8 @@ export const catalogExpansion:CatalogEntry[]=[
   substrate("substrate-seachem-flourite-black","Seachem Flourite Black","#282a28","charcoal clay gravel",.045,.96,"Seachem","https://ftp.seachem.com/flourite.php"),
   substrate("substrate-caribsea-eco-black","CaribSea Eco-Planted Black","#272827","black basaltic grains",.04,.94,"CaribSea","https://caribsea.com/freshwater-substrates/"),
   substrate("substrate-caribsea-eco-red","CaribSea Eco-Planted Red","#7a3f30","red laterite gravel",.04,.93,"CaribSea","https://caribsea.com/freshwater-substrates/"),
+  substrate("substrate-ada-la-plata-sand","ADA La Plata Sand","#c7b17e","natural fine sand with mixed grains",.032,.88,"ADA","https://www.adana.co.jp/en/contents/products/na_substrate/detail03.html"),
+  substrate("substrate-caribsea-peace-river","CaribSea Peace River","#a98b61","small smooth river gravel",.035,.9,"CaribSea","https://caribsea.com/freshwater-substrates/"),
 
   filter("filter-oase-biomaster-150","Oase BioMaster² Thermo 150","#333b3a","rear","canister","Moderate",.42,"jet",[24,24,31.5],850,[0,150],"Oase","https://www.oase.com/en-US/aquarium/biomaster-thermo-150"),
   filter("filter-oase-biomaster-250","Oase BioMaster² Thermo 250","#35413d","rear","canister","Moderate",.5,"jet",[24,24,37],900,[0,250],"Oase","https://www.oase.com/en/aquarium/biomaster-thermo-250-gb"),
@@ -116,6 +128,7 @@ export const catalogExpansion:CatalogEntry[]=[
   filter("filter-eheim-classic-250","Eheim classic 250","#34684b","rear","canister","Gentle",.32,"line",[16,16,35.5],440,[80,250],"Eheim","https://eheim.com/media/3e/b6/2a/1737110772/EHEIM_Haendlerkatalog_EN_0923.pdf"),
   filter("filter-seachem-tidal-35","Seachem Tidal 35","#283238","rim","hob","Moderate",.45,"sheet",[15.5,13,18],500,[0,130],"Seachem","https://www.seachem.com/tidal-compare.php"),
   filter("filter-seachem-tidal-55","Seachem Tidal 55","#253138","rim","hob","High",.6,"sheet",[20.5,15.5,21.4],1000,[0,200],"Seachem","https://www.seachem.com/tidal-compare.php"),
+  filter("filter-oase-bioplus-thermo-100","Oase BioPlus Thermo 100","#2e3937","internal","internal","Moderate",.46,"line",[12,11,27],500,[0,100],"Oase","https://www.oase.com/en-US/aquarium/bioplus-thermo-100"),
 
   light("light-ada-solar-rgb-ii","ADA Solar RGB II","#25282b","suspended","pendant",7000,.78,.9,[43,28,6.4],[60,90],135,"ADA","https://www.adana.co.jp/en/contents/products/na_lighting/detail05.html"),
   {...light("light-ada-aquasky-rgb-ii-60","ADA AQUASKY RGB II 60","#282d31","rim","bar",9500,.66,.82,[60,13,13],[60,60],108,"ADA","https://www.adana.co.jp/jp/contents/products/na_lighting/aquasky_rgb2/index.html"),browseTags:["light","bar","8000–11000K default CCT","108W rated power","0–66W consumption","planted tank"],identityCaveat:"ADA lists an approximately 8,000–11,000 K default-mode range, 108 W rated power, and 0–66 W power consumption. Fishy uses the 9,500 K midpoint and 66% normalized visual intensity as bounded rendering inputs, not electrical or spectral measurements."},

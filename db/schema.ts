@@ -1,4 +1,8 @@
-// Intentionally empty by default.
-// Add Drizzle tables here when the site actually needs a database.
-// See examples/d1/db/schema.ts for an opt-in example.
-export {};
+import {integer,sqliteTable,text} from "drizzle-orm/sqlite-core";
+
+/** Shared production quota state. Identity values are SHA-256 digests, never raw account ids or IPs. */
+export const generationRateLimits=sqliteTable("generation_rate_limits",{
+  identityHash:text("identity_hash").primaryKey(),
+  windowStarted:integer("window_started").notNull(),
+  count:integer("count").notNull(),
+});

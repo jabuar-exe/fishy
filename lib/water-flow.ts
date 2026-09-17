@@ -40,6 +40,8 @@ export const DEFAULT_WATER_FLOW:WaterFlowParameters={
 export class WaterFlow {
   readonly columns:number;
   readonly rows:number;
+  readonly surfaceWidth:number;
+  readonly surfaceDepth:number;
   readonly heights:Float32Array;
   readonly velocities:Float32Array;
   readonly parameters:WaterFlowParameters;
@@ -53,9 +55,10 @@ export class WaterFlow {
   private useLegacyDefaultInlet:boolean;
 
   constructor(columns:number,rows:number,width:number,depth:number,parameters:Partial<WaterFlowParameters>={}){
-    if(columns<2||rows<2||width<=0||depth<=0)throw new Error("Water flow requires a positive surface with at least two rows and columns.");
-    this.columns=columns;this.rows=rows;this.parameters={...DEFAULT_WATER_FLOW,...parameters};this.useLegacyDefaultInlet=parameters.sources===undefined;this.sources=this.normaliseSources(parameters.sources??[]);
-    if(this.parameters.fixedTimeStep<=0||this.parameters.maxFrameTime<=0||!Number.isInteger(this.parameters.maxSubSteps)||this.parameters.maxSubSteps<1||this.parameters.gravity<0||this.parameters.effectiveDepth<0||this.parameters.damping<0||this.parameters.maxDisplacement<=0)throw new Error("Water flow parameters must describe a stable positive time and surface scale.");
+    if(!Number.isInteger(columns)||!Number.isInteger(rows)||columns<2||rows<2||!Number.isFinite(width)||!Number.isFinite(depth)||width<=0||depth<=0)throw new Error("Water flow requires a positive surface with at least two rows and columns.");
+    this.columns=columns;this.rows=rows;this.surfaceWidth=width;this.surfaceDepth=depth;this.parameters={...DEFAULT_WATER_FLOW,...parameters};this.useLegacyDefaultInlet=parameters.sources===undefined;this.sources=this.normaliseSources(parameters.sources??[]);
+    const finiteParameters=[this.parameters.fixedTimeStep,this.parameters.maxFrameTime,this.parameters.maxSubSteps,this.parameters.gravity,this.parameters.effectiveDepth,this.parameters.damping,this.parameters.inletStrength,this.parameters.inletFrequency,this.parameters.initialDisturbance,this.parameters.maxDisplacement];
+    if(finiteParameters.some(value=>!Number.isFinite(value))||this.parameters.fixedTimeStep<=0||this.parameters.maxFrameTime<=0||!Number.isInteger(this.parameters.maxSubSteps)||this.parameters.maxSubSteps<1||this.parameters.gravity<0||this.parameters.effectiveDepth<0||this.parameters.damping<0||this.parameters.maxDisplacement<=0)throw new Error("Water flow parameters must describe a stable positive time and surface scale.");
     const size=columns*rows;
     this.heights=new Float32Array(size);this.velocities=new Float32Array(size);
     this.nextHeights=new Float32Array(size);this.nextVelocities=new Float32Array(size);

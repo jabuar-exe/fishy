@@ -22,12 +22,13 @@ test("the original photographed Materials entries retain local attribution",()=>
   }
 });
 
-test("expanded material catalog has 30 organic additions and 10 products per installed-system section",()=>{
-  assert.equal(catalogEntries.length,80);
-  assert.equal(catalogEntries.filter(isOrganicCatalogEntry).length,50);
+test("expanded material catalog includes reference-matched organics and grounded installed systems",()=>{
+  assert.equal(catalogEntries.length,88);
+  assert.equal(catalogEntries.filter(isOrganicCatalogEntry).length,55);
+  const expected={substrate:12,filter:11,light:10};
   for(const kind of ["substrate","filter","light"]){
     const entries=catalogEntries.filter(entry=>entry.kind===kind);
-    assert.equal(entries.length,10,`${kind} needs ten real-world counterparts`);
+    assert.equal(entries.length,expected[kind],`${kind} needs the expected real-world counterparts`);
     for(const entry of entries){
       assert.ok(isSystemCatalogEntry(entry));
       assert.equal(entry.system.type,kind);
@@ -36,7 +37,7 @@ test("expanded material catalog has 30 organic additions and 10 products per ins
       assert.match(entry.renderingLimit,/./);
     }
   }
-  for(const entry of catalogEntries.slice(20,50)){
+  for(const entry of catalogEntries.filter(item=>item.organic)){
     assert.ok(isOrganicCatalogEntry(entry));
     assert.match(entry.source.url,/^https:\/\//);
   }

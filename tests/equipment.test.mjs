@@ -4,7 +4,7 @@ import * as T from "three";
 import {catalogEntries} from "../lib/catalog.ts";
 import {activeLights,equipmentCompatibilityMessage,filterFlowSources,installEquipment,systemTransform} from "../lib/equipment.ts";
 import {buildEquipmentModel,buildSystemPreview,lightFixtureGeometry} from "../lib/equipment-models.ts";
-import {aquariumLightingState,aquariumSpotlightOrigins} from "../lib/aquarium-stage.ts";
+import {aquariumLightingState,aquariumSpotlightOrigins,populateAquarium} from "../lib/aquarium-stage.ts";
 import {initialScene,validateScene} from "../lib/scene.ts";
 import {WaterFlow} from "../lib/water-flow.ts";
 
@@ -42,6 +42,30 @@ test("installed filters seed directional flow and installed lights retain fixed 
   const filterPlacement=systemTransform(scene.equipment[0],scene),lightPlacement=systemTransform(installedLight.instance,scene);
   assert(filterPlacement.position[2]<-scene.tank.depth/2+.01,"filter stays at the rear tank boundary");
   assert(lightPlacement.position[1]>scene.tank.height,"light stays above the waterline");
+});
+
+test("the Oase internal filter mounts inside the rear pane with a source-grounded envelope",()=>{
+  const product=entry("filter-oase-bioplus-thermo-100"),scene=installEquipment(initialScene(),product,"internal-filter"),instance=scene.equipment[0];
+  assert.equal(instance.mount,"rear-internal");assert.deepEqual(product.system.nominalDimensionsCm,[12,11,27]);assert.equal(product.system.ratedFlowLph,500);
+  const model=buildEquipmentModel(instance,scene,product),body=model.getObjectByName("Equipment body"),bounds=boundsOf(body);
+  try{assert.ok(body);near(sizeOf(body).x,.12);near(sizeOf(body).y,.27);near(sizeOf(body).z,.11);assert(bounds.min.z>=-scene.tank.depth/2-1e-6);assert(bounds.max.z<=scene.tank.depth/2+1e-6);const fullBounds=boundsOf(model);assert(fullBounds.min.y>=-1e-6);assert(fullBounds.max.y<=scene.tank.height+1e-6);assert(fullBounds.min.z>=-scene.tank.depth/2-1e-6);assert(fullBounds.max.z<=scene.tank.depth/2+1e-6);assert.equal(filterFlowSources(scene).length,1);}
+  finally{dispose(model);}
+});
+
+test("an internal filter is rejected when its complete rigid envelope cannot fit the tank",()=>{
+  const product=entry("filter-oase-bioplus-thermo-100"),installed=installEquipment(initialScene(),product,"internal-filter"),smallTank={...installed.tank,depth:.1,height:.15};
+  assert.match(equipmentCompatibilityMessage(product,smallTank),/at least 11 cm tank depth and 27 cm tank height/);
+  assert.throws(()=>installEquipment({...initialScene(),tank:smallTank},product,"too-large"),/at least 11 cm tank depth and 27 cm tank height/);
+  assert.throws(()=>validateScene({...installed,tank:smallTank}),/at least 11 cm tank depth and 27 cm tank height/);
+});
+
+test("substrate grains apply their selected color exactly once",()=>{
+  const product=entry("substrate-ada-la-plata-sand"),scene={...initialScene(),substrate:product.system.depth,substrateCatalogId:product.id},content=new T.Group();
+  populateAquarium(content,scene,false);
+  const grains=content.children.find(child=>child.isInstancedMesh);assert.ok(grains);assert.equal(grains.material.color.getHexString(),"ffffff");
+  const actual=new T.Color(),base=new T.Color(product.color);grains.getColorAt(0,actual);
+  const ratios=[actual.r/base.r,actual.g/base.g,actual.b/base.b];near(ratios[0],ratios[1]);near(ratios[1],ratios[2]);
+  content.traverse(node=>{if(node.isMesh){node.geometry.dispose();const materials=Array.isArray(node.material)?node.material:[node.material];materials.forEach(material=>material.dispose());}});
 });
 
 test("every system product has a procedural rigid or granular preview",()=>{

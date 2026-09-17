@@ -50,11 +50,17 @@ export function createAquariumStage(renderer:T.WebGLRenderer) {
     const origins=aquariumSpotlightOrigins(record);
     const state=aquariumLightingState(record);
     hemi.intensity=state.hemi;sun.intensity=state.sun;fill.intensity=state.fill;renderer.toneMappingExposure=state.exposure;
-    installed.slice(0,4).forEach(({entry},index)=>{
+    installed.slice(0,4).forEach(({instance,entry},index)=>{
       if(entry.system?.type!=="light")return;
       const profile=entry.system,{width,depth}=record.tank,[x,y,z]=origins[index],color=kelvinColor(profile.kelvin);
-      const fixtureLight=new T.SpotLight(color,1.5+profile.intensity*3.2,Math.max(width,depth)*2.5,Math.PI*(.19+profile.beam*.19),.45,1.2);
-      fixtureLight.position.set(x,y,z);fixtureLight.target.position.set(x,record.substrate+.012,z);fixtureLight.castShadow=index<2;fixtureLight.shadow.mapSize.set(1024,1024);fixtureLight.shadow.bias=-.0002;installedLightRig.add(fixtureLight,fixtureLight.target);
+      const fixture=lightFixtureGeometry(instance,record,entry),sampleCount=Math.max(1,Math.min(3,Math.ceil(fixture.bodySize[0]/Math.max(.28,width*.42))));
+      for(let sample=0;sample<sampleCount;sample++){
+        const offset=sampleCount===1?0:(sample/(sampleCount-1)-.5)*fixture.bodySize[0]*.72;
+        const fixtureLight=new T.SpotLight(color,(1.5+profile.intensity*3.2)/sampleCount,Math.max(width,depth)*2.5,Math.PI*(.19+profile.beam*.19),.45,1.2);
+        fixtureLight.position.set(x+offset,y,z);fixtureLight.target.position.set(x+offset*.42,record.substrate+.012,z);fixtureLight.castShadow=index<2&&sample===Math.floor(sampleCount/2);fixtureLight.shadow.mapSize.set(1024,1024);fixtureLight.shadow.bias=-.0002;
+        fixtureLight.shadow.camera.near=.02;fixtureLight.shadow.camera.far=Math.max(.5,y+record.tank.height);fixtureLight.shadow.camera.fov=T.MathUtils.radToDeg(fixtureLight.angle*2);
+        installedLightRig.add(fixtureLight,fixtureLight.target);
+      }
     });
   };
   return {scene,applyLighting,dispose:()=>{clearLights(installedLightRig);env.dispose();sun.shadow.map?.dispose();}};
@@ -68,10 +74,12 @@ export function populateAquarium(content:T.Group,record:SceneRecord,showWater:bo
   const base=new T.Mesh(new T.BoxGeometry(W+.016,.02,D+.016),new T.MeshStandardMaterial({color:"#101817",roughness:.8}));base.position.y=-.012;base.receiveShadow=true;content.add(base);
   const edges=new T.LineSegments(new T.EdgesGeometry(new T.BoxGeometry(W,H,D)),new T.LineBasicMaterial({color:"#a8ccc0",transparent:true,opacity:.42}));edges.position.y=H/2;content.add(edges);
   const back=new T.Mesh(new T.PlaneGeometry(W,H),new T.MeshPhysicalMaterial({color:"#315347",roughness:.2,transparent:true,opacity:.28,side:T.DoubleSide}));back.position.set(0,H/2,-D/2);content.add(back);
-  const sand=new T.Mesh(new T.BoxGeometry(W-.005,record.substrate,D-.005),surfaceMaterial("sand",substrateColor));sand.position.y=record.substrate/2;sand.receiveShadow=true;content.add(sand);
-  const pebbleGeo=new T.IcosahedronGeometry(.0022,0),pebbleMat=new T.MeshStandardMaterial({color:new T.Color(substrateColor).multiplyScalar(.83),roughness}),pebbles=new T.InstancedMesh(pebbleGeo,pebbleMat,280),matrix=new T.Matrix4();for(let i=0;i<280;i++){const x=(Math.sin(i*127.1)*43758.5453)%1,z=(Math.sin(i*269.5)*43758.5453)%1;matrix.makeTranslation(x*(W/2-.006),record.substrate,z*(D/2-.006));pebbles.setMatrixAt(i,matrix);}pebbles.receiveShadow=true;content.add(pebbles);
+  const bedMaterial=surfaceMaterial("sand",substrateColor);bedMaterial.roughness=roughness;const sand=new T.Mesh(new T.BoxGeometry(W-.005,record.substrate,D-.005),bedMaterial);sand.position.y=record.substrate/2;sand.receiveShadow=true;content.add(sand);
+  const grainName=substrateProfile?.grain??"mixed natural sand",fine=/fine|sand|powder/i.test(grainName),river=/river|gravel/i.test(grainName),grainRadius=fine?.00135:river?.0031:.00215,grainCount=Math.round(Math.max(360,Math.min(2400,520+W*D*(fine?6200:4400))));
+  const pebbleGeo=river?new T.DodecahedronGeometry(grainRadius,1):new T.IcosahedronGeometry(grainRadius,fine?0:1),pebbleMat=new T.MeshStandardMaterial({color:"#ffffff",roughness,vertexColors:true}),pebbles=new T.InstancedMesh(pebbleGeo,pebbleMat,grainCount),matrix=new T.Matrix4(),position=new T.Vector3(),quaternion=new T.Quaternion(),scale=new T.Vector3(),euler=new T.Euler();
+  const fraction=(value:number)=>value-Math.floor(value);for(let i=0;i<grainCount;i++){const x=fraction(Math.sin((i+1)*127.1)*43758.5453)-.5,z=fraction(Math.sin((i+1)*269.5)*24634.6345)-.5,jitter=.68+fraction(Math.sin((i+1)*93.7)*19341.7)*.72;position.set(x*(W-.014),record.substrate+grainRadius*(.55+jitter*.24),z*(D-.014));euler.set(i*.37,i*.91,i*.23);quaternion.setFromEuler(euler);scale.set(jitter*(river?1.32:1),jitter*(river?.68:.84),jitter*(river?1.08:1));matrix.compose(position,quaternion,scale);pebbles.setMatrixAt(i,matrix);const shade=.72+fraction(Math.sin((i+1)*51.3)*18317.1)*.55;pebbles.setColorAt(i,new T.Color(substrateColor).multiplyScalar(shade));}pebbles.instanceMatrix.needsUpdate=true;if(pebbles.instanceColor)pebbles.instanceColor.needsUpdate=true;pebbles.receiveShadow=true;content.add(pebbles);
   for(const object of record.objects){const mesh=makeObject(object);content.add(mesh);meshes.set(object.id,mesh);}
   for(const instance of record.equipment){const entry=catalogEntryById(instance.catalogId);if(!entry||!isSystemCatalogEntry(entry)||(entry.system.type!==instance.kind))continue;const mesh=buildEquipmentModel(instance,record,entry);content.add(mesh);meshes.set(instance.id,mesh);}
-  if(showWater){water=new T.Mesh(new T.PlaneGeometry(W-.008,D-.008,36,24),new T.MeshPhysicalMaterial({color:"#9dccbe",metalness:.05,roughness:.2,transparent:true,opacity:.11,side:T.DoubleSide,depthWrite:false}));water.rotation.x=-Math.PI/2;water.position.y=H-.015;water.renderOrder=2;content.add(water);}
+  if(showWater){water=new T.Mesh(new T.PlaneGeometry(W-.008,D-.008,36,24),new T.MeshPhysicalMaterial({color:"#9dccbe",metalness:0,roughness:.065,transmission:.34,thickness:.045,ior:1.333,transparent:true,opacity:.2,side:T.DoubleSide,depthWrite:false,envMapIntensity:1.2}));water.rotation.x=-Math.PI/2;water.position.y=H-.015;water.renderOrder=2;content.add(water);const lineGeometry=new T.BufferGeometry().setFromPoints([new T.Vector3(-W/2+.003,H-.014,-D/2+.003),new T.Vector3(W/2-.003,H-.014,-D/2+.003),new T.Vector3(W/2-.003,H-.014,D/2-.003),new T.Vector3(-W/2+.003,H-.014,D/2-.003)]),waterline=new T.LineLoop(lineGeometry,new T.LineBasicMaterial({color:"#c5eee8",transparent:true,opacity:.32}));waterline.renderOrder=3;content.add(waterline);}
   return {meshes,water};
 }

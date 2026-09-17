@@ -66,6 +66,24 @@ function hangOnBack(instance:EquipmentInstance,scene:Pick<SceneRecord,"tank">,en
   return fixed(group,instance);
 }
 
+function internalFilter(instance:EquipmentInstance,scene:Pick<SceneRecord,"tank">,entry:CatalogEntry) {
+  const group=new T.Group(),profile=entry.system;
+  if(!profile||profile.type!=="filter")return group;
+  const [lengthCm,depthCm,heightCm]=profile.nominalDimensionsCm,width=lengthCm/100,depth=depthCm/100,height=heightCm/100;
+  const shell=new T.MeshStandardMaterial({color:entry.color??"#263330",roughness:.35,metalness:.22}),foam=new T.MeshStandardMaterial({color:"#365e69",roughness:.88}),heater=new T.MeshStandardMaterial({color:"#202526",roughness:.25,metalness:.55}),water=poweredMaterial("#a9dbd5",instance.enabled,.7);
+  const body=new T.Mesh(new T.BoxGeometry(width,height,depth),shell);body.name="Equipment body";body.userData.nominalEnvelopeMetres=[width,height,depth];body.position.set(0,height/2,depth/2);group.add(body);
+  // Three removable sponge bays and intake slots make the filter read as a real internal corner unit.
+  for(let bay=0;bay<3;bay++){
+    const y=height*(.2+bay*.27),pad=new T.Mesh(new T.BoxGeometry(width*.8,height*.2,.003),foam);pad.position.set(0,y,depth-.002);group.add(pad);
+    for(let slot=0;slot<7;slot++){const vent=new T.Mesh(new T.BoxGeometry(width*.055,.003,.002),heater);vent.position.set((slot-3)*width*.095,y+height*.075,depth-.001);group.add(vent);}
+  }
+  const heaterTube=new T.Mesh(new T.CylinderGeometry(.008,.008,height*.72,12),heater);heaterTube.position.set(width*.31,height*.48,depth*.68);group.add(heaterTube);
+  for(const side of [-1,1] as const){const cup=new T.Mesh(new T.CylinderGeometry(.013,.017,.006,14),shell);cup.rotation.x=Math.PI/2;cup.position.set(side*width*.28,height*.7,.003);group.add(cup);}
+  const spray=new T.Mesh(new T.CylinderGeometry(.004,.004,width*.72,10),shell);spray.rotation.z=Math.PI/2;spray.position.set(0,height-.025,depth-.012);group.add(spray);
+  for(let outlet=0;outlet<6;outlet++){const jet=new T.Mesh(new T.CylinderGeometry(.0027,.0022,.018,8),water);jet.name="Filter powered flow";jet.userData.powered=instance.enabled;jet.rotation.x=Math.PI/2;jet.position.set((outlet-2.5)*width*.105,height-.025,depth-.012);group.add(jet);}
+  return fixed(group,instance);
+}
+
 function lightFixture(instance:EquipmentInstance,scene:Pick<SceneRecord,"tank">,entry:CatalogEntry) {
   const group=new T.Group(),profile=entry.system;
   if(!profile||profile.type!=="light")return group;
@@ -87,7 +105,7 @@ function lightFixture(instance:EquipmentInstance,scene:Pick<SceneRecord,"tank">,
 
 export function buildEquipmentModel(instance:EquipmentInstance,scene:Pick<SceneRecord,"tank">,entry:CatalogEntry) {
   if(!isSystemCatalogEntry(entry)||(entry.system.type!=="filter"&&entry.system.type!=="light"))throw new Error(`${entry.displayLabel} cannot be built as equipment.`);
-  const group=entry.system.type==="filter"?(entry.system.silhouette==="hob"?hangOnBack(instance,scene,entry):canister(instance,scene,entry)):lightFixture(instance,scene,entry);
+  const group=entry.system.type==="filter"?(entry.system.silhouette==="hob"?hangOnBack(instance,scene,entry):entry.system.silhouette==="internal"?internalFilter(instance,scene,entry):canister(instance,scene,entry)):lightFixture(instance,scene,entry);
   const transform=systemTransform(instance,scene);group.position.fromArray(transform.position);group.rotation.set(...transform.rotation);group.name=entry.displayLabel;group.userData.nominalDimensionsCm=entry.system.nominalDimensionsCm;group.updateMatrixWorld(true);return group;
 }
 
@@ -100,7 +118,7 @@ export function buildSystemPreview(entry:CatalogEntry) {
     for(let i=0;i<86;i++){const x=((i*37.13)%1-.5)*.25,z=((i*73.71)%1-.5)*.16,grain=new T.Mesh(grainGeometry,grainMaterial);grain.position.set(x,.039+(i%3)*.001,z);grain.scale.setScalar(.55+(i%5)*.11);grain.rotation.set(i*.7,i*1.2,i*.3);group.add(grain);}
   } else {
     const sampleScene={tank:{width:.42,depth:.24,height:.26,source:"assumed" as const}};
-    const instance:EquipmentInstance={id:"preview-system",kind:entry.system.type,catalogId:entry.id,mount:entry.system.type==="filter"?(entry.system.mount==="rim"?"rear-rim":"rear-glass"):(entry.system.mount==="rim"?"rim-bar":"pendant"),offset:0,enabled:true};
+    const instance:EquipmentInstance={id:"preview-system",kind:entry.system.type,catalogId:entry.id,mount:entry.system.type==="filter"?(entry.system.mount==="rim"?"rear-rim":entry.system.mount==="internal"?"rear-internal":"rear-glass"):(entry.system.mount==="rim"?"rim-bar":"pendant"),offset:0,enabled:true};
     const model=buildEquipmentModel(instance,sampleScene,entry);model.position.set(0,0,0);group.add(model);
   }
   group.updateMatrixWorld(true);return group;

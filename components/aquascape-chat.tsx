@@ -23,10 +23,10 @@ function blobDataUrl(blob:Blob){return new Promise<string>((resolve,reject)=>{co
 
 async function encodePhoto(photo:AquascapePhoto){
   const bitmap=await createImageBitmap(photo.file);let width=bitmap.width,height=bitmap.height;
-  const scale=Math.min(1,1400/Math.max(width,height));width=Math.max(1,Math.round(width*scale));height=Math.max(1,Math.round(height*scale));
+  const scale=Math.min(1,2048/Math.max(width,height));width=Math.max(1,Math.round(width*scale));height=Math.max(1,Math.round(height*scale));
   const render=async(w:number,h:number,quality:number)=>{const canvas=document.createElement("canvas");canvas.width=w;canvas.height=h;const context=canvas.getContext("2d");if(!context)throw new Error("Could not prepare the reference photo.");context.drawImage(bitmap,0,0,w,h);return await new Promise<Blob>((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error("Could not prepare the reference photo.")),"image/jpeg",quality));};
   try{
-    let blob=await render(width,height,.82);
+    let blob=await render(width,height,.86);
     if(blob.size>MAX_ENCODED_BLOB){width=Math.max(1,Math.round(width*.72));height=Math.max(1,Math.round(height*.72));blob=await render(width,height,.68);}
     if(blob.size>MAX_ENCODED_BLOB)throw new Error(`${photo.name} is too detailed to send safely. Use a smaller crop.`);
     return {id:photo.id,name:photo.name,dataUrl:await blobDataUrl(blob)};

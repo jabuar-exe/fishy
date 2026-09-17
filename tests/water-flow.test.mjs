@@ -57,6 +57,8 @@ test('an explicitly empty source list stays calm while omitted sources preserve 
 
 test('invalid grids and unstable parameter signs are rejected',()=>{
   assert.throws(()=>new WaterFlow(1,8,.6,.3),/at least two/);
+  assert.throws(()=>new WaterFlow(8,8,Number.NaN,.3),/positive surface/);
   assert.throws(()=>new WaterFlow(8,8,.6,.3,{fixedTimeStep:0}),/stable positive/);
+  assert.throws(()=>new WaterFlow(8,8,.6,.3,{inletStrength:Number.NaN}),/stable positive/);
   assert.throws(()=>new WaterFlow(8,8,.6,.3,{damping:-1}),/stable positive/);
 });

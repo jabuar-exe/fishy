@@ -12,8 +12,8 @@ export type SubstrateProfile={
 
 export type FilterProfile={
   type:"filter";
-  mount:"rear"|"rim";
-  silhouette:"canister"|"hob";
+  mount:"rear"|"rim"|"internal";
+  silhouette:"canister"|"hob"|"internal";
   flowClass:"Gentle"|"Moderate"|"High";
   flowStrength:number;
   outlet:"jet"|"sheet"|"line";

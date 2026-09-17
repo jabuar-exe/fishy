@@ -18,13 +18,13 @@ const metrics=object=>{
 
 test("every addable material has deterministic identity-bearing detailed geometry",()=>{
   const entries=catalogEntries.filter(entry=>entry.status==="supported_procedural"&&isOrganicCatalogEntry(entry)),hashes=new Set(),scene=initialScene();
-  assert.equal(entries.length,50);
+  assert.equal(entries.length,55);
   for(const entry of entries){
     const object=catalogDescriptor(entry,"sample"),first=metrics(object),second=metrics(structuredClone(object));
     assert.deepEqual(first,second,`${entry.id} must rebuild deterministically`);
     assert.equal(first.catalogModel,entry.id);
     assert.match(first.detail,/^species-specific-procedural-v[12]$/);
-    assert(first.meshes>=8,`${entry.id} lacks modeled parts`);
+    assert(first.meshes>=(entry.id==="plant-cabomba-caroliniana"?2:8),`${entry.id} lacks modeled parts`);
     assert(first.vertices>=1400,`${entry.id} lacks surface detail`);
     assert(first.triangles>=2500,`${entry.id} lacks intricate topology`);
     assert(!hashes.has(first.hash),`${entry.id} reused another material's geometry`);hashes.add(first.hash);
@@ -33,9 +33,9 @@ test("every addable material has deterministic identity-bearing detailed geometr
   }
 });
 
-test("the 30 expanded organic materials carry representative source-linked scale and morphology profiles",()=>{
+test("the 35 expanded organic materials carry representative source-linked scale and morphology profiles",()=>{
   const entries=catalogEntries.filter(entry=>entry.organic);
-  assert.equal(entries.length,30);assert.equal(Object.keys(expandedOrganicProfiles).length,30);
+  assert.equal(entries.length,35);assert.equal(Object.keys(expandedOrganicProfiles).length,35);
   for(const entry of entries){
     assert.equal(entry.organic,expandedOrganicProfiles[entry.id]);
     assert(entry.source.url.startsWith("https://"),`${entry.id} needs a primary reference link`);
@@ -43,6 +43,19 @@ test("the 30 expanded organic materials carry representative source-linked scale
     assert.equal(entry.organic.morphology.length,3,`${entry.id} needs concise identity traits`);
     assert.match(entry.renderingLimit,/procedural counterpart/i);
   }
+});
+
+test("variant seeds rebuild deterministically while producing distinct natural specimens",()=>{
+  const entry=catalogEntries.find(candidate=>candidate.id==="wood-talawa");assert(entry);
+  const base=catalogDescriptor(entry,"variant"),first=metrics({...base,variantSeed:91}),repeat=metrics({...base,variantSeed:91}),other=metrics({...base,variantSeed:92});
+  assert.equal(first.hash,repeat.hash);assert.notEqual(first.hash,other.hash);
+});
+
+test("Cabomba preserves feathery detail within a bounded draw-call budget",()=>{
+  const entry=catalogEntries.find(candidate=>candidate.id==="plant-cabomba-caroliniana");assert(entry);
+  const model=metrics(catalogDescriptor(entry,"cabomba-budget"));
+  assert(model.meshes<=4,`Cabomba uses ${model.meshes} meshes`);
+  assert(model.vertices>=40_000,"Cabomba should retain dense divided foliage");
 });
 
 test("expanded proxies expose distinct morphology and family-appropriate proportions",()=>{

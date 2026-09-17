@@ -16,15 +16,17 @@ export const objectSchema = z.object({
   position, rotation, size: z.number().min(0.05).max(4),
   form: z.string().max(60), color: z.string().regex(/^#[a-fA-F0-9]{6}$/),
   protected: z.boolean(), catalogId: z.string().max(100).optional(),
+  /** Optional deterministic specimen variation. Existing saves intentionally keep the catalog-default seed. */
+  variantSeed: z.number().int().min(0).max(65535).optional(),
   stretch: z.tuple([z.number().min(.01).max(20),z.number().min(.01).max(20),z.number().min(.01).max(20)]).optional(),
   sculpt: sculptSchema.optional(),
 }).strict().refine(o=>!o.sculpt||(o.sculpt.basis.kind===o.kind&&o.sculpt.basis.form===o.form),"Reset sculpt before changing the base form").transform(o=>{if(!o.sculpt?.nodes.length)delete o.sculpt;return o;});
-type EquipmentProduct={kind:"filter";mount:"rear-glass"|"rear-rim";profile:FilterProfile}|{kind:"light";mount:"rim-bar"|"pendant";profile:LightProfile};
+type EquipmentProduct={kind:"filter";mount:"rear-glass"|"rear-rim"|"rear-internal";profile:FilterProfile}|{kind:"light";mount:"rim-bar"|"pendant";profile:LightProfile};
 const equipmentCatalog=new Map<string,EquipmentProduct>();
 const substrateCatalogIds=new Set<string>();
 for(const entry of catalogExpansion) {
   if(entry.system?.type==="substrate")substrateCatalogIds.add(entry.id);
-  if(entry.system?.type==="filter")equipmentCatalog.set(entry.id,{kind:"filter",mount:entry.system.mount==="rim"?"rear-rim":"rear-glass",profile:entry.system});
+  if(entry.system?.type==="filter")equipmentCatalog.set(entry.id,{kind:"filter",mount:entry.system.mount==="rim"?"rear-rim":entry.system.mount==="internal"?"rear-internal":"rear-glass",profile:entry.system});
   if(entry.system?.type==="light")equipmentCatalog.set(entry.id,{kind:"light",mount:entry.system.mount==="suspended"?"pendant":"rim-bar",profile:entry.system});
 }
 export const MAX_EQUIPMENT_BY_KIND={filter:6,light:4} as const;
@@ -34,7 +36,7 @@ export const equipmentSchema=z.object({
   kind:z.enum(["filter","light"]),
   catalogId:z.string().min(1).max(100),
   /** Fixed semantic mounts prevent an external filter or fixture from becoming loose décor. */
-  mount:z.enum(["rear-glass","rear-rim","rim-bar","pendant"]),
+  mount:z.enum(["rear-glass","rear-rim","rear-internal","rim-bar","pendant"]),
   offset:z.number().min(-.8).max(.8),
   enabled:z.boolean(),
 }).strict().superRefine((item,ctx)=>{
@@ -62,7 +64,13 @@ export const sceneSchema = z.object({
   const litres=s.tank.width*s.tank.depth*s.tank.height*1000,widthCm=s.tank.width*100;
   for(const [index,item] of s.equipment.entries()){
     const product=equipmentCatalog.get(item.catalogId);if(!product||item.kind!==product.kind)continue;
-    if(product.kind==="filter"){const [minimum,maximum]=product.profile.compatibleVolumeLitres;if(litres<minimum||litres>maximum)ctx.addIssue({code:"custom",path:["equipment",index,"catalogId"],message:`This filter is rated for ${minimum||"up to"}${minimum?"–":" "}${maximum} L aquariums; this tank holds ${Math.round(litres)} L.`});}
+    if(product.kind==="filter"){
+      const [minimum,maximum]=product.profile.compatibleVolumeLitres;if(litres<minimum||litres>maximum)ctx.addIssue({code:"custom",path:["equipment",index,"catalogId"],message:`This filter is rated for ${minimum||"up to"}${minimum?"–":" "}${maximum} L aquariums; this tank holds ${Math.round(litres)} L.`});
+      if(product.profile.mount==="internal"){
+        const [,depthCm,heightCm]=product.profile.nominalDimensionsCm,tankDepthCm=s.tank.depth*100,tankHeightCm=s.tank.height*100;
+        if(depthCm>tankDepthCm||heightCm>tankHeightCm)ctx.addIssue({code:"custom",path:["equipment",index,"catalogId"],message:`This internal filter needs at least ${depthCm} cm tank depth and ${heightCm} cm tank height; this tank is ${Math.round(tankDepthCm)} cm deep and ${Math.round(tankHeightCm)} cm high.`});
+      }
+    }
     else{const [minimum,maximum]=product.profile.compatibleTankWidthCm;if(widthCm<minimum||widthCm>maximum)ctx.addIssue({code:"custom",path:["equipment",index,"catalogId"],message:`This light fits ${minimum}–${maximum} cm-wide tanks; this tank is ${Math.round(widthCm)} cm wide.`});}
     const horizontalExtent=Math.abs(item.offset*s.tank.width*.42)+product.profile.nominalDimensionsCm[0]/200;
     if(horizontalExtent>s.tank.width/2+1e-6)ctx.addIssue({code:"custom",path:["equipment",index,"offset"],message:`${item.kind[0].toUpperCase()+item.kind.slice(1)} extends outside its fixed mounting span.`});

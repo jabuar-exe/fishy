@@ -1,9 +1,13 @@
 import {AquascapeAgentError,aquascapeRequestSchema,generateAquascape} from "../../../../lib/aquascape-agent.ts";
+import {and,lt,ne,sql} from "drizzle-orm";
+import {generationRateLimits} from "../../../../db/schema.ts";
 
 export const dynamic="force-dynamic";
 const MAX_BODY_BYTES=9_000_000;
 const WINDOW_MS=60_000;
 const MAX_REQUESTS=6;
+const MAX_GLOBAL_REQUESTS=12;
+const GLOBAL_QUOTA_KEY="fishy-global-generation-v1";
 const buckets=new Map<string,{started:number;count:number}>();
 
 class RequestError extends Error {readonly status:number;constructor(status:number,message:string){super(message);this.status=status;}}
@@ -36,7 +40,7 @@ function requestIdentity(request:Request){
   return userId??request.headers.get("cf-connecting-ip")??"local-anonymous";
 }
 
-function rateLimit(identity:string){
+function localRateLimit(identity:string){
   const now=Date.now(),bucket=buckets.get(identity);
   if(!bucket||now-bucket.started>=WINDOW_MS){buckets.set(identity,{started:now,count:1});return;}
   if(bucket.count>=MAX_REQUESTS)throw new RequestError(429,"Too many aquarium requests. Please wait a minute and try again.");
@@ -44,19 +48,58 @@ function rateLimit(identity:string){
   if(buckets.size>1000)for(const [key,value] of buckets)if(now-value.started>=WINDOW_MS)buckets.delete(key);
 }
 
+type QuotaStore={increment:(key:string)=>Promise<number>;deleteExpired:(before:number)=>Promise<void>};
+
+export async function enforceSharedQuota(identityHash:string,store:QuotaStore,now=Date.now()){
+  const globalCount=await store.increment(GLOBAL_QUOTA_KEY);
+  if(globalCount>MAX_GLOBAL_REQUESTS)throw new RequestError(429,"Too many aquarium requests. Please wait a minute and try again.");
+  const identityCount=await store.increment(identityHash);
+  if(identityCount>MAX_REQUESTS)throw new RequestError(429,"Too many aquarium requests. Please wait a minute and try again.");
+  await store.deleteExpired(now-WINDOW_MS);
+}
+
+async function rateLimit(identityHash:string){
+  if(process.env.NODE_ENV!=="production"){localRateLimit(identityHash);return;}
+  const now=Date.now(),expiredBefore=now-WINDOW_MS;
+  try{
+    const {getDb}=await import("../../../../db/index.ts");
+    const db=getDb();
+    const store:QuotaStore={
+      increment:async(key:string)=>{
+      const [bucket]=await db.insert(generationRateLimits).values({identityHash:key,windowStarted:now,count:1}).onConflictDoUpdate({
+        target:generationRateLimits.identityHash,
+        set:{
+          windowStarted:sql`CASE WHEN ${generationRateLimits.windowStarted} <= ${expiredBefore} THEN ${now} ELSE ${generationRateLimits.windowStarted} END`,
+          count:sql`CASE WHEN ${generationRateLimits.windowStarted} <= ${expiredBefore} THEN 1 ELSE ${generationRateLimits.count} + 1 END`,
+        },
+      }).returning({count:generationRateLimits.count});
+      if(!bucket)throw new Error("Quota update returned no row");
+        return bucket.count;
+      },
+      deleteExpired:async(before:number)=>{await db.delete(generationRateLimits).where(and(ne(generationRateLimits.identityHash,GLOBAL_QUOTA_KEY),lt(generationRateLimits.windowStarted,before)));},
+    };
+    await enforceSharedQuota(identityHash,store,now);
+  } catch(error) {
+    if(error instanceof RequestError)throw error;
+    throw new RequestError(503,"Aquarium generation is temporarily unavailable while its shared quota guard recovers.");
+  }
+}
+
 async function safetyIdentifier(value:string){
   const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value));
   return Array.from(new Uint8Array(digest)).map(byte=>byte.toString(16).padStart(2,"0")).join("");
 }
 
-export async function POST(request:Request){
+type RouteDependencies={apiKey?:string;model?:string;quota?:(identityHash:string)=>Promise<void>;generate?:typeof generateAquascape};
+
+export async function handleAquascapePost(request:Request,dependencies:RouteDependencies={}){
   try{
     checkRequestBoundary(request);
-    const identity=requestIdentity(request);rateLimit(identity);
-    const apiKey=process.env.OPENAI_API_KEY;
+    const identity=requestIdentity(request),apiKey=dependencies.apiKey??process.env.OPENAI_API_KEY;
     if(!apiKey)throw new RequestError(503,"Aquarium generation is not configured yet.");
     const body=aquascapeRequestSchema.parse(await readJson(request));
-    const result=await generateAquascape(body,{apiKey,model:process.env.OPENAI_MODEL,userIdentifier:await safetyIdentifier(identity),signal:request.signal});
+    const identityHash=await safetyIdentifier(identity);await (dependencies.quota??rateLimit)(identityHash);
+    const result=await (dependencies.generate??generateAquascape)(body,{apiKey,model:dependencies.model??(process.env.OPENAI_AQUASCAPE_MODEL?.trim()||"gpt-6-astra"),userIdentifier:identityHash,signal:request.signal});
     return json({ok:true,baseRevision:body.scene.revision,...result});
   } catch(error) {
     if(error instanceof RequestError)return json({ok:false,error:error.message},error.status);
@@ -65,3 +108,5 @@ export async function POST(request:Request){
     return json({ok:false,error:"Aquarium generation failed safely. Please try again."},500);
   }
 }
+
+export async function POST(request:Request){return handleAquascapePost(request);}

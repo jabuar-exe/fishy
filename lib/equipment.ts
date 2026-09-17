@@ -13,6 +13,10 @@ export function equipmentCompatibilityMessage(entry:CatalogEntry,tank:SceneRecor
   if(entry.system.type==="filter"){
     const litres=tank.width*tank.depth*tank.height*1000,[minimum,maximum]=entry.system.compatibleVolumeLitres;
     if(litres<minimum||litres>maximum)return `${entry.displayLabel} is rated for ${minimum||"up to"}${minimum?"–":" "}${maximum} L aquariums; this tank holds ${Math.round(litres)} L.`;
+    if(entry.system.mount==="internal"){
+      const [,depthCm,heightCm]=entry.system.nominalDimensionsCm,tankDepthCm=tank.depth*100,tankHeightCm=tank.height*100;
+      if(depthCm>tankDepthCm||heightCm>tankHeightCm)return `${entry.displayLabel} needs at least ${depthCm} cm tank depth and ${heightCm} cm tank height; this tank is ${Math.round(tankDepthCm)} cm deep and ${Math.round(tankHeightCm)} cm high.`;
+    }
     return null;
   }
   const width=tank.width*100,[minimum,maximum]=entry.system.compatibleTankWidthCm;
@@ -26,7 +30,7 @@ export function assertEquipmentCompatibility(entry:CatalogEntry,tank:SceneRecord
 
 export function mountForCatalog(entry:CatalogEntry):EquipmentInstance["mount"] {
   if(!isSystemCatalogEntry(entry)||entry.system.type==="substrate")throw new Error(`${entry.displayLabel} is not mountable equipment.`);
-  if(entry.system.type==="filter")return entry.system.mount==="rim"?"rear-rim":"rear-glass";
+  if(entry.system.type==="filter")return entry.system.mount==="rim"?"rear-rim":entry.system.mount==="internal"?"rear-internal":"rear-glass";
   return entry.system.mount==="suspended"?"pendant":"rim-bar";
 }
 
@@ -94,6 +98,7 @@ export function systemTransform(instance:EquipmentInstance,scene:Pick<SceneRecor
   const x=instance.offset*width*.42;
   if(instance.mount==="rear-glass")return {position:[x,height*.66,-depth/2-.01],rotation:[0,0,0]};
   if(instance.mount==="rear-rim")return {position:[x,height+.006,-depth/2-.006],rotation:[0,0,0]};
+  if(instance.mount==="rear-internal")return {position:[x,0,-depth/2],rotation:[0,0,0]};
   if(instance.mount==="rim-bar")return {position:[x,height+.038,0],rotation:[0,0,0]};
   return {position:[x,height+.19,0],rotation:[0,0,0]};
 }

@@ -1,7 +1,8 @@
 import * as T from "three";
+import {mergeGeometries} from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import type {SceneObject,Vec3} from "./scene";
 
-type CatalogObject=Pick<SceneObject,"kind"|"catalogId">;
+type CatalogObject=Pick<SceneObject,"kind"|"catalogId"|"variantSeed">;
 
 function seedFor(value:string) {
   let seed=2166136261;
@@ -43,6 +44,19 @@ function leaf(origin:Vec3,direction:Vec3,length:number,width:number,material:T.M
 }
 
 function stem(points:Vec3[],radius:number,material:T.Material,seed=0) {return branch(points,radius,radius*.72,material,seed,18,6);}
+function mergedMesh(parts:T.Mesh[],material:T.Material) {
+  const geometries=parts.map(part=>{
+    part.updateMatrix();
+    const geometry=part.geometry.clone();
+    geometry.applyMatrix4(part.matrix);
+    return geometry;
+  });
+  const merged=mergeGeometries(geometries,false);
+  geometries.forEach(geometry=>geometry.dispose());
+  parts.forEach(part=>part.geometry.dispose());
+  if(!merged)throw new Error("Catalog geometry could not be merged");
+  return new T.Mesh(merged,material);
+}
 function addRootlets(group:T.Group,origin:Vec3,count:number,spread:number,length:number,material:T.Material,rand:()=>number) {
   for(let i=0;i<count;i++){const a=i/count*Math.PI*2+rand()*.4,x=Math.cos(a),z=Math.sin(a);group.add(branch([origin,[origin[0]+x*spread*.45,Math.max(.002,origin[1]-length*.18),origin[2]+z*spread*.45],[origin[0]+x*spread,.003,origin[2]+z*spread]],.0024,.0006,material,i,12,6));}
 }
@@ -279,6 +293,49 @@ function vallisneria(group:T.Group,material:T.Material,rand:()=>number) {
   }
 }
 
+function swordRosette(group:T.Group,material:T.Material,rand:()=>number) {
+  addRootlets(group,[0,.004,0],14,.065,.024,material,rand);
+  for(let i=0;i<22;i++){
+    const angle=i/22*Math.PI*2+(rand()-.5)*.16,length=.095+rand()*.105,width=.011+rand()*.007,lean=.38+rand()*.28;
+    group.add(leaf([(rand()-.5)*.012,.003,(rand()-.5)*.012],[Math.cos(angle)*lean,.88,Math.sin(angle)*lean],length,width,material,{wave:.24,round:.5,curl:.16,seed:i,color:[.72,.98,.65]}));
+    const rib=stem([[0,.004,0],[Math.cos(angle)*length*.18,length*.47,Math.sin(angle)*length*.18],[Math.cos(angle)*length*.42,length*.87,Math.sin(angle)*length*.42]],.00055,material,210+i);group.add(rib);
+  }
+}
+
+function javaFern(group:T.Group,material:T.Material,rand:()=>number) {
+  group.add(branch([[-.055,.008,.005],[-.018,.012,0],[.02,.01,-.004],[.06,.013,.003]],.0045,.003,material,230,28,8));
+  addRootlets(group,[0,.009,0],12,.06,.024,material,rand);
+  for(let i=0;i<18;i++){
+    const angle=i/18*Math.PI*2+(rand()-.5)*.22,length=.095+rand()*.1,width=.009+rand()*.006;
+    group.add(stem([[(rand()-.5)*.06,.012,(rand()-.5)*.014],[Math.cos(angle)*.016,length*.3,Math.sin(angle)*.016]],.0008,material,240+i));
+    group.add(leaf([Math.cos(angle)*.016,length*.3,Math.sin(angle)*.016],[Math.cos(angle)*.44,.9,Math.sin(angle)*.44],length*.72,width,material,{wave:.72,lobes:.14,round:.66,curl:.2,seed:i,color:[.62,.9,.58]}));
+  }
+}
+
+function cabomba(group:T.Group,material:T.Material,rand:()=>number) {
+  const stems:T.Mesh[]=[],leaves:T.Mesh[]=[];
+  for(let i=0;i<18;i++){
+    const a=rand()*Math.PI*2,r=Math.sqrt(rand())*.065,x=Math.cos(a)*r,z=Math.sin(a)*r,h=.09+rand()*.105,bend=(rand()-.5)*.026;
+    stems.push(stem([[x,.003,z],[x+bend*.3,h*.45,z],[x+bend,h,z+(rand()-.5)*.018]],.00072,material,270+i));
+    for(let node=1;node<=6;node++){
+      const t=node/7,origin:Vec3=[x+bend*t,h*t,z];
+      for(let ray=0;ray<6;ray++){
+        const angle=ray/6*Math.PI*2+node*.4,length=.011+rand()*.005;
+        leaves.push(leaf(origin,[Math.cos(angle),.08,Math.sin(angle)],length,.00125,material,{round:.94,curl:.02,wave:.08,seed:i*43+node*6+ray,color:[.7,1,.62]}));
+      }
+    }
+  }
+  group.add(mergedMesh(stems,material),mergedMesh(leaves,material));
+}
+
+function sagittaria(group:T.Group,material:T.Material,rand:()=>number) {
+  runners(group,16,.12,.08,material,rand);
+  for(let i=0;i<56;i++){
+    const x=(rand()-.5)*.12,z=(rand()-.5)*.08,h=.055+rand()*.1,lean=(rand()-.5)*.04;
+    group.add(leaf([x,.002,z],[lean,.99,(rand()-.5)*.16],h,.0025+rand()*.0012,material,{round:.88,curl:.12,wave:.24,seed:i,color:[.68,.94,.58]}));
+  }
+}
+
 function expandedCatalogModel(id:string,group:T.Group,material:T.Material,rand:()=>number) {
   const modeled=(morphology:string,build:()=>void)=>{build();group.userData.morphology=morphology;return true;};
   switch(id){
@@ -302,6 +359,7 @@ function expandedCatalogModel(id:string,group:T.Group,material:T.Material,rand:(
     case "rock-black-abyss": return modeled("near-black-irregular-mass",()=>layeredRock(group,material,rand,"basalt"));
     case "rock-blue-mountain": return modeled("blue-grey-horizontal-ridge",()=>layeredRock(group,material,rand,"stratified"));
     case "rock-wio-midnight": return modeled("near-black-vesicular-lava",()=>layeredRock(group,material,rand,"vesicular"));
+    case "rock-ryuoh-stone": return modeled("blue-grey-calcareous-ridged-seams",()=>layeredRock(group,material,rand,"stratified"));
     case "plant-rotala-rotundifolia": return modeled("upright-opposite-rounded-leaf-stems",()=>stemCanopy(group,material,rand,"rotala-round"));
     case "plant-rotala-hra": return modeled("arching-narrow-leaf-stems",()=>stemCanopy(group,material,rand,"rotala-hra"));
     case "plant-ludwigia-super-red": return modeled("dense-broad-opposite-leaf-stems",()=>stemCanopy(group,material,rand,"ludwigia"));
@@ -312,13 +370,17 @@ function expandedCatalogModel(id:string,group:T.Group,material:T.Material,rand:(
     case "plant-helanthium-tenellum": return modeled("short-ribbon-runner-lawn",()=>helanthium(group,material,rand));
     case "plant-vallisneria-nana": return modeled("long-narrow-basal-ribbons",()=>vallisneria(group,material,rand));
     case "plant-taxiphyllum-barbieri": return modeled("irregular-small-leaved-branching-mat",()=>javaMoss(group,material,rand));
+    case "plant-echinodorus-bleherae": return modeled("broad-ribbed-lanceolate-sword-rosette",()=>swordRosette(group,material,rand));
+    case "plant-microsorum-pteropus": return modeled("rhizome-mounted-wavy-java-fern-fronds",()=>javaFern(group,material,rand));
+    case "plant-cabomba-caroliniana": return modeled("rounded-fanlike-feathery-stem-whorls",()=>cabomba(group,material,rand));
+    case "plant-sagittaria-subulata": return modeled("runner-spreading-tapered-ribbon-rosettes",()=>sagittaria(group,material,rand));
     default:return false;
   }
 }
 
 /** Adds a deterministic catalog-specific model. Generic scene objects return false. */
 export function buildCatalogModel(o:CatalogObject,group:T.Group,material:T.Material) {
-  const id=o.catalogId;if(!id)return false;const rand=seedFor(id);
+  const id=o.catalogId;if(!id)return false;const rand=seedFor(o.variantSeed===undefined?id:`${id}:${o.variantSeed}`);
   if(expandedCatalogModel(id,group,material,rand)){
     group.userData.catalogModel=id;group.userData.modelDetail="species-specific-procedural-v2";return true;
   }
