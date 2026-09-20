@@ -38,15 +38,17 @@ export function lightFixtureGeometry(instance:EquipmentInstance,scene:Pick<Scene
 function canister(instance:EquipmentInstance,scene:Pick<SceneRecord,"tank">,entry:CatalogEntry) {
   const group=new T.Group(),profile=entry.system;
   if(!profile||profile.type!=="filter")return group;
-  const {height,depth}=scene.tank,[lengthCm,depthCm,heightCm]=profile.nominalDimensionsCm,bodyLength=lengthCm/100,bodyDepth=depthCm/100,bodyHeight=heightCm/100,bodyZ=-bodyDepth/2,bodyMat=new T.MeshStandardMaterial({color:entry.color??"#293230",roughness:.36,metalness:.38}),pipeMat=new T.MeshStandardMaterial({color:"#20292a",roughness:.2,metalness:.48}),waterMat=poweredMaterial("#9ec9c3",instance.enabled,.62);
-  // The external canister rests on the floor behind the rear pane at its source-listed size.
-  const bodyY=bodyHeight/2-height*.66,body=new T.Mesh(new T.BoxGeometry(bodyLength,bodyHeight,bodyDepth),bodyMat);body.name="Equipment body";body.userData.nominalEnvelopeMetres=[bodyLength,bodyHeight,bodyDepth];body.position.set(0,bodyY,bodyZ);group.add(body);
+  const {height}=scene.tank,[lengthCm,depthCm,heightCm]=profile.nominalDimensionsCm,bodyLength=lengthCm/100,bodyDepth=depthCm/100,bodyHeight=heightCm/100,bodyZ=-bodyDepth/2,bodyMat=new T.MeshStandardMaterial({color:entry.color??"#293230",roughness:.36,metalness:.38}),pipeMat=new T.MeshStandardMaterial({color:"#20292a",roughness:.2,metalness:.48}),waterMat=poweredMaterial("#9ec9c3",instance.enabled,.62);
+  // External canisters live below the tank in the cabinet, not behind the aquascape.
+  const bodyY=-bodyHeight/2-height*.66-.06,body=new T.Mesh(new T.BoxGeometry(bodyLength,bodyHeight,bodyDepth),bodyMat);body.name="Equipment body";body.userData.nominalEnvelopeMetres=[bodyLength,bodyHeight,bodyDepth];body.position.set(0,bodyY,bodyZ);group.add(body);
   const capHeight=Math.min(.009,bodyHeight*.08),capY=bodyY+bodyHeight/2-capHeight/2,cap=new T.Mesh(new T.BoxGeometry(bodyLength*.94,capHeight,bodyDepth*.94),pipeMat);cap.position.set(0,capY,bodyZ);group.add(cap);
-  for(const ringY of [-.22,.22]){const ring=new T.Mesh(new T.BoxGeometry(bodyLength*.99,.003,bodyDepth*.99),pipeMat);ring.position.set(0,bodyY+bodyHeight*ringY,bodyZ);group.add(ring);}
+  // Raised bands and front ribs keep the external housing legible through the rear glass.
+  for(const ringY of [-.22,.22]){const ring=new T.Mesh(new T.BoxGeometry(bodyLength+.002,.006,bodyDepth+.002),pipeMat);ring.position.set(0,bodyY+bodyHeight*ringY,bodyZ);group.add(ring);}
+  for(let rib=-3;rib<=3;rib++){const detail=new T.Mesh(new T.BoxGeometry(.004,bodyHeight*.68,.003),pipeMat);detail.position.set(rib*bodyLength*.11,bodyY,.001);group.add(detail);}
   for(const x of [-1,1] as const)for(const y of [-1,1] as const){const clasp=new T.Mesh(new T.BoxGeometry(.006,.013,.007),pipeMat);clasp.position.set(x*(bodyLength/2-.003),capY+y*.004,bodyZ);group.add(clasp);}
   for(const side of [-1,1] as const){
-    const x=side*bodyLength*.24,top:Vec3=[x,capY+.004,bodyZ],returnY=height*.2;
-    group.add(tube([top,[x,-height*.08,bodyZ],[x,returnY,-depth*.025],[x,returnY,.028]],.0032,pipeMat));
+    const x=side*bodyLength*.24,top:Vec3=[x,capY+.004,bodyZ],rimY=height*.34,returnY=rimY-.03;
+    const hose=tube([top,[x,Math.max(capY+.02,rimY+.024),bodyZ],[x,rimY+.024,-.004],[x,rimY+.018,.024],[x,returnY,.028]],.0032,pipeMat);hose.name="Over-rim filter hose";group.add(hose);
     const nozzle=new T.Mesh(new T.CylinderGeometry(.0045,.0035,.026,9),waterMat);nozzle.name="Filter powered flow";nozzle.userData.powered=instance.enabled;nozzle.rotation.x=Math.PI/2;nozzle.position.set(x,returnY,.039);group.add(nozzle);
   }
   return fixed(group,instance);
@@ -96,8 +98,15 @@ function lightFixture(instance:EquipmentInstance,scene:Pick<SceneRecord,"tank">,
     const canopy=new T.Mesh(new T.CylinderGeometry(.043,.035,.012,18),bodyMat);canopy.position.y=height*.29;group.add(canopy);
   } else {
     const rimY=datum.supportBottomY??0,bodyBottom=datum.supportTopY??0,legHeight=bodyBottom-rimY;
-    for(const x of [-barWidth*.42,barWidth*.42]){
-      const leg=new T.Mesh(new T.BoxGeometry(.008,legHeight,.012),bodyMat);leg.name="Rim support";leg.position.set(x,(bodyBottom+rimY)/2,0);group.add(leg);
+    const root=systemTransform(instance,scene);
+    for(const side of [-1,1]){
+      // Legs register to the glass, independently of the source-sized lamp body.
+      // Telescoping arms bridge short bodies to wider compatible aquariums.
+      const x=side*scene.tank.width/2-root.position[0],attachmentX=side*Math.min(barWidth*.42,scene.tank.width*.42),armLength=Math.abs(x-attachmentX)+.008;
+      const support=new T.Group();support.name="Rim support";
+      const leg=new T.Mesh(new T.BoxGeometry(.008,legHeight,.012),bodyMat);leg.position.set(x,(bodyBottom+rimY)/2,0);support.add(leg);
+      const seat=new T.Mesh(new T.BoxGeometry(.016,Math.min(.004,legHeight),Math.min(.05,barDepth*.8)),bodyMat);seat.name="Glass rim seat";seat.position.set(x,rimY+Math.min(.004,legHeight)/2,0);support.add(seat);
+      const armHeight=Math.min(.006,legHeight),arm=new T.Mesh(new T.BoxGeometry(armLength,armHeight,.012),bodyMat);arm.name="Adjustable support arm";arm.position.set((x+attachmentX)/2,bodyBottom-armHeight/2,0);support.add(arm);group.add(support);
     }
   }
   return fixed(group,instance);

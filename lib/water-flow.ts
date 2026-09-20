@@ -73,6 +73,9 @@ export class WaterFlow {
 
   setSources(sources:readonly FlowSource[]) { this.useLegacyDefaultInlet=false;this.sources=this.normaliseSources(sources); }
 
+  /** Render effects share simulation time, including pauses and bounded catch-up. */
+  get timeSeconds(){return this.elapsed;}
+
   /** Sample the directional current field used by planted/equipment-aware consumers. */
   sampleCurrent(x:number,z:number):[number,number] {
     let currentX=0,currentZ=0;

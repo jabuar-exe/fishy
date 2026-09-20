@@ -101,7 +101,11 @@ test("canister bodies preserve each source length, depth, and height axis",()=>{
       assert.ok(body,`${product.id} must expose its rigid body envelope`);
       const size=sizeOf(body),[lengthCm,depthCm,heightCm]=product.system.nominalDimensionsCm;
       near(size.x,lengthCm/100);near(size.z,depthCm/100);near(size.y,heightCm/100);
-      near(boundsOf(body).min.y,0,1e-6);
+      near(boundsOf(body).max.y,-.06,1e-6);
+      assert(boundsOf(body).max.z<-scene.tank.depth/2,"cabinet body stays outside the rear glass");
+      assert.equal(body.material.transparent,false,"canister housing is opaque");
+      const hoses=model.children.filter(child=>child.name==="Over-rim filter hose");assert.equal(hoses.length,2);
+      for(const hose of hoses)assert(boundsOf(hose).max.y>scene.tank.height+.01,"hoses bridge over the glass rim");
       if(lengthCm!==depthCm)assert.notEqual(size.x,size.z,`${product.id} must not collapse a rectangular footprint into a cylinder`);
     } finally {dispose(model);}
   }
@@ -122,6 +126,29 @@ test("every rim light keeps its nominal body envelope and all hardware at or abo
       for(const support of supports){const supportBounds=boundsOf(support);near(supportBounds.min.y,scene.tank.height,1e-6);near(supportBounds.max.y,bodyBounds.min.y,1e-6);}
       if(product.id==="light-ada-aquasky-rgb-ii-60")near(modelBounds.max.y,scene.tank.height+.13,1e-6);
     } finally {dispose(model);}
+  }
+});
+
+test("rim light feet touch both side panes throughout each compatible width range",()=>{
+  for(const product of catalogEntries.filter(item=>item.system?.type==="light"&&item.system.mount==="rim")){
+    const [minimum,maximum]=product.system.compatibleTankWidthCm;
+    for(const widthCm of [minimum,(minimum+maximum)/2,maximum])for(const height of [.25,.55]){
+      const scene={...initialScene(),objects:[],tank:{...initialScene().tank,width:widthCm/100,height}},installed=validateScene(installEquipment(scene,product,"rim-fit")),model=buildEquipmentModel(installed.equipment[0],installed,product);
+      try{
+        const seats=[];model.traverse(node=>{if(node.name==="Glass rim seat")seats.push(node);});assert.equal(seats.length,2);
+        for(let index=0;index<seats.length;index++){
+          const bounds=boundsOf(seats[index]),paneX=(index===0?-1:1)*scene.tank.width/2;
+          near((bounds.min.x+bounds.max.x)/2,paneX);near(bounds.min.y,height);
+          assert(bounds.min.x<paneX&&bounds.max.x>paneX,"seat straddles the glass pane");
+        }
+        assert.throws(()=>installEquipment(installed,product,"second"),/No collision-free space/);
+        const body=boundsOf(model.getObjectByName("Equipment body"));
+        for(const support of model.children.filter(node=>node.name==="Rim support")){
+          const arm=boundsOf(support.getObjectByName("Adjustable support arm"));near(arm.max.y,body.min.y);
+          assert(arm.min.x<=body.max.x&&arm.max.x>=body.min.x,"arm joins the nominal fixture body");
+        }
+      }finally{dispose(model);}
+    }
   }
 });
 

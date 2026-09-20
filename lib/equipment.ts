@@ -51,6 +51,7 @@ function offsetClearanceMetres(a:EquipmentInstance,b:EquipmentInstance,scene:Pic
 }
 
 function fitsMountingSpan(entry:CatalogEntry,offset:number,scene:Pick<SceneRecord,"tank">) {
+  if(entry.system?.type==="light"&&entry.system.mount==="rim")return Math.abs(offset)<1e-6;
   const x=Math.abs(offset*scene.tank.width*.42);
   return x+mountSpanMetres(entry)/2<=scene.tank.width/2+1e-6;
 }

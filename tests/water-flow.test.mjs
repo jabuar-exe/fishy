@@ -1,9 +1,33 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {WaterFlow} from '../lib/water-flow.ts';
+import * as T from 'three';
+import {populateAquarium,updateWaterSurface,waterCurrentMaterial} from '../lib/aquarium-stage.ts';
+import {initialScene} from '../lib/scene.ts';
+import {catalogEntries} from '../lib/catalog.ts';
+import {installEquipment,filterFlowSources} from '../lib/equipment.ts';
 
 const total=values=>values.reduce((sum,value)=>sum+value,0);
 const peak=values=>values.reduce((maximum,value)=>Math.max(maximum,Math.abs(value)),0);
+
+test('water highlights follow installed outlets and disappear with filter power or water visibility',()=>{
+  const entry=catalogEntries.find(entry=>entry.id==='filter-fluval-207');
+  const scene=installEquipment(initialScene(),entry,'flow-filter');
+  const source=filterFlowSources(scene)[0],material=waterCurrentMaterial(scene);
+  assert.equal(material.uniforms.sourceCount.value,1);
+  assert.deepEqual(material.uniforms.sources.value[0].toArray(),[...source.position,source.radius,source.strength]);
+  const off={...scene,equipment:scene.equipment.map(item=>({...item,enabled:false}))};
+  assert.equal(waterCurrentMaterial(off).uniforms.sourceCount.value,0);
+  assert.equal(populateAquarium(new T.Group(),scene,false).water,null);
+  const water=populateAquarium(new T.Group(),scene,true).water;
+  const flow=new WaterFlow(37,25,scene.tank.width-.008,scene.tank.depth-.008,{sources:[source]});
+  flow.advance(1/30);updateWaterSurface(water,flow.heights,flow.timeSeconds);
+  const highlights=water.getObjectByName('Outlet current highlights');
+  assert.equal(highlights.geometry,water.geometry,'reflections must follow exactly the displaced water surface');
+  assert.equal(highlights.material.uniforms.time.value,flow.timeSeconds);
+  const pausedTime=flow.timeSeconds;flow.advance(0);
+  assert.equal(flow.timeSeconds,pausedTime,'paused effects must not advance their phase');
+});
 
 test('water flow is frame-rate stable under fixed-step integration',()=>{
   const parameters={initialDisturbance:.0005,inletStrength:.002};

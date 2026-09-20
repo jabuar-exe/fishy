@@ -54,15 +54,25 @@ test("Weeping Moss uses its exact, reusable Flickr reference",()=>{
 
 test("Materials cards render 3D model previews and reveal real reference photos on demand",()=>{
   const page=readFileSync(resolve(root,"app/page.tsx"),"utf8");
+  const filter=readFileSync(resolve(root,"components/catalog-filter.tsx"),"utf8");
   assert.match(page,/useMaterialThumbnails\(catalog,materialsVisible&&!realSampleOpen\)/);
   assert.match(page,/src=\{materialThumbnails\[entry\.id\]\}/);
   assert.match(page,/3D model preview of/);
   assert.match(page,/Inspect real sample/);
   assert.match(page,/Real reference photo ·/);
   assert.match(page,/candidate\.referenceImage\.sourceUrl/);
-  assert.match(page,/label:"Substrate"/);
-  assert.match(page,/label:"Filters"/);
-  assert.match(page,/label:"Light"/);
+  assert.match(page,/<CatalogFilter entries=\{catalog\} value=\{catCategory\}/);
+  assert.match(filter,/Filter/);
+  assert.match(filter,/All materials/);
+  assert.match(filter,/Natural materials/);
+  assert.match(filter,/label: "Rocks"/);
+  assert.match(filter,/label: "Plants"/);
+  assert.match(filter,/label: "Wood"/);
+  assert.match(filter,/Tank systems/);
+  assert.match(filter,/label: "Substrate"/);
+  assert.match(filter,/label: "Filters"/);
+  assert.match(filter,/label: "Lighting"/);
+  assert.match(filter,/DropdownMenuRadioGroup/);
 });
 
 test("the desktop configuration tray has an accessible resize control",()=>{

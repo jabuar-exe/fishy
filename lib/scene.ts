@@ -73,7 +73,8 @@ export const sceneSchema = z.object({
     }
     else{const [minimum,maximum]=product.profile.compatibleTankWidthCm;if(widthCm<minimum||widthCm>maximum)ctx.addIssue({code:"custom",path:["equipment",index,"catalogId"],message:`This light fits ${minimum}–${maximum} cm-wide tanks; this tank is ${Math.round(widthCm)} cm wide.`});}
     const horizontalExtent=Math.abs(item.offset*s.tank.width*.42)+product.profile.nominalDimensionsCm[0]/200;
-    if(horizontalExtent>s.tank.width/2+1e-6)ctx.addIssue({code:"custom",path:["equipment",index,"offset"],message:`${item.kind[0].toUpperCase()+item.kind.slice(1)} extends outside its fixed mounting span.`});
+    const outsideMount=item.mount==="rim-bar"?Math.abs(item.offset)>=1e-6:horizontalExtent>s.tank.width/2+1e-6;
+    if(outsideMount)ctx.addIssue({code:"custom",path:["equipment",index,"offset"],message:`${item.kind[0].toUpperCase()+item.kind.slice(1)} extends outside its fixed mounting span.`});
     for(let priorIndex=0;priorIndex<index;priorIndex++){
       const prior=s.equipment[priorIndex];if(prior.mount!==item.mount)continue;
       const priorProduct=equipmentCatalog.get(prior.catalogId);if(!priorProduct||prior.kind!==priorProduct.kind)continue;
@@ -128,10 +129,25 @@ export function commitScene(current:SceneRecord,next:SceneRecord,base:number,act
   }
   return {...valid,revision:current.revision+1};
 }
-// Original storage is never changed. Migration retains every known stable ID/transform.
+/** Recover the formerly valid horizontal light offset only at the saved-v6 boundary. */
+function validateSavedScene(value:unknown):SceneRecord {
+  if(!value||typeof value!=="object")return validateScene(value);
+  const record=value as Record<string,unknown>;
+  if(record.schema!==6||record.builder!==BUILDER||!Array.isArray(record.equipment))return validateScene(value);
+  const tank=record.tank as Record<string,unknown>|undefined,width=tank?.width;
+  const rims=record.equipment.filter(item=>item&&typeof item==="object"&&item.mount==="rim-bar");
+  if(typeof width!=="number"||!Number.isFinite(width)||rims.length!==1)return validateScene(value);
+  const parsed=equipmentSchema.safeParse(rims[0]);
+  if(!parsed.success||parsed.data.offset===0)return validateScene(value);
+  const light=parsed.data,product=equipmentCatalog.get(light.catalogId)!;
+  // An offset that already extended beyond the old mounting span is corrupt, not legacy.
+  if(Math.abs(light.offset*width*.42)+product.profile.nominalDimensionsCm[0]/200>width/2+1e-6)return validateScene(value);
+  return validateScene({...record,equipment:record.equipment.map(item=>item===rims[0]?{...light,offset:0}:item)});
+}
+// Original storage is never changed. Legacy rim lights retain their ID and are seated centrally.
 export function readSavedScene(storage:Storage):{scene:SceneRecord;note:string;raw:string|null;past?:SceneRecord[];future?:SceneRecord[];manualEdits?:unknown} {
   const raw=storage.getItem(SAVE_KEY),previousV5=raw?null:storage.getItem(PREVIOUS_SAVE_KEY);
-  if(raw||previousV5){const saved=raw??previousV5!,parsed=JSON.parse(saved);return {scene:validateScene(parsed.scene??parsed),note:raw?"Loaded saved scene":"Recovered previous save; save to upgrade its installed-system data. Original retained.",raw:raw??null,past:Array.isArray(parsed.past)?parsed.past.slice(-40).map(validateScene):[],future:Array.isArray(parsed.future)?parsed.future.slice(-40).map(validateScene):[],manualEdits:parsed.manualEdits};}
+  if(raw||previousV5){const saved=raw??previousV5!,parsed=JSON.parse(saved);return {scene:validateSavedScene(parsed.scene??parsed),note:raw?"Loaded saved scene":"Recovered previous save; save to upgrade its installed-system data. Original retained.",raw:raw??null,past:Array.isArray(parsed.past)?parsed.past.slice(-40).map(validateSavedScene):[],future:Array.isArray(parsed.future)?parsed.future.slice(-40).map(validateSavedScene):[],manualEdits:parsed.manualEdits};}
   const previous=storage.getItem("fishy.studio.scene.v4");
   if(previous){const parsed=JSON.parse(previous),migrate=(old:unknown)=>{if(!old||typeof old!=="object"||(old as Record<string,unknown>).schema!==4||(old as Record<string,unknown>).builder!=="fishy-browser-2")throw new Error("Unrecognized previous scene format");return validateScene({...old,schema:6,builder:BUILDER,equipment:[]});};return {scene:migrate(parsed.scene??parsed),note:"Recovered previous save; save to keep sculpt-compatible history. Original retained.",raw:null,past:Array.isArray(parsed.past)?parsed.past.slice(-40).map(migrate):[],future:Array.isArray(parsed.future)?parsed.future.slice(-40).map(migrate):[],manualEdits:parsed.manualEdits};}
   const candidates=["fishy.v3","fishy.v2","fishy.scene","fishy-scene-v1","fishy.controls"].map(key=>({key,raw:storage.getItem(key)})).filter(c=>c.raw).map(c=>({...c,data:JSON.parse(c.raw!)}));
