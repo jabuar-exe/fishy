@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {WaterFlow} from '../lib/water-flow.ts';
+import {waterFlowForSurface,WaterFlow} from '../lib/water-flow.ts';
 
 const total=values=>values.reduce((sum,value)=>sum+value,0);
 const peak=values=>values.reduce((maximum,value)=>Math.max(maximum,Math.abs(value)),0);
@@ -44,6 +44,38 @@ test('mounted filter sources create bounded directional surface forcing',()=>{
   for(let i=0;i<240;i++)water.advance(1/120);
   assert(water.heights.some(height=>Math.abs(height)>1e-7),'filter should disturb the rendered surface');
   assert(Math.abs(total(water.heights))<1e-7,'surface forcing must not create water volume');
+});
+
+test('outlet wakes decay after the pump is switched off while the walls keep them contained',()=>{
+  const water=new WaterFlow(31,19,.8,.4,{initialDisturbance:0,damping:1.35,sources:[{position:[.08,.12],direction:[0,1],radius:.18,strength:.75,frequency:1,turbulence:.7}]});
+  for(let i=0;i<240;i++)water.advance(1/120);
+  const activeEnergy=water.heights.reduce((sum,height,index)=>sum+height*height+water.velocities[index]*water.velocities[index]*.0001,0);
+  assert(activeEnergy>0,'the powered outlet should supply wave energy');
+  water.setSources([]);
+  for(let i=0;i<1440;i++)water.advance(1/120);
+  const settlingEnergy=water.heights.reduce((sum,height,index)=>sum+height*height+water.velocities[index]*water.velocities[index]*.0001,0);
+  assert(settlingEnergy<activeEnergy*.35,'damping should settle a source-free surface');
+  assert(Math.abs(total(water.heights))<1e-7,'reflecting walls must retain mean water level');
+});
+
+test('equipment-only rebuilds preserve the live wake while tank or quality grids reset deterministically',()=>{
+  const source={position:[.08,.12],direction:[0,1],radius:.18,strength:.75,frequency:1,turbulence:.7};
+  const active=new WaterFlow(31,19,.8,.4,{initialDisturbance:0,sources:[source]});
+  for(let i=0;i<240;i++)active.advance(1/120);
+  const before=Array.from(active.heights),reused=waterFlowForSurface(active,{columns:31,rows:19,width:.8,depth:.4},[]);
+  assert.equal(reused,active);
+  assert.deepEqual(Array.from(reused.heights),before,'rebuilding a filter should not erase its outgoing wake');
+  const reset=waterFlowForSurface(active,{columns:32,rows:19,width:.8,depth:.4},[]);
+  assert.notEqual(reset,active);
+  assert.equal(peak(reset.heights),0,'a changed surface grid needs a fresh deterministic field');
+});
+
+test('CFL subdivision keeps an unusually fine, deep grid finite',()=>{
+  const water=new WaterFlow(79,53,.6,.3,{effectiveDepth:.08,fixedTimeStep:1/30,initialDisturbance:.0008,inletStrength:0,damping:.2});
+  for(let i=0;i<180;i++)water.advance(1/30);
+  assert(water.heights.every(Number.isFinite));
+  assert(water.velocities.every(Number.isFinite));
+  assert(peak(water.heights)<=water.parameters.maxDisplacement+.00000001);
 });
 
 test('an explicitly empty source list stays calm while omitted sources preserve the legacy inlet',()=>{

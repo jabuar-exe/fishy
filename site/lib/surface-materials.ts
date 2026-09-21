@@ -2,6 +2,70 @@ import * as T from "three";
 
 export type SurfaceKind = "wood" | "rock" | "plant" | "sand";
 
+export type PlantMotionState={time:{value:number};strength:{value:number};phase:{value:number};stiffness:{value:number};rootY:{value:number};height:{value:number};flow:{value:T.Vector2}};
+type SurfaceMaterialData={fishyPlantMotion?:PlantMotionState};
+type ShaderLike={uniforms:Record<string,unknown>;vertexShader:string};
+
+function materialData(material:T.Material) { return material.userData as SurfaceMaterialData; }
+
+/** Shared uniform objects let the visible and depth passes consume identical plant motion. */
+export function plantMotionState(material:T.Material):PlantMotionState|undefined { return materialData(material).fishyPlantMotion; }
+
+function plantVertexMotion(shader:ShaderLike,state:PlantMotionState) {
+  shader.uniforms.uFishyPlantTime=state.time;shader.uniforms.uFishyPlantMotion=state.strength;shader.uniforms.uFishyPlantPhase=state.phase;shader.uniforms.uFishyPlantStiffness=state.stiffness;shader.uniforms.uFishyPlantRootY=state.rootY;shader.uniforms.uFishyPlantHeight=state.height;shader.uniforms.uFishyPlantFlow=state.flow;
+  shader.vertexShader=shader.vertexShader.replace("#include <common>","#include <common>\nuniform float uFishyPlantTime; uniform float uFishyPlantMotion; uniform float uFishyPlantPhase; uniform float uFishyPlantStiffness; uniform float uFishyPlantRootY; uniform float uFishyPlantHeight; uniform vec2 uFishyPlantFlow;")
+    .replace("#include <begin_vertex>","#include <begin_vertex>\nfloat fishyPlantRootWeight=clamp(((modelMatrix*vec4(transformed,1.0)).y-uFishyPlantRootY)/max(uFishyPlantHeight,.01),0.0,1.0);\nfloat fishyPlantBend=sin(uFishyPlantTime*(1.15+uFishyPlantStiffness*.65)+uFishyPlantPhase+position.y*23.0);\nvec2 fishyPlantFlow=normalize(uFishyPlantFlow+vec2(.0001));\nvec3 fishyPlantWorldOffset=vec3(fishyPlantFlow.x*fishyPlantBend,0.0,fishyPlantFlow.y*cos(uFishyPlantTime*.83+uFishyPlantPhase+position.y*17.0))*fishyPlantRootWeight*uFishyPlantMotion*.0028;\ntransformed+=(inverse(modelMatrix)*vec4(fishyPlantWorldOffset,0.0)).xyz;");
+}
+
+export function setPlantMotion(material:T.Material,values:{time?:number;strength?:number;phase?:number;stiffness?:number;rootY?:number;height?:number;flow?:readonly[number,number]}) {
+  const state=plantMotionState(material);if(!state)return false;
+  if(values.time!==undefined)state.time.value=values.time;
+  if(values.strength!==undefined)state.strength.value=Math.max(0,Math.min(1,values.strength));
+  if(values.phase!==undefined)state.phase.value=values.phase;
+  if(values.stiffness!==undefined)state.stiffness.value=Math.max(.15,Math.min(2,values.stiffness));
+  if(values.rootY!==undefined)state.rootY.value=values.rootY;
+  if(values.height!==undefined)state.height.value=Math.max(.01,values.height);
+  if(values.flow!==undefined)state.flow.value.set(values.flow[0],values.flow[1]);
+  return true;
+}
+
+/** Add Fishy's bounded sway contract to an authored PBR plant material without replacing its maps. */
+export function wrapPlantMaterial(material:T.Material) {
+  const existing=plantMotionState(material);if(existing)return existing;
+  if(!(material instanceof T.MeshStandardMaterial||material instanceof T.MeshPhysicalMaterial))return undefined;
+  const state:PlantMotionState={time:{value:0},strength:{value:0},phase:{value:0},stiffness:{value:1},rootY:{value:0},height:{value:.16},flow:{value:new T.Vector2(.55,.4)}};
+  materialData(material).fishyPlantMotion=state;
+  const original=material.onBeforeCompile,originalKey=material.customProgramCacheKey;
+  material.onBeforeCompile=(shader,renderer)=>{original(shader,renderer);plantVertexMotion(shader,state);};
+  material.customProgramCacheKey=()=>originalKey.call(material)+"-fishy-plant-sway-v1";
+  material.needsUpdate=true;
+  return state;
+}
+
+export function plantDepthMaterial(source:T.Material,state:PlantMotionState) {
+  const visible=source as T.MeshStandardMaterial;
+  // Alpha-tested scanned fronds must cast the leaf silhouette, including holes.
+  // Maps are borrowed from the visible material and remain owned by that asset.
+  const depth=new T.MeshDepthMaterial({depthPacking:T.RGBADepthPacking,alphaTest:visible.alphaTest,map:visible.map,alphaMap:visible.alphaMap,side:visible.side});
+  depth.userData.fishyPlantMotion=state;
+  depth.customProgramCacheKey=()=>"fishy-plant-depth-sway-v1";
+  depth.onBeforeCompile=shader=>{
+    plantVertexMotion(shader,state);
+  };
+  return depth;
+}
+
+export function plantDistanceMaterial(state:PlantMotionState,source?:T.Material) {
+  const visible=source as T.MeshStandardMaterial|undefined;
+  const distance=new T.MeshDistanceMaterial({alphaTest:visible?.alphaTest??0,map:visible?.map??null,alphaMap:visible?.alphaMap??null,side:visible?.side??T.DoubleSide});
+  distance.userData.fishyPlantMotion=state;
+  distance.customProgramCacheKey=()=>"fishy-plant-distance-sway-v1";
+  distance.onBeforeCompile=shader=>{
+    plantVertexMotion(shader,state);
+  };
+  return distance;
+}
+
 // Detail is evaluated in object coordinates, so it follows edits without changing
 // geometry, bounds, saved colours or protected-object state. No texture downloads.
 const noise = /* glsl */`
@@ -71,10 +135,13 @@ const surfaces:Record<SurfaceKind,string> = {
 
 export function surfaceMaterial(kind:SurfaceKind,color:string) {
   const material=new T.MeshStandardMaterial({color,roughness:kind==="plant"?.7:.88,side:T.DoubleSide,vertexColors:kind==="plant"});
+  if(kind==="plant")materialData(material).fishyPlantMotion={time:{value:0},strength:{value:0},phase:{value:0},stiffness:{value:1},rootY:{value:0},height:{value:.16},flow:{value:new T.Vector2(.55,.4)}};
   material.customProgramCacheKey=()=>`fishy-surface-v1-${kind}`;
   material.onBeforeCompile=shader=>{
-    shader.vertexShader=shader.vertexShader.replace("#include <common>","#include <common>\nvarying vec3 vSurfacePoint;\nvarying vec2 vSurfaceUv;")
-      .replace("#include <begin_vertex>","#include <begin_vertex>\nvSurfacePoint=position; vSurfaceUv=uv;");
+    const motion=plantMotionState(material);
+    if(motion){shader.uniforms.uFishyPlantTime=motion.time;shader.uniforms.uFishyPlantMotion=motion.strength;shader.uniforms.uFishyPlantPhase=motion.phase;shader.uniforms.uFishyPlantStiffness=motion.stiffness;shader.uniforms.uFishyPlantRootY=motion.rootY;shader.uniforms.uFishyPlantHeight=motion.height;shader.uniforms.uFishyPlantFlow=motion.flow;}
+    shader.vertexShader=shader.vertexShader.replace("#include <common>",`#include <common>\nvarying vec3 vSurfacePoint;\nvarying vec2 vSurfaceUv;${motion?"\nuniform float uFishyPlantTime; uniform float uFishyPlantMotion; uniform float uFishyPlantPhase; uniform float uFishyPlantStiffness; uniform float uFishyPlantRootY; uniform float uFishyPlantHeight; uniform vec2 uFishyPlantFlow;":""}`)
+      .replace("#include <begin_vertex>",`#include <begin_vertex>\nvSurfacePoint=position; vSurfaceUv=uv;${motion?"\nfloat fishyPlantRootWeight=clamp(((modelMatrix*vec4(transformed,1.0)).y-uFishyPlantRootY)/max(uFishyPlantHeight,.01),0.0,1.0);\nfloat fishyPlantBend=sin(uFishyPlantTime*(1.15+uFishyPlantStiffness*.65)+uFishyPlantPhase+position.y*23.0);\nvec2 fishyPlantFlow=normalize(uFishyPlantFlow+vec2(.0001));\nvec3 fishyPlantWorldOffset=vec3(fishyPlantFlow.x*fishyPlantBend,0.0,fishyPlantFlow.y*cos(uFishyPlantTime*.83+uFishyPlantPhase+position.y*17.0))*fishyPlantRootWeight*uFishyPlantMotion*.0028;\ntransformed+=(inverse(modelMatrix)*vec4(fishyPlantWorldOffset,0.0)).xyz;":""}`);
     shader.fragmentShader=shader.fragmentShader.replace("#include <common>",`#include <common>\n${noise}\nvec4 surfaceSample(){${surfaces[kind]}}`)
       .replace("#include <color_fragment>","#include <color_fragment>\nvec4 surfaceDetail=surfaceSample();\ndiffuseColor.rgb*=surfaceDetail.rgb;")
       .replace("#include <roughnessmap_fragment>","#include <roughnessmap_fragment>\nroughnessFactor=clamp(roughnessFactor+(surfaceDetail.a-.5)*.22,.3,1.0);")

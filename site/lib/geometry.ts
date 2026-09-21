@@ -5,12 +5,25 @@ import {applySculpt} from "./sculpt.ts";
 
 export function makeObject(o:SceneObject):T.Group {
   const g=buildObjectBaseV11(o);if(o.sculpt?.nodes.length)applySculpt(g,o.sculpt);
+  else if(o.kind==="plant"&&(o.form==="fern"||o.catalogId==="plant-bolbitis-heudelotii")){
+    // The delivered fern forms a broad, low crown. Keep its conservative edit
+    // envelope at that aspect ratio, rather than the old upright stem height.
+    // Otherwise containment pushes an epiphytic fern down inside its rock.
+    for(const child of g.children){child.position.y*=.40;child.scale.y*=.40;}
+  }
   g.name=o.name;g.userData.objectId=o.id;g.position.fromArray(o.position);g.rotation.set(...o.rotation);g.scale.set(...(o.stretch??[1,1,1]));g.scale.multiplyScalar(o.size);g.updateMatrixWorld(true);return g;
 }
 export function disposeObject(object:T.Object3D) {
-  object.traverse(o=>{if(o instanceof T.Mesh||o instanceof T.LineSegments){o.geometry?.dispose();const materials=Array.isArray(o.material)?o.material:[o.material];materials.forEach(m=>{for(const value of Object.values(m))if(value instanceof T.Texture)value.dispose();m.dispose();});}});
+  object.traverse(o=>{if(o instanceof T.Mesh||o instanceof T.Line||o instanceof T.Points){o.geometry?.dispose();const materials=Array.isArray(o.material)?o.material:[o.material];materials.forEach(m=>{for(const value of Object.values(m))if(value instanceof T.Texture)value.dispose();m.dispose();});}});
 }
-export function boundsOf(o:SceneObject) {const g=makeObject(o);const b=new T.Box3().setFromObject(g);disposeObject(g);return b;}
+export function boundsOf(o:SceneObject) {
+  const g=makeObject(o),world=g.matrixWorld.clone();
+  // The hydrated asset is fitted to the complete local procedural envelope
+  // before the root rotates. Union that local envelope first as well: a union
+  // of individually rotated child AABBs can be too tight at the empty corners.
+  g.matrixAutoUpdate=false;g.matrix.identity();g.matrixWorld.identity();g.updateMatrixWorld(true);
+  const b=new T.Box3().setFromObject(g).applyMatrix4(world);disposeObject(g);return b;
+}
 export function tankBounds(s:SceneRecord){return new T.Box3(new T.Vector3(-s.tank.width/2+.004,s.substrate-.001,-s.tank.depth/2+.004),new T.Vector3(s.tank.width/2-.004,s.tank.height-.008,s.tank.depth/2-.004));}
 export function outsideObjects(s:SceneRecord) {const b=tankBounds(s);return s.objects.filter(o=>!b.containsBox(boundsOf(o))).map(o=>o.name);}
 export function positionRange(o:SceneObject,s:SceneRecord,axis:0|1|2) {
@@ -18,7 +31,7 @@ export function positionRange(o:SceneObject,s:SceneRecord,axis:0|1|2) {
   return {min:Math.ceil(min*10000)/100,max:Math.floor(max*10000)/100};
 }
 export function fitObject(o:SceneObject,s:SceneRecord,allowScale:boolean):SceneObject {
-  let n=structuredClone(o),b=boundsOf(n);const tank=tankBounds(s).expandByScalar(-.00001),size=b.getSize(new T.Vector3()),available=tank.getSize(new T.Vector3());
+  const n=structuredClone(o);let b=boundsOf(n);const tank=tankBounds(s).expandByScalar(-.00001),size=b.getSize(new T.Vector3()),available=tank.getSize(new T.Vector3());
   const factor=Math.min(1,available.x/size.x,available.y/size.y,available.z/size.z);
   if(factor<1){if(!allowScale)throw new Error(`${o.name} is too large for this tank. Reduce its size first.`);n.size*=factor*.985;if(n.size<.05)throw new Error(`${o.name} cannot fit at the minimum size.`);b=boundsOf(n);}
   const delta=new T.Vector3();for(const axis of ["x","y","z"] as const){if(b.min[axis]<tank.min[axis])delta[axis]=tank.min[axis]-b.min[axis];else if(b.max[axis]>tank.max[axis])delta[axis]=tank.max[axis]-b.max[axis];}

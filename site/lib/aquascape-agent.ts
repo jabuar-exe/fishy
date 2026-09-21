@@ -1,7 +1,7 @@
 import {z} from "zod";
 import {catalogDescriptor,catalogEntries,isOrganicCatalogEntry,type CatalogEntry} from "./catalog.ts";
 import {fitObject,outsideObjects,separatePlacements} from "./geometry.ts";
-import {sceneSchema,validateScene,type SceneRecord} from "./scene.ts";
+import {MAX_SCENE_OBJECTS,sceneSchema,validateScene,type SceneRecord} from "./scene.ts";
 import {COMPOSITIONS,MAINTENANCE,MOODS} from "./design.ts";
 
 export const MAX_AGENT_IMAGES=4;
@@ -144,7 +144,7 @@ function compactScene(scene:SceneRecord){
   };
 }
 
-function availableComponentCapacity(scene:SceneRecord){return 32-scene.objects.filter(object=>object.protected).length;}
+function availableComponentCapacity(scene:SceneRecord){return MAX_SCENE_OBJECTS-scene.objects.filter(object=>object.protected).length;}
 
 function outputSchemaFor(capacity:number){
   const maxComponents=Math.min(24,capacity);
@@ -214,7 +214,7 @@ export function parseAquascapeModelResponse(payload:unknown):AquascapePlan {
 
 export function materializeAquascapePlan(current:SceneRecord,plan:AquascapePlan,message:string,idFactory:()=>string=()=>crypto.randomUUID()){
   const scene=validateScene(current),validPlan=aquascapePlanSchema.parse(plan),protectedObjects=scene.objects.filter(object=>object.protected).map(object=>structuredClone(object));
-  const capacity=32-protectedObjects.length;
+  const capacity=MAX_SCENE_OBJECTS-protectedObjects.length;
   if(capacity<1)throw new AquascapeAgentError("invalid_plan","The scene has no room for generated components. Release or remove an object first.");
   if(validPlan.components.length>capacity)throw new AquascapeAgentError("invalid_plan","The model proposed more components than this tank can safely accept.",true);
   if(validPlan.design.focalIndex>=validPlan.components.length)throw new AquascapeAgentError("invalid_plan","The model selected a focal component that was not generated.",true);

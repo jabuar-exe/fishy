@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {boundsOf} from "../lib/geometry.ts";
 import {initialScene,validateScene} from "../lib/scene.ts";
+import {createPlantedStudy} from "../lib/planted-study.ts";
 import {RECIPE_SCHEMA_VERSION,RecipeExportError,assetFor,recipeBounds,recipeIdFor,toRecipe,validateRecipeFit} from "../lib/recipe.ts";
 
 const near=(actual,expected,tolerance,label)=>assert.ok(Math.abs(actual-expected)<=tolerance,`${label}: ${actual} vs ${expected} (tolerance ${tolerance})`);
@@ -17,6 +18,13 @@ test("export produces a schema v2 recipe that passes its own containment check",
   // Schema v2 requires a design block, and the focal id must name an exported object.
   assert.ok(recipe.design.focal_object_id);
   assert.ok(recipe.objects.some(object=>object.id===recipe.design.focal_object_id));
+});
+
+test("the user-loadable planted study exports at the editable scene ceiling",()=>{
+  const study=createPlantedStudy(),recipe=toRecipe(study);
+  assert.equal(study.objects.length,56);
+  assert.equal(recipe.objects.length,study.objects.length);
+  assert.deepEqual(validateRecipeFit(recipe),[]);
 });
 
 test("coordinates convert from browser Y-up centre-origin to Blender Z-up front-left origin",()=>{

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import {existsSync,readFileSync} from "node:fs";
 import {resolve} from "node:path";
 import test from "node:test";
-import {catalogEntries,isOrganicCatalogEntry,isSystemCatalogEntry} from "../lib/catalog.ts";
+import {catalogEntries,isFishCatalogEntry,isOrganicCatalogEntry,isSystemCatalogEntry} from "../lib/catalog.ts";
 
 const root=resolve(import.meta.dirname,"..");
 const registry=JSON.parse(readFileSync(resolve(root,"public/data/catalog-registry.json"),"utf8"));
@@ -22,9 +22,16 @@ test("the original photographed Materials entries retain local attribution",()=>
   }
 });
 
-test("expanded material catalog has 30 organic additions and 10 products per installed-system section",()=>{
-  assert.equal(catalogEntries.length,80);
+test("expanded catalog has organic, fish, and ten products per installed-system section",()=>{
+  assert.equal(catalogEntries.length,91);
   assert.equal(catalogEntries.filter(isOrganicCatalogEntry).length,50);
+  const fish=catalogEntries.filter(isFishCatalogEntry);
+  assert.equal(fish.length,11);
+  for(const entry of fish){
+    assert.match(entry.id,/^fish-/);
+    assert.match(entry.browseTags.join(" "),/cm/);
+    assert.equal(entry.placementRole,"animated open-water school");
+  }
   for(const kind of ["substrate","filter","light"]){
     const entries=catalogEntries.filter(entry=>entry.kind===kind);
     assert.equal(entries.length,10,`${kind} needs ten real-world counterparts`);
@@ -53,15 +60,21 @@ test("Weeping Moss uses its exact, reusable Flickr reference",()=>{
 
 test("Materials cards render 3D model previews and reveal real reference photos on demand",()=>{
   const page=readFileSync(resolve(root,"app/page.tsx"),"utf8");
+  const filter=readFileSync(resolve(root,"components/catalog-filter.tsx"),"utf8");
   assert.match(page,/useMaterialThumbnails\(catalog,materialsVisible&&!realSampleOpen\)/);
   assert.match(page,/src=\{materialThumbnails\[entry\.id\]\}/);
   assert.match(page,/3D model preview of/);
   assert.match(page,/Inspect real sample/);
   assert.match(page,/Real reference photo ·/);
   assert.match(page,/candidate\.referenceImage\.sourceUrl/);
-  assert.match(page,/label:"Substrate"/);
-  assert.match(page,/label:"Filters"/);
-  assert.match(page,/label:"Light"/);
+  assert.match(filter,/label: "Substrate"/);
+  assert.match(filter,/label: "Filters"/);
+  assert.match(filter,/label: "Lighting"/);
+  assert.match(filter,/label: "Fishes"/);
+  assert.match(page,/fish-thumbnails/);
+  assert.match(page,/filter-thumbnails/);
+  assert.match(page,/chooseDensity/);
+  assert.doesNotMatch(page,/A detailed editable procedural counterpart for this natural material\./);
 });
 
 test("the desktop configuration tray has an accessible resize control",()=>{

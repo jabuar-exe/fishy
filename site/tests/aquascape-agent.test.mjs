@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {aquascapeRequestSchema,buildAquascapeModelRequest,generateAquascape,materializeAquascapePlan,parseAquascapeModelResponse} from "../lib/aquascape-agent.ts";
 import {outsideObjects} from "../lib/geometry.ts";
-import {initialScene} from "../lib/scene.ts";
+import {MAX_SCENE_OBJECTS,initialScene} from "../lib/scene.ts";
 import {POST} from "../app/api/aquascape/generate/route.ts";
 
 const design={composition:"triangular",focalIndex:0,sightline:"Open from the front right toward the branch.",openForegroundMin:.4,mood:"lush",maintenanceTier:"medium",story:"A shaded riverbank under an overhanging branch."};
@@ -97,7 +97,7 @@ test("API route denies cross-site and non-JSON requests before provider access",
 
 test("materializer rejects over-capacity and missing focal components without silently changing the design",()=>{
   const protectedScene=initialScene();
-  protectedScene.objects=Array.from({length:31},(_,index)=>({...protectedScene.objects[0],id:`protected-${index}`,protected:true}));
+  protectedScene.objects=Array.from({length:MAX_SCENE_OBJECTS-1},(_,index)=>({...protectedScene.objects[0],id:`protected-${index}`,protected:true}));
   const overCapacity={...plan,design:{...design,focalIndex:1}};
   assert.throws(()=>materializeAquascapePlan(protectedScene,overCapacity,"Keep the focal branch",()=>"stable"),/more components/i);
   const missingFocal={...plan,components:[plan.components[0]],design:{...design,focalIndex:1}};

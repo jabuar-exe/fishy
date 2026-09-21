@@ -125,3 +125,129 @@ Verified with Blender 5.2.0 LTS on Apple Silicon macOS. Six background checks pa
 Desktop verification confirmed the file opens, the panel draws, dragging the navigation gizmo orbits the scene, dragging the selected wood changes its position, and ⌘Z restores it. Rotating the wood crossed the back wall; Check Bounds named that violation, and Undo restored the original rotation. A subsequent check confirmed all six objects were within tank bounds.
 
 The Astra generation and render–compare–revise milestone now has three successful model runs, including the native-button test. Generated geometry still uses a limited procedural asset library and has not been measured against an actual aquarium. Voice, video ingestion, inspiration retrieval, biological validation, and shopping remain future work.
+
+## Browser render assets
+
+The canonical browser asset pipeline is `build_natural_assets.py` plus
+`build_tetra.py`. It exports nine original natural asset variants across eight
+unique geometric families, one scan-derived fern, and one animated, skinned
+neon tetra to
+`site/public/render-assets/models/`:
+
+- `rock-rounded` and `rock-strata` (one original fractured-rock geometry with
+  dark-rock and lichen-mineral PBR variants)
+- `wood-arch`, `wood-root`, and `wood-stump`
+- `plant-broadleaf`, `plant-grass`, `plant-stem`, and `plant-moss`
+- `plant-fern` from the adapted Poly Haven Fern 02 clump b source
+- `neon-tetra`
+
+This is an **11-asset delivery**: nine original natural exports across eight
+unique geometric families, the adapted CC0 fern, and the original tetra. The
+native source deliverables are `fishy-fidelity-assets.blend` (the ten natural
+exports) and
+`fishy-neon-tetra.blend` (tetra geometry, skin, armature, and action). The
+current `astra-refinement/scene.json` is a separate 56-object browser study.
+The editor accepts up to 64 editable objects; the older browser-to-recipe
+bridge intentionally remains capped at 24 approximate procedural envelopes, so
+it cannot reproduce that study as a full native recipe.
+
+Astra completed native and browser visual review of this delivery. The renders and source files below document the pipeline; the [quality report](../workstreams/fidelity-reference-20260921/astra-refinement/QUALITY_REPORT.md) records findings and remaining reference differences. Exact parity is not claimed.
+The evidence boundary and recorded method are in
+[`astra-refinement/METHOD.md`](../workstreams/fidelity-reference-20260921/astra-refinement/METHOD.md).
+
+The eight unique original natural geometric families, their botanical maps,
+tetra geometry, tetra skin, and tetra rig are authored in these generators.
+Rock and bark PBR inputs are selected Poly Haven CC0 scans. `rock-strata` is a
+mineral material variant of the same fractured original geometry as
+`rock-rounded`, using the documented `lichen_rock` scan. Asset pages, source
+file URLs, hashes, map dimensions, and license are recorded in
+[`material-sources/materials-provenance.json`](material-sources/materials-provenance.json);
+the active `rock` and `bark` choices are in
+[`material-sources/selection.json`](material-sources/selection.json).
+
+`plant-fern` is delivered from the adapted Fern 02 clump b source rather than
+the older custom fern. Fern 02 is CC0 work credited by Poly Haven to Rico
+Cilliers (modeling) and Rob Tuytel (scanning); its separate model package,
+relative texture references, source URLs, hashes, and license are in
+[`material-sources/fern_02/provenance.json`](material-sources/fern_02/provenance.json).
+`make_procedural_fern()` remains an authoring fallback/reference only and is
+not the delivered fern geometry.
+
+Build the natural models first, then the tetra. Both generators export JPEG
+textures into the GLBs and save editable Blender source files:
+
+```sh
+BLENDER_BIN="${BLENDER_BIN:-/Users/bedelau/Applications/Blender 5.2.2 LTS.app/Contents/MacOS/Blender}"
+"$BLENDER_BIN" --background --python blender/build_natural_assets.py
+"$BLENDER_BIN" --background --python blender/build_tetra.py
+```
+
+`build_natural_assets.py` saves `fishy-fidelity-assets.blend`, which contains
+the nine original natural exports (eight unique geometries) and the adapted
+Fern 02 delivery family.
+`build_tetra.py` saves
+`fishy-neon-tetra.blend`, which contains the tetra mesh, skin, armature, and
+cyclic action. Rebuilding replaces generated render assets; keep separately
+named copies of any manual source-scene edits.
+
+Inspect the delivery GLBs, rather than the authoring geometry, with fixed front
+and reverse Cycles views:
+
+```sh
+"$BLENDER_BIN" --background --python blender/inspect_natural_assets.py
+```
+
+Inspection renders and per-asset inspection `.blend` files are written to
+`workstreams/fidelity-reference-20260921/astra-refinement/renders/`. Set
+`FISHY_INSPECT_ONLY=rock-rounded,wood-root` to restrict the inspection set.
+`build_aquascape_study.py` is a separate study assembler: it imports these GLBs
+against an existing study `scene.json` and writes an editable riverbank study.
+
+### Full study reproduction
+
+After generating the natural assets and tetra, refresh the browser-derived
+study data, assemble the native study, then check every authored world-space
+vertex against the glass envelope:
+
+```sh
+node --experimental-strip-types site/scripts/export-fidelity-study.mjs
+"$BLENDER_BIN" --background --python blender/build_aquascape_study.py
+"$BLENDER_BIN" --background --python blender/verify_study_bounds.py
+```
+
+The final command writes `astra-refinement/world-bounds.json` and fails when
+any authored vertex crosses glass. It is a geometric containment check, not a
+substitute for final visual QA.
+
+### Study contact reproduction
+
+The regenerated riverbank scene uses the Astra-reviewed placements in
+[`site/lib/study-plant-contacts.ts`](../site/lib/study-plant-contacts.ts).
+`export_contact_surface.py` reduces the delivered `rock-rounded.glb` to the
+geometric proxy used for browser cascade contact; it writes
+`site/lib/rock-contact-surface.ts` and does not replace the visible GLB.
+
+```sh
+"$BLENDER_BIN" --background --python blender/export_contact_surface.py
+"$BLENDER_BIN" --background --python blender/seat_study_plants.py
+```
+
+`seat_study_plants.py` opens `fishy-riverbank-study.blend`, measures hardscape
+surfaces, and writes candidate anchors to
+`astra-refinement/plant-contact-anchors.json`. It does not edit
+`scene.json` or `study-plant-contacts.ts`; review candidate placements before
+accepting any update. These geometric checks support review and do not complete
+final visual QA.
+
+`verify_fidelity_assets.py` verifies the current 11 GLBs: it reopens the
+current master, checks mesh/UV/normal constraints, and roundtrips tetra's
+skinned clip across 65 sampled poses. Run it after rebuilding assets:
+
+```sh
+"$BLENDER_BIN" --background --python blender/verify_fidelity_assets.py
+```
+
+`build_fidelity_assets.py` and `render_fidelity_contact_sheet.py` belong to the
+older procedural export set. They are retained for historical compatibility and
+are not the canonical source or inspection workflow for the current render
+assets.

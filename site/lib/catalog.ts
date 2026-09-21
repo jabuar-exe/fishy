@@ -1,11 +1,12 @@
 import registry from "../public/data/catalog-registry.json" with {type:"json"};
 import {catalogExpansion} from "./catalog-expansion.ts";
-import {isOrganicCatalogEntry,isSystemCatalogEntry,type CatalogEntry,type CatalogReferenceImage,type CatalogKind,type OrganicCatalogKind} from "./catalog-types.ts";
+import {fishCatalogEntries,fishSpeciesFromCatalogId} from "./fish-species.ts";
+import {isOrganicCatalogEntry,isSystemCatalogEntry,isFishCatalogEntry,type CatalogEntry,type CatalogReferenceImage,type CatalogKind,type OrganicCatalogKind} from "./catalog-types.ts";
 import type {SceneObject,SceneRecord} from "./scene";
 import {fitObject} from "./geometry.ts";
 
 export type {CatalogEntry,CatalogReferenceImage,CatalogKind,OrganicCatalogKind};
-export {isOrganicCatalogEntry,isSystemCatalogEntry};
+export {isOrganicCatalogEntry,isSystemCatalogEntry,isFishCatalogEntry};
 
 /**
  * The original reference-photo registry remains deliberately small and locally
@@ -13,7 +14,7 @@ export {isOrganicCatalogEntry,isSystemCatalogEntry};
  * source link, so catalog browsing never presents an unlicensed supplier image
  * as a Fishy asset.
  */
-export const catalogEntries=[...(registry.entries as CatalogEntry[]),...catalogExpansion];
+export const catalogEntries=[...(registry.entries as CatalogEntry[]),...catalogExpansion,...fishCatalogEntries];
 const entriesById=new Map(catalogEntries.map(entry=>[entry.id,entry]));
 
 export function catalogEntryById(id:string) { return entriesById.get(id); }
@@ -28,4 +29,14 @@ export function catalogDescriptor(entry:CatalogEntry,id:string):SceneObject {
 
 export function catalogObject(entry:CatalogEntry,scene:SceneRecord,id:string):SceneObject {
   const object=catalogDescriptor(entry,id);object.position[1]=scene.substrate;return fitObject(object,scene,true);
+}
+
+/** Add one independently editable school to the persisted render profile. */
+export function addCatalogFish(scene:SceneRecord,entry:CatalogEntry,id:string):SceneRecord {
+  if(!isFishCatalogEntry(entry))throw new Error(`${entry.displayLabel} is not an addable fish species.`);
+  const species=fishSpeciesFromCatalogId(entry.id);if(!species)throw new Error(`Unknown fish catalog ID: ${entry.id}`);
+  const existing=scene.visual.organisms.schools??[];
+  const profile=entry.fish,seed=[...id].reduce((value,char)=>Math.imul(value^char.charCodeAt(0),16777619)>>>0,2166136261);
+  const school={id:`school-${id}`,enabled:true,species,count:Math.min(profile.schoolSize[0],12),size:((profile.adultLengthCm[0]+profile.adultLengthCm[1])/2)/100,seed};
+  return {...scene,visual:{...scene.visual,organisms:{...scene.visual.organisms,enabled:true,schools:[...existing,school]}}};
 }

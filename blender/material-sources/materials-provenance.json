@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "retrieved_utc": "2026-09-21",
+  "license": {
+    "name": "CC0 1.0 Universal",
+    "license_url": "https://polyhaven.com/license",
+    "summary": "Poly Haven states its assets are CC0."
+  },
+  "assets": [
+    {
+      "asset_id": "dark_rock",
+      "role": "stone-primary",
+      "selection": "Charcoal-gray stratified fractures and crevices for damp ravine boulders.",
+      "asset_url": "https://polyhaven.com/a/dark_rock",
+      "license_url": "https://polyhaven.com/license",
+      "files": [
+        {"map":"albedo","local_path":"dark_rock/dark_rock_albedo_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/dark_rock/dark_rock_diff_2k.jpg","color_space":"sRGB","pixels":[2048,2048],"bytes":2159653,"source_md5":"980167324d1d407197227619a80cfb71","sha256":"0f01bfec36ec4546e23576a10c52ef073f9eb815826c5fce2a1cdb08cd8188b8"},
+        {"map":"roughness","local_path":"dark_rock/dark_rock_roughness_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/dark_rock/dark_rock_rough_2k.jpg","color_space":"Non-Color","pixels":[2048,2048],"bytes":2312590,"source_md5":"375269be32375407880ab60ac0154ea5","sha256":"de4dc9e276ea769f0eb58faae8c3bc04b512ad62ca49301a0287efe35d26b058"},
+        {"map":"normal_gl","local_path":"dark_rock/dark_rock_normal_gl_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/dark_rock/dark_rock_nor_gl_2k.jpg","color_space":"Non-Color","pixels":[2048,2048],"bytes":3811444,"source_md5":"498cbe6f8ba1a5e08c3ea2f0ace3843c","sha256":"abb3c5f1f932693537333a6d467c3e79bb810afa84416d0deaa10ead9fb4f628"},
+        {"map":"displacement","local_path":"dark_rock/dark_rock_displacement_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/dark_rock/dark_rock_disp_2k.jpg","color_space":"Non-Color","pixels":[2048,2048],"bytes":693929,"source_md5":"cc8215577da08ea453fbff28bf48e35c","sha256":"b72e529899ee15361d5b3ca14a75d6bbfecb7164388a4bf76a70809bbd978b77"}
+      ]
+    },
+    {
+      "asset_id": "lichen_rock",
+      "role": "stone-variation",
+      "selection": "Layered rock microdetail with restrained lichen; use sparingly as damp variation.",
+      "asset_url": "https://polyhaven.com/a/lichen_rock",
+      "license_url": "https://polyhaven.com/license",
+      "files": [
+        {"map":"albedo","local_path":"lichen_rock/lichen_rock_albedo_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/lichen_rock/lichen_rock_diff_2k.jpg","color_space":"sRGB","pixels":[2048,2048],"bytes":4010129,"source_md5":"5625c90a7b55058b7d89e180376a7cda","sha256":"f2ec7a10c6cb929653278e00dcfb0e7e07aea178136a37eac7478d2b9cdd5e96"},
+        {"map":"roughness","local_path":"lichen_rock/lichen_rock_roughness_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/lichen_rock/lichen_rock_rough_2k.jpg","color_space":"Non-Color","pixels":[2048,2048],"bytes":2108970,"source_md5":"0f6970ee1ff05b053b58cf9ad2451c15","sha256":"ad8a3ffad3cc15e8781958179db56dbcc9c82b50021076a0068c9e62d494a4c2"},
+        {"map":"normal_gl","local_path":"lichen_rock/lichen_rock_normal_gl_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/lichen_rock/lichen_rock_nor_gl_2k.jpg","color_space":"Non-Color","pixels":[2048,2048],"bytes":4844348,"source_md5":"801690ee8bbc1d4aa2f16af2d49acc26","sha256":"89b28336282a07492080a20725d18c7649ae69b1d8e10187ffe143c804bd6d2c"},
+        {"map":"displacement","local_path":"lichen_rock/lichen_rock_displacement_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/lichen_rock/lichen_rock_disp_2k.jpg","color_space":"Non-Color","pixels":[2048,2048],"bytes":961417,"source_md5":"8feedb29e0fc7d10a29ed915bb571865","sha256":"f1e7b11ae7f95250b62fb39006b5ae7f5e46db800bfa4a6cccc3f9d320132443"}
+      ]
+    },
+    {
+      "asset_id": "bark_willow",
+      "role": "root-primary",
+      "selection": "Dark, deeply fissured weathered willow bark for submerged root channels.",
+      "asset_url": "https://polyhaven.com/a/bark_willow",
+      "license_url": "https://polyhaven.com/license",
+      "files": [
+        {"map":"albedo","local_path":"bark_willow/bark_willow_albedo_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/bark_willow/bark_willow_diff_2k.jpg","color_space":"sRGB","pixels":[2048,2048],"bytes":3154082,"source_md5":"83d9b8f937142151313dc21270ff15f9","sha256":"d87e97687eb0abd61031161f2895ab7eafc241c850380e978d011ef98a45a67b"},
+        {"map":"roughness","local_path":"bark_willow/bark_willow_roughness_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/bark_willow/bark_willow_rough_2k.jpg","color_space":"Non-Color","pixels":[2048,2048],"bytes":1629349,"source_md5":"724aa2dc495a89bf226697936ab66817","sha256":"fc3cc861befbd9dcaec295d7ddb54b41c68ecf153a49a18fc8460c25b3f57c49"},
+        {"map":"normal_gl","local_path":"bark_willow/bark_willow_normal_gl_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/bark_willow/bark_willow_nor_gl_2k.jpg","color_space":"Non-Color","pixels":[2048,2048],"bytes":5586193,"source_md5":"5ec97758109361e8630e90ae00f414d2","sha256":"2984fe9d23f2cfb9b235fc50eea85f514b27be3f4addc7c7142afba077c9970e"},
+        {"map":"displacement","local_path":"bark_willow/bark_willow_displacement_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/bark_willow/bark_willow_disp_2k.jpg","color_space":"Non-Color","pixels":[2048,2048],"bytes":1212681,"source_md5":"872acf5178628554c888b2869f99fdff","sha256":"6a7c4c7a28b3b4a5910a1d525dd21633abbae4509664b63efa511d08dd1ce6ac"}
+      ]
+    },
+    {
+      "asset_id": "jolcham_oak_bark_01",
+      "role": "root-variation",
+      "selection": "Coarse mossy weathered bark with deep fissures for a secondary root mass.",
+      "asset_url": "https://polyhaven.com/a/jolcham_oak_bark_01",
+      "license_url": "https://polyhaven.com/license",
+      "files": [
+        {"map":"albedo","local_path":"jolcham_oak_bark_01/jolcham_oak_bark_01_albedo_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/jolcham_oak_bark_01/jolcham_oak_bark_01_diff_2k.jpg","color_space":"sRGB","pixels":[2048,4096],"bytes":7512396,"source_md5":"2836557140894ed530aed39818b79f57","sha256":"2eb8d1e79a64827ad70b20bc80bec2171494a442310099ac88d15970a46e6c5f"},
+        {"map":"roughness","local_path":"jolcham_oak_bark_01/jolcham_oak_bark_01_roughness_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/jolcham_oak_bark_01/jolcham_oak_bark_01_rough_2k.jpg","color_space":"Non-Color","pixels":[2048,4096],"bytes":3347715,"source_md5":"32379d55c2811647bbd8cc0b3089af41","sha256":"831efb4bfef79ee43270f99e0c0428b2723c34725341ca4357b102102b1d0eec"},
+        {"map":"normal_gl","local_path":"jolcham_oak_bark_01/jolcham_oak_bark_01_normal_gl_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/jolcham_oak_bark_01/jolcham_oak_bark_01_nor_gl_2k.jpg","color_space":"Non-Color","pixels":[2048,4096],"bytes":10334471,"source_md5":"c5daadd598c38113271ea14480b09cc9","sha256":"f0c17caeafb7aad681e7a376e754ed1593a6bf61acc0bc71a45d9850f29e2ae3"},
+        {"map":"displacement","local_path":"jolcham_oak_bark_01/jolcham_oak_bark_01_displacement_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/jolcham_oak_bark_01/jolcham_oak_bark_01_disp_2k.jpg","color_space":"Non-Color","pixels":[2048,4096],"bytes":2652494,"source_md5":"0c92bf4fb113f9f64a81ed4f47ad7ba9","sha256":"42ef3801d43309a15f69c3c6c515d8577eb14763e367c204e1663cd0894e809f"}
+      ]
+    }
+  ]
+}

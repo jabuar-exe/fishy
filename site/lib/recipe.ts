@@ -26,7 +26,7 @@ import {
   designSchema, inferComposition, inferMaintenance, reviewDesign,
   type DesignIntent, type Footprint, type Tank,
 } from "./design.ts";
-import type { SceneObject, SceneRecord } from "./scene.ts";
+import { MAX_SCENE_OBJECTS, type SceneObject, type SceneRecord } from "./scene.ts";
 
 export const RECIPE_SCHEMA_VERSION = "fishy.recipe.v2";
 /** Mirrors ASSETS in blender/scene_recipe.py. */
@@ -35,7 +35,10 @@ export type RecipeAsset = (typeof RECIPE_ASSETS)[number];
 
 /** Plant forms Blender builds as a fine carpet rather than a leafy bush. */
 const GRASS_FORMS = new Set(["grass", "carpet", "moss"]);
-const MAX_OBJECTS = 24;
+// The browser validates this ceiling before a scene can be saved. Keep the
+// export contract aligned so every valid editable scene, including the planted
+// study, remains a valid recipe input.
+const MAX_OBJECTS = MAX_SCENE_OBJECTS;
 const MIN_SIZE_M = 0.002;
 const MAX_SUBSTRATE_M = 0.2;
 const SUBSTRATE_HEIGHT_FRACTION = 0.3;
@@ -248,6 +251,8 @@ export function toRecipe(scene: SceneRecord, options: { interpretation?: string 
     assumptions.push("Tilt on X or Z was absorbed into the exported envelope; a recipe carries yaw only.");
   }
   assumptions.push("Assets are procedural approximations built inside each envelope, not the browser's meshes.");
+  assumptions.push("Detailed browser GLBs and PBR maps are supplied separately. Browser water, glass, reflections and animated plant sway are not reproduced by this procedural Blender recipe.");
+  if(scene.visual.organisms.enabled)assumptions.push("The fish use a separate authored skinned GLB and Blender source. This procedural recipe omits the school paths and animation; use the supplied riverbank study Blender scene for the fidelity study.");
 
   const footprints = footprintsOf(scene);
   const declared = scene.design ? designSchema.parse(scene.design) : null;

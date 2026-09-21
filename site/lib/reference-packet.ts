@@ -1,5 +1,10 @@
 import * as T from "three";
 import {createAquariumStage,populateAquarium} from "./aquarium-stage.ts";
+import {resolveRenderQuality} from "./render-quality.ts";
+import {createOrganismSystem,type OrganismSystem} from "./organism-system.ts";
+import {enhanceAquariumAssets} from "./render-assets.ts";
+import {installedSystems,systemTransform} from "./equipment.ts";
+import {lightFixtureGeometry} from "./equipment-models.ts";
 import {disposeObject} from "./geometry.ts";
 import {validateScene,type SceneRecord} from "./scene.ts";
 
@@ -9,8 +14,20 @@ export const OUTPUT_WIDTH=2048,OUTPUT_HEIGHT=1536;
 export function referenceDimensionsLabel(tank:SceneRecord["tank"]) {
   return [tank.width,tank.depth,tank.height].map(value=>Number((value*100).toFixed(2)).toString()).join(" × ")+" cm";
 }
+/** Bounds include the actual installed light datum so five-view exports never crop fixtures. */
+export function referenceCameraBounds(record:SceneRecord) {
+  const {width,height,depth}=record.tank;let top=height+.004;
+  for(const {instance,entry} of installedSystems(record)){
+    if(entry.system?.type!=="light")continue;
+    const transform=systemTransform(instance,record),fixture=lightFixtureGeometry(instance,record,entry);
+    const bodyTop=transform.position[1]+fixture.bodyCenterY+fixture.bodySize[1]/2;
+    const supportTop=fixture.supportTopY===null?transform.position[1]+height*.29+.006:transform.position[1]+fixture.supportTopY;
+    top=Math.max(top,bodyTop,supportTop);
+  }
+  return new T.Box3(new T.Vector3(-width/2-.012,-.025,-depth/2-.012),new T.Vector3(width/2+.012,top,depth/2+.012));
+}
 export function referenceCameras(record:SceneRecord) {
-  const {width:w,height:h,depth:d}=record.tank,center=new T.Vector3(0,h/2-.012,0),box=new T.Box3(new T.Vector3(-w/2-.012,-.025,-d/2-.012),new T.Vector3(w/2+.012,h+.004,d/2+.012)),radius=box.getSize(new T.Vector3()).length()/2,aspect=OUTPUT_WIDTH/OUTPUT_HEIGHT;
+  const box=referenceCameraBounds(record),center=box.getCenter(new T.Vector3()),radius=box.getSize(new T.Vector3()).length()/2,aspect=OUTPUT_WIDTH/OUTPUT_HEIGHT;
   const directions=[new T.Vector3(0,0,1),new T.Vector3(-1,0,0),new T.Vector3(1,0,0),new T.Vector3(0,1,0),new T.Vector3(.8,.52,1).normalize()];
   const views=VIEW_NAMES.map((name,i)=>{const camera=i===4?new T.PerspectiveCamera(36,aspect,.001,100):new T.OrthographicCamera(-1,1,1,-1,.001,100),distance=i===4?radius/Math.sin(18*Math.PI/180)*1.16:radius*3+1;camera.position.copy(center).addScaledVector(directions[i],distance);if(name==="top")camera.up.set(0,0,-1);camera.lookAt(center);camera.updateMatrixWorld(true);
     if(camera instanceof T.OrthographicCamera){let extentX=0,extentY=0;for(const x of [box.min.x,box.max.x])for(const y of [box.min.y,box.max.y])for(const z of [box.min.z,box.max.z]){const p=new T.Vector3(x,y,z).applyMatrix4(camera.matrixWorldInverse);extentX=Math.max(extentX,Math.abs(p.x));extentY=Math.max(extentY,Math.abs(p.y));}const half=Math.max(extentY,extentX/aspect)*1.12;camera.left=-half*aspect;camera.right=half*aspect;camera.top=half;camera.bottom=-half;}
@@ -29,18 +46,21 @@ export function zipPacket(files:{name:string;bytes:Uint8Array}[]) {
 const sha=async(bytes:Uint8Array)=>Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",new Uint8Array(bytes).buffer))).map(b=>b.toString(16).padStart(2,"0")).join("");
 export type ReferencePacket={zip:Blob;images:{name:string;blob:Blob}[];revision:number};
 export async function renderReferencePacket(input:SceneRecord,water:boolean,signal:AbortSignal,onProgress:(n:number)=>void):Promise<ReferencePacket> {
-  const record=validateScene(structuredClone(input)),sceneBytes=encoder.encode(JSON.stringify(record,null,2)),sceneHash=await sha(sceneBytes);signal.throwIfAborted();const renderer=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true}),images:ReferencePacket["images"]=[],files:{name:string;bytes:Uint8Array}[]=[{name:"scene.json",bytes:sceneBytes}],content=new T.Group();let stage:ReturnType<typeof createAquariumStage>|undefined;
+  const record=validateScene(structuredClone(input)),sceneBytes=encoder.encode(JSON.stringify(record,null,2)),sceneHash=await sha(sceneBytes);signal.throwIfAborted();const renderer=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true}),images:ReferencePacket["images"]=[],files:{name:string;bytes:Uint8Array}[]=[{name:"scene.json",bytes:sceneBytes}],content=new T.Group();let stage:ReturnType<typeof createAquariumStage>|undefined,built:ReturnType<typeof populateAquarium>|undefined,organisms:OrganismSystem|undefined;
   try{
     let shaderFailed=false;renderer.debug.onShaderError=()=>{shaderFailed=true;};
-    stage=createAquariumStage(renderer);stage.scene.add(content);
-    renderer.setPixelRatio(1);renderer.setSize(OUTPUT_WIDTH,OUTPUT_HEIGHT,false);populateAquarium(content,record,water);const cameras=referenceCameras(record),manifestViews=[];
+    const quality=resolveRenderQuality({preference:record.visual.quality,viewport:{width:OUTPUT_WIDTH,height:OUTPUT_HEIGHT,devicePixelRatio:1}});
+    stage=createAquariumStage(renderer,{quality});stage.scene.add(content);
+    renderer.setPixelRatio(1);renderer.setSize(OUTPUT_WIDTH,OUTPUT_HEIGHT,false);built=populateAquarium(content,record,water,{quality});stage.applyLighting(record);
+    await enhanceAquariumAssets(content,record,built.meshes,signal);signal.throwIfAborted();built.effects.refreshPlants();built.effects.setTime(0);
+    organisms=createOrganismSystem(record);await organisms.ready;stage.scene.add(organisms.group);organisms.update(0);const cameras=referenceCameras(record),manifestViews=[];
     for(const {name,camera,target} of cameras){signal.throwIfAborted();await new Promise<void>(resolve=>requestAnimationFrame(()=>resolve()));signal.throwIfAborted();renderer.render(stage.scene,camera);if(shaderFailed||renderer.getContext().isContextLost())throw new Error("The graphics device could not render this packet. Close it and try again.");
       const blob=await new Promise<Blob>((resolve,reject)=>renderer.domElement.toBlob(b=>b?resolve(b):reject(new Error("Image encoding failed")),"image/png")),bytes=new Uint8Array(await blob.arrayBuffer()),cameraRecord={projection:camera.type,metresPerPixel:camera instanceof T.OrthographicCamera?(camera.right-camera.left)/OUTPUT_WIDTH:null,position:camera.position.toArray(),up:camera.up.toArray(),target:target.toArray(),matrixWorld:camera.matrixWorld.toArray(),projectionMatrix:camera.projectionMatrix.toArray()};images.push({name,blob});files.push({name:`${name}.png`,bytes});manifestViews.push({name,file:`${name}.png`,width:OUTPUT_WIDTH,height:OUTPUT_HEIGHT,sha256:await sha(bytes),cameraSha256:await sha(encoder.encode(JSON.stringify(cameraRecord))),...cameraRecord});signal.throwIfAborted();onProgress(images.length);
     }
-    const manifest={format:"fishy.reference-packet.v1",sceneId:record.id,revision:record.revision,builder:record.builder,geometryGenerator:"fishy-object-v11",sceneFile:"scene.json",sceneSha256:sceneHash,units:"metres",dimensionsCm:{width:record.tank.width*100,depth:record.tank.depth*100,height:record.tank.height*100},dimensionSource:record.tank.source,water,orthographicScale:"Identical metres per pixel across front, left, right and top",waterPhase:"flat static surface",background:"dark studio; room photo excluded",lighting:"same studio rig as editor",views:manifestViews,limitations:["These are rendered views of one frozen scene, not photographs or alternative designs.","Scene dimensions are user-entered or assumed, not independently measured.","Orthographic front/left/right/top preserve relative model scale; perspective overview is not a measurement view.","Materials are procedural approximations. Browser/GPU differences may affect pixels.","scene.json is the full data record including sculpt fields; this release does not provide a general scene-file import UI."]};
+    const manifest={format:"fishy.reference-packet.v1",sceneId:record.id,revision:record.revision,builder:record.builder,geometryGenerator:"fishy-object-v11",sceneFile:"scene.json",sceneSha256:sceneHash,units:"metres",dimensionsCm:{width:record.tank.width*100,depth:record.tank.depth*100,height:record.tank.height*100},dimensionSource:record.tank.source,water,orthographicScale:"Identical metres per pixel across front, left, right and top",waterPhase:"fixed time 0; flow geometry remains flat for deterministic capture",organismPhase:"fixed time 0 using the persisted organism seed",background:"dark studio; room photo excluded",lighting:"same resolved studio rig as editor",views:manifestViews,limitations:["These are rendered views of one frozen scene, not photographs or alternative designs.","Scene dimensions are user-entered or assumed, not independently measured.","Orthographic front/left/right/top preserve relative model scale; perspective overview is not a measurement view.","Detailed local GLBs are used when available; an offline or failed asset load retains the editable procedural model.","Materials are procedural/PBR approximations. Browser/GPU differences may affect pixels.","Fish use the authored skinned tetra GLB when available. This image packet freezes its pose; editable Blender sources and the swimming clip are supplied separately.","scene.json is the full data record including sculpt fields; this release does not provide a general scene-file import UI."]};
     files.push({name:"manifest.json",bytes:encoder.encode(JSON.stringify(manifest,null,2))});
     const caption=`Revision ${record.revision} · ${referenceDimensionsLabel(record.tank)} (W × D × H) · ${record.tank.source==="assumed"?"assumed dimensions":"user-entered dimensions"}`;
     files.push({name:"index.html",bytes:encoder.encode(`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Fishy — five reference views</title><style>body{font:16px system-ui;max-width:1100px;margin:32px auto;padding:0 20px;background:#f7f8f7;color:#16312c}img{width:100%;height:auto}figure{margin:28px 0}p{line-height:1.5}</style><h1>Fishy · five reference views</h1><p>${caption}</p><p>One frozen scene. Rendered references—not photographs or measured physical fit. Room photo excluded. Front, left, right and top are orthographic at identical scale; overview is perspective.</p>${VIEW_NAMES.map(name=>`<figure><h2>${name}</h2><img src="${name}.png" alt="${name} view of aquarium revision ${record.revision}"><figcaption>${caption}</figcaption></figure>`).join("")}<p>See manifest.json for exact cameras, dimensions and SHA-256 image/data identities. scene.json includes sculpt data; no general re-import UI is provided in this release.</p>`)});
     signal.throwIfAborted();return {zip:zipPacket(files),images,revision:record.revision};
-  }finally{disposeObject(content);stage?.dispose();renderer.dispose();renderer.forceContextLoss();}
+  }finally{built?.effects.dispose();organisms?.dispose();disposeObject(content);stage?.dispose();renderer.dispose();renderer.forceContextLoss();}
 }

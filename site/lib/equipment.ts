@@ -1,5 +1,6 @@
 import {catalogEntryById,isSystemCatalogEntry,type CatalogEntry} from "./catalog.ts";
 import type {EquipmentInstance,SceneRecord,Vec3} from "./scene.ts";
+import {aquariumWaterHeight} from "./render-profile.ts";
 import type {FlowSource} from "./water-flow.ts";
 
 export type InstalledSystem={instance:EquipmentInstance;entry:CatalogEntry};
@@ -98,15 +99,27 @@ export function systemTransform(instance:EquipmentInstance,scene:Pick<SceneRecor
   return {position:[x,height+.19,0],rotation:[0,0,0]};
 }
 
+export type FilterTankScene=Pick<SceneRecord,"tank">&Partial<Pick<SceneRecord,"substrate"|"visual">>;
+
+/** One physical outlet datum for the rendered hardware and surface forcing. */
+export function filterOutletDatum(instance:EquipmentInstance,scene:FilterTankScene,entry:CatalogEntry) {
+  if(entry.system?.type!=="filter")throw new Error("A filter profile is required.");
+  const profile=entry.system,root=systemTransform(instance,scene),waterHeight=aquariumWaterHeight({...scene,substrate:scene.substrate??.04});
+  const x=root.position[0]+(profile.silhouette==="canister"&&profile.outlet==="jet"?profile.nominalDimensionsCm[0]/100*.24:0);
+  const worldPosition:Vec3=[x,profile.silhouette==="hob"?scene.tank.height-.003:waterHeight-.009,-scene.tank.depth/2+.043];
+  const localPosition=worldPosition.map((v,i)=>v-root.position[i]) as Vec3;
+  return {worldPosition,localPosition,waterHeight,bodyBaseY:profile.silhouette==="hob"?scene.tank.height-profile.nominalDimensionsCm[2]/100*.82-root.position[1]:-root.position[1]};
+}
+
 /** Filter profiles drive both surface waves and the horizontal current field. */
 export function filterFlowSources(scene:SceneRecord):FlowSource[] {
   const {width,depth,height}=scene.tank,volumeLitres=Math.max(1,width*depth*height*1000);
   return installedSystems(scene).flatMap(({instance,entry})=>{
     if(!instance.enabled||entry.system?.type!=="filter")return [];
-    const transform=systemTransform(instance,scene);
+    const datum=filterOutletDatum(instance,scene,entry);
     const profile=entry.system;
-    const x=Math.max(0,Math.min(1,(transform.position[0]+width/2)/width));
-    const z=Math.max(0,Math.min(1,(transform.position[2]+depth/2)/depth));
+    const x=Math.max(0,Math.min(1,(datum.worldPosition[0]+width/2)/width));
+    const z=Math.max(0,Math.min(1,(datum.worldPosition[2]+depth/2)/depth));
     const spread=profile.outlet==="sheet"?.24:profile.outlet==="line"?.3:.16;
     const sourceStrength=Math.max(profile.flowStrength*.65,Math.min(.82,profile.ratedFlowLph/volumeLitres*.035));
     return [{position:[x,z],direction:[0,1],radius:spread,strength:sourceStrength,frequency:.72+sourceStrength*.8,turbulence:profile.outlet==="jet"?.8:.45}];

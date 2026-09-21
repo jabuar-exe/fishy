@@ -1,0 +1,155 @@
+{
+  "format": "fishy.render-assets.v2",
+  "generators": [
+    "blender/build_natural_assets.py",
+    "blender/build_tetra.py"
+  ],
+  "naturalSource": "blender/fishy-fidelity-assets.blend",
+  "fishSource": "blender/fishy-neon-tetra.blend",
+  "materialProvenance": [
+    "blender/material-sources/materials-provenance.json",
+    "blender/material-sources/fern_02/provenance.json"
+  ],
+  "assets": [
+    {
+      "file": "neon-tetra.glb",
+      "bytes": 477236,
+      "sha256": "069e1d54f3a53ac17d316d3553779a39742d7495dc9226f84413054accf6aea3",
+      "triangles": 10144,
+      "drawPrimitives": 6,
+      "textureFormats": [
+        "image/jpeg",
+        "image/jpeg"
+      ],
+      "animations": 1,
+      "source": "Original Fishy geometry; documented CC0 scan maps on wood and stone"
+    },
+    {
+      "file": "plant-broadleaf.glb",
+      "bytes": 241248,
+      "sha256": "258d9237153d02d2090d692349213b01c7bc43e7fcb6bf30fd72dd7b8226934d",
+      "triangles": 8072,
+      "drawPrimitives": 2,
+      "textureFormats": [
+        "image/jpeg",
+        "image/jpeg",
+        "image/jpeg"
+      ],
+      "animations": 0,
+      "source": "Original Fishy geometry; documented CC0 scan maps on wood and stone"
+    },
+    {
+      "file": "plant-fern.glb",
+      "bytes": 5981688,
+      "sha256": "0a5f65af2a4f1871b8116356845f19a00ff091434000720627022c14e32ee5c5",
+      "triangles": 7152,
+      "drawPrimitives": 1,
+      "textureFormats": [
+        "image/jpeg",
+        "image/png",
+        "image/jpeg"
+      ],
+      "animations": 0,
+      "source": "Adapted Poly Haven Fern 02 (CC0), three overlapping crowns"
+    },
+    {
+      "file": "plant-grass.glb",
+      "bytes": 187736,
+      "sha256": "57d1b4ad22af1161a48a994ae05fca434ace0f9578ffcd12db644c64e9529c92",
+      "triangles": 4640,
+      "drawPrimitives": 1,
+      "textureFormats": [
+        "image/jpeg",
+        "image/jpeg",
+        "image/jpeg"
+      ],
+      "animations": 0,
+      "source": "Original Fishy geometry; documented CC0 scan maps on wood and stone"
+    },
+    {
+      "file": "plant-moss.glb",
+      "bytes": 3885164,
+      "sha256": "e0f90e3e47608e0cb87630e7a28964fab8343b569497242b7e440d6024a40736",
+      "triangles": 101640,
+      "drawPrimitives": 2,
+      "textureFormats": [
+        "image/jpeg",
+        "image/jpeg",
+        "image/jpeg"
+      ],
+      "animations": 0,
+      "source": "Original Fishy geometry; documented CC0 scan maps on wood and stone"
+    },
+    {
+      "file": "plant-stem.glb",
+      "bytes": 1803940,
+      "sha256": "804917e7689342996dfdf50815657a6e613aa62d7aaf973023224d6246753b17",
+      "triangles": 64320,
+      "drawPrimitives": 2,
+      "textureFormats": [
+        "image/jpeg",
+        "image/jpeg",
+        "image/jpeg"
+      ],
+      "animations": 0,
+      "source": "Original Fishy geometry; documented CC0 scan maps on wood and stone"
+    },
+    {
+      "file": "rock-rounded.glb",
+      "bytes": 6682824,
+      "sha256": "9a12e19cbf0df90b27009a3e84084157e7443bd831c942bc708d578c3c5b8f8d",
+      "triangles": 9216,
+      "drawPrimitives": 1,
+      "textureFormats": [
+        "image/jpeg",
+        "image/jpeg",
+        "image/jpeg"
+      ],
+      "animations": 0,
+      "source": "Original Fishy geometry; documented CC0 scan maps on wood and stone"
+    },
+    {
+      "file": "wood-arch.glb",
+      "bytes": 9432508,
+      "sha256": "d5e2e5a8dd2509c955f8beecb35d2f249a4c771e54ef98333fdd59acc45c9e8b",
+      "triangles": 24764,
+      "drawPrimitives": 1,
+      "textureFormats": [
+        "image/jpeg",
+        "image/jpeg",
+        "image/jpeg"
+      ],
+      "animations": 0,
+      "source": "Original Fishy geometry; documented CC0 scan maps on wood and stone"
+    },
+    {
+      "file": "wood-root.glb",
+      "bytes": 9233104,
+      "sha256": "79af2e83189e07b54cf1b41ef87517f0aab78b9046396f8db82ff548043b107f",
+      "triangles": 15964,
+      "drawPrimitives": 1,
+      "textureFormats": [
+        "image/jpeg",
+        "image/jpeg",
+        "image/jpeg"
+      ],
+      "animations": 0,
+      "source": "Original Fishy geometry; documented CC0 scan maps on wood and stone"
+    },
+    {
+      "file": "wood-stump.glb",
+      "bytes": 9179520,
+      "sha256": "3220cc9c606899066f4f1c5b3a97c54b08908cb5ce671a6489b43f0c9d115950",
+      "triangles": 13732,
+      "drawPrimitives": 1,
+      "textureFormats": [
+        "image/jpeg",
+        "image/jpeg",
+        "image/jpeg"
+      ],
+      "animations": 0,
+      "source": "Original Fishy geometry; documented CC0 scan maps on wood and stone"
+    }
+  ],
+  "totalBytes": 47104968
+}

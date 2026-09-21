@@ -10,3 +10,56 @@
   .studio .canvas-toolbar{left:6px;right:6px;gap:4px}
   .studio .canvas-toolbar button{font-size:13px;padding:5px 4px;gap:3px}
 }
+
+/* Keep every project action reachable at 320px and at enlarged text sizes. */
+@media(max-width:599px){
+  .studio .topbar{height:auto;min-height:96px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 8px;padding:5px 10px;flex:none}
+  .studio .topbar .brand{grid-column:1;grid-row:1;justify-self:start}
+  .studio .topbar .project-title{display:none}
+  .studio .topbar nav{grid-column:1/-1;grid-row:2;justify-self:stretch;display:flex;min-width:0;margin:0}
+  .studio .topbar nav button{flex:1;min-width:0;min-height:36px;padding:5px 12px}
+  .studio .topbar .top-actions{grid-column:2;grid-row:1;gap:3px;margin:0}
+  .studio .topbar .top-actions>button{min-width:32px;min-height:40px;padding:5px 7px}
+  .studio .topbar .save-state{display:none}
+  .studio .topbar .project-menu>summary{min-width:32px;min-height:40px;display:flex;align-items:center;justify-content:center}
+}
+.skip-to-aquarium{position:fixed;z-index:100;left:12px;top:8px;padding:10px 16px;background:#fff;color:#174c40;transform:translateY(-180%)}
+.skip-to-aquarium:focus{transform:none;outline:2px solid #17695d;outline-offset:2px}
+.aquarium-settings .select-field{display:grid;gap:7px;margin-bottom:12px}
+.aquarium-settings select{width:100%}
+.aquarium-settings .number-field{display:grid;grid-template-columns:minmax(0,1fr) 86px;gap:8px;align-items:center}
+.aquarium-settings .micro{line-height:1.5;margin-top:12px}
+.aquarium-settings .field-error{grid-column:1/-1}
+.viewport-controls{position:absolute;z-index:5;bottom:18px;left:18px;right:18px;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;pointer-events:none}
+.viewport-controls>*{pointer-events:auto}
+.camera-controls{position:relative;display:flex;gap:4px;align-items:center;padding:5px;background:#f4f8f5ed;border:1px solid #cbd7d0;border-radius:11px;box-shadow:0 3px 18px #0002;backdrop-filter:blur(12px)}
+.camera-controls button{min-width:34px;min-height:34px;padding:6px 8px;border:0;background:transparent;font-size:13px;color:#243d34}
+.camera-controls button:hover:not(:disabled){background:#dceae1}
+.camera-controls select{width:auto;min-width:104px;min-height:34px;padding:5px 6px;border:0;background:transparent;font-size:13px;color:#243d34}
+.camera-controls :focus-visible,.render-diagnostics summary:focus-visible{outline:2px solid #17695d;outline-offset:2px}
+.render-diagnostics{font-size:12px;color:#d6e6dd;background:#152824ed;border:1px solid #40534b;border-radius:9px;padding:6px 9px;max-width:255px}
+.render-diagnostics summary{font-size:12px;color:inherit;min-height:22px;cursor:pointer}
+.render-diagnostics dl{display:grid;grid-template-columns:1fr auto;gap:3px 12px;margin:8px 0 2px}
+.render-diagnostics dt,.render-diagnostics dd{margin:0;color:inherit}
+.render-diagnostics p{font-size:11px;line-height:1.45;color:inherit;margin:7px 0 0}
+.aquarium-canvas:focus-visible{outline:3px solid #9ce2c0;outline-offset:-4px}
+.camera-status{position:absolute;left:18px;bottom:72px;color:#e4f1e7;font-size:12px;pointer-events:none;text-shadow:0 1px 3px #000}
+.viewport-status.asset-status{top:auto;bottom:76px;left:18px;right:auto;width:auto;font-size:12px;padding:7px 10px;background:#152824e6;border-radius:6px}
+.presentation-controls{position:absolute;z-index:8;left:50%;top:72px;transform:translateX(-50%);display:flex;gap:6px;align-items:center;background:#f4f8f5f5;padding:7px 10px;border-radius:10px;color:#243d34;font-size:12px;white-space:nowrap}
+.presentation-controls button{min-height:32px;font-size:12px;padding:5px 8px}
+@media(max-width:599px){
+  .viewport-controls{bottom:12px;left:8px;right:8px;gap:6px;align-items:flex-end;flex-wrap:wrap}
+  .camera-controls{gap:1px;padding:3px;border-radius:8px}
+  .camera-controls button{min-width:30px;padding:5px;min-height:36px}
+  .camera-controls select{min-width:87px;width:87px;font-size:12px}
+  .render-diagnostics{padding:5px 7px;max-width:100%;font-size:11px}
+  .render-diagnostics[open]{position:absolute;bottom:46px;right:0;max-width:240px}
+  .render-diagnostics summary{font-size:11px}
+  .camera-status{left:10px;bottom:64px;font-size:11px;max-width:90%}
+  .presentation-controls{top:65px;max-width:96%;gap:4px}
+}
+@media(forced-colors:active){.camera-controls,.render-diagnostics{border:1px solid CanvasText;background:Canvas;color:CanvasText}.camera-controls :focus-visible{outline-color:Highlight}}
+.planted-study-card{background:linear-gradient(135deg,#e6f0e7,#f7f8f1);border-color:#c8d8c9}.planted-study-card p{color:#456252}.planted-study-card button{margin-top:12px;color:#255647;border-color:#aac3b0}
+.fidelity-lab{height:100dvh;display:flex;flex-direction:column;background:#111d21}.fidelity-lab>header{display:flex;align-items:center;gap:20px;padding:12px 20px;background:#eef4ee;color:#234536}.fidelity-lab h1{font-size:18px;margin:0}.fidelity-lab>nav{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:8px 20px;background:#eef4ee}.fidelity-lab nav label{display:flex;align-items:center;gap:6px}.lab-stage{position:relative;flex:1;min-height:0}
+.lab-stage{display:flex}
+.viewport-status button{pointer-events:auto;margin-left:8px}.viewport-status{z-index:9}

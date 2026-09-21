@@ -2,6 +2,7 @@ import { z } from "zod";
 import {sculptSchema} from "./sculpt.ts";
 import {designSchema} from "./design.ts";
 import {catalogExpansion} from "./catalog-expansion.ts";
+import {DEFAULT_VISUAL_PROFILE,visualProfileSchema} from "./render-profile.ts";
 import type {FilterProfile,LightProfile} from "./catalog-types.ts";
 
 export const BUILDER = "fishy-browser-4";
@@ -10,6 +11,8 @@ const PREVIOUS_SAVE_KEY = "fishy.studio.scene.v5";
 const position = z.tuple([z.number().min(-10).max(10),z.number().min(-10).max(10),z.number().min(-10).max(10)]);
 const rotation = z.tuple([z.number().min(-Math.PI*100).max(Math.PI*100),z.number().min(-Math.PI*100).max(Math.PI*100),z.number().min(-Math.PI*100).max(Math.PI*100)]);
 export const MAX_REVISION = Number.MAX_SAFE_INTEGER - 1;
+/** Maximum number of editable hardscape and plant objects in a browser scene. */
+export const MAX_SCENE_OBJECTS = 64;
 export const objectSchema = z.object({
   id: z.string().min(1).max(100), name: z.string().min(1).max(160),
   kind: z.enum(["wood", "rock", "plant"]),
@@ -48,8 +51,10 @@ export const sceneSchema = z.object({
   revision: z.number().int().min(0).max(MAX_REVISION), units: z.literal("metres"),
   coordinates: z.literal("Y-up; X right; Z toward front; origin floor centre"),
   tank: z.object({ width: z.number().min(.1).max(3), depth: z.number().min(.1).max(3), height: z.number().min(.1).max(3), source: z.enum(["assumed", "user-entered"]) }),
-  substrate: z.number().min(0).max(.05), substrateCatalogId:z.string().min(1).max(100).optional(), objects: z.array(objectSchema).max(32),
+  substrate: z.number().min(0).max(.05), substrateCatalogId:z.string().min(1).max(100).optional(), objects: z.array(objectSchema).max(MAX_SCENE_OBJECTS),
   equipment:z.array(equipmentSchema).max(10).default([]),
+  /** Browser visual settings are persisted independently of editable aquascape geometry. */
+  visual:visualProfileSchema.default(DEFAULT_VISUAL_PROFILE),
   references: z.array(z.string().max(120)).max(50), brief: z.string().max(3000),
   /** Declared design intent. Optional so existing saves load; required by the Blender recipe. */
   design: designSchema.optional(),
@@ -79,7 +84,7 @@ const legacyV5SceneSchema=z.object({
   schema:z.literal(5),builder:z.literal("fishy-browser-3"),id:z.string().min(1).max(100),name:z.string().trim().min(1).max(120).default("Riverbend study"),
   revision:z.number().int().min(0).max(MAX_REVISION),units:z.literal("metres"),coordinates:z.literal("Y-up; X right; Z toward front; origin floor centre"),
   tank:z.object({width:z.number().min(.1).max(3),depth:z.number().min(.1).max(3),height:z.number().min(.1).max(3),source:z.enum(["assumed","user-entered"])}),
-  substrate:z.number().min(0).max(.05),objects:z.array(objectSchema).max(32),references:z.array(z.string().max(120)).max(50),brief:z.string().max(3000),design:designSchema.optional(),
+  substrate:z.number().min(0).max(.05),objects:z.array(objectSchema).max(MAX_SCENE_OBJECTS),references:z.array(z.string().max(120)).max(50),brief:z.string().max(3000),design:designSchema.optional(),
 }).strict();
 export type SceneObject = z.infer<typeof objectSchema>;
 export type EquipmentInstance=z.infer<typeof equipmentSchema>;
@@ -87,7 +92,7 @@ export type SceneRecord = z.infer<typeof sceneSchema>;
 export type Vec3 = [number, number, number];
 export function initialScene(): SceneRecord {
   const item=(id:string,name:string,kind:SceneObject["kind"],p:Vec3,form:string,color:string,size=1):SceneObject=>({id,name,kind,position:p,rotation:[0,0,0],form,color,size,protected:false});
-  return {schema:6,builder:BUILDER,id:"riverbend",name:"Riverbend study",revision:1,units:"metres",coordinates:"Y-up; X right; Z toward front; origin floor centre",tank:{width:.6,depth:.3,height:.36,source:"assumed"},substrate:.03,references:[],brief:"",equipment:[],objects:[
+  return {schema:6,builder:BUILDER,id:"riverbend",name:"Riverbend study",revision:1,units:"metres",coordinates:"Y-up; X right; Z toward front; origin floor centre",tank:{width:.6,depth:.3,height:.36,source:"assumed"},substrate:.03,references:[],brief:"",equipment:[],visual:structuredClone(DEFAULT_VISUAL_PROFILE),objects:[
     {...item("wood-arch","River wood","wood",[-.01,.035,-.01],"arch","#805636"),protected:true},
     item("rock-left","Left stone","rock",[-.16,.03,.055],"faceted","#777969",1),
     item("rock-right","Right stone","rock",[.17,.03,-.015],"faceted","#62675c",.85),
@@ -101,7 +106,11 @@ export function migrateScene(s:unknown):unknown {
   if(!s||typeof s!=="object")return s;
   const record=s as Record<string,unknown>;
   if(record.schema===5&&record.builder==="fishy-browser-3") {
-    const legacy=legacyV5SceneSchema.parse(record);
+    // A caller may derive a v5 fixture from a current scene. Visual profiles did
+    // not exist in v5, so never preserve one through the legacy parser.
+    const {visual,...legacyRecord}=record;
+    void visual;
+    const legacy=legacyV5SceneSchema.parse(legacyRecord);
     const {schema,builder,...rest}=legacy;
     void schema;void builder;
     return {...rest,schema:6,builder:BUILDER,equipment:[]};

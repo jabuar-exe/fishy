@@ -1,4 +1,4 @@
-export const CATALOG_KINDS=["wood","rock","plant","substrate","filter","light"] as const;
+export const CATALOG_KINDS=["wood","rock","plant","fish","substrate","filter","light"] as const;
 export type CatalogKind=(typeof CATALOG_KINDS)[number];
 export type OrganicCatalogKind=Extract<CatalogKind,"wood"|"rock"|"plant">;
 export type CatalogReferenceImage={src:string;alt:string;scope:string;sourceUrl:string;author:string;license:string;licenseUrl:string};
@@ -49,6 +49,19 @@ export type OrganicProfile={
   morphology:readonly string[];
 };
 
+/** A visual species profile, intentionally limited to identity and render bounds. */
+export type FishProfile={
+  type:"fish";
+  scientificName:string;
+  /** Typical adult total-length range, used for the editable starting scale. */
+  adultLengthCm:readonly [number,number];
+  /** Local model envelope as multiples of saved nose-to-tail length. */
+  envelope:{length:number;width:number;height:number};
+  schoolSize:readonly [number,number];
+  swimTempo:number;
+  model:string;
+};
+
 export type CatalogEntry={
   id:string;
   displayLabel:string;
@@ -63,8 +76,10 @@ export type CatalogEntry={
   color?:string;
   referenceImage?:CatalogReferenceImage;
   organic?:OrganicProfile;
+  fish?:FishProfile;
   system?:CatalogSystemProfile;
 };
 
 export const isOrganicCatalogEntry=(entry:CatalogEntry):entry is CatalogEntry&{kind:OrganicCatalogKind}=>entry.kind==="wood"||entry.kind==="rock"||entry.kind==="plant";
 export const isSystemCatalogEntry=(entry:CatalogEntry):entry is CatalogEntry&{system:CatalogSystemProfile}=>!!entry.system&&(entry.kind==="substrate"||entry.kind==="filter"||entry.kind==="light");
+export const isFishCatalogEntry=(entry:CatalogEntry):entry is CatalogEntry&{kind:"fish";fish:FishProfile}=>entry.kind==="fish"&&!!entry.fish;

@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import * as T from 'three';
-import {initialScene,validateScene,commitScene,readSavedScene,SAVE_KEY,BUILDER} from '../lib/scene.ts';
+import {MAX_SCENE_OBJECTS,initialScene,validateScene,commitScene,readSavedScene,SAVE_KEY,BUILDER} from '../lib/scene.ts';
 import {makeObject,boundsOf,disposeObject,outsideObjects} from '../lib/geometry.ts';
 import {createSculpt,brushSculpt,minimumBrushRadius,sculptSchema} from '../lib/sculpt.ts';
 import {duplicateObject} from '../lib/duplicate.ts';
@@ -41,6 +41,7 @@ test('sculpt edits auto-protect and journal; hostile proposal cannot remove or a
 test('duplicate keeps deformation independent, never overlaps and fails atomically when full',()=>{
   const scene=initialScene(),rock={...scene.objects[1],position:[0,.03,0],sculpt:{...seed(scene.objects[1]),nodes:[{index:364,offset:[0,.002,0]}]}},s={...scene,objects:[rock]},before=structuredClone(s),copy=duplicateObject(s,rock.id,'new-copy');assert.notEqual(copy.id,rock.id);assert(!boundsOf(copy).intersectsBox(boundsOf(rock)));assert.deepEqual(outsideObjects({...s,objects:[rock,copy]}),[]);copy.sculpt.nodes[0].offset[1]=.01;assert.deepEqual(s,before);const tiny={...s,tank:{width:.11,depth:.11,height:.1,source:'user-entered'}};assert.throws(()=>duplicateObject(tiny,rock.id,'copy'),/No clear space/);assert.throws(()=>duplicateObject(s,rock.id,rock.id),/identity/);
 });
+test('duplicate shares the editable scene object ceiling',()=>{const scene=initialScene(),objects=Array.from({length:MAX_SCENE_OBJECTS},(_,index)=>({...scene.objects[index%scene.objects.length],id:`full-${index}`}));assert.throws(()=>duplicateObject({...scene,objects},objects[0].id,'one-more'),/64-object limit/);});
 test('scene Undo and Redo preserve the outgoing sculpt snapshot before refs change',()=>{
   const original=initialScene(),sculpt={...seed(original.objects[1]),nodes:[{index:364,offset:[0,.003,0]}]},draft={...original,objects:original.objects.map((o,i)=>i===1?{...o,sculpt}:o)},edited=commitScene(original,protectManualChanges(original,draft),original.revision),undone=stepHistory(edited,[original],[],'undo');assert.deepEqual(undone.scene.objects,original.objects);assert.deepEqual(undone.future[0].objects,edited.objects);const redone=stepHistory(undone.scene,undone.past,undone.future,'redo');assert.deepEqual(redone.scene.objects,edited.objects);assert.deepEqual(vertices(redone.scene.objects[1]),vertices(edited.objects[1]));assert(redone.scene.objects[1].protected);assert.equal(redone.scene.revision,4);const again=stepHistory(redone.scene,redone.past,redone.future,'undo');assert.deepEqual(again.scene.objects,original.objects);
 });

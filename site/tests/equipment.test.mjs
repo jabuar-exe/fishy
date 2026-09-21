@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import * as T from "three";
 import {catalogEntries} from "../lib/catalog.ts";
-import {activeLights,equipmentCompatibilityMessage,filterFlowSources,installEquipment,systemTransform} from "../lib/equipment.ts";
+import {activeLights,equipmentCompatibilityMessage,filterFlowSources,filterOutletDatum,installEquipment,systemTransform} from "../lib/equipment.ts";
 import {buildEquipmentModel,buildSystemPreview,lightFixtureGeometry} from "../lib/equipment-models.ts";
 import {aquariumLightingState,aquariumSpotlightOrigins} from "../lib/aquarium-stage.ts";
 import {initialScene,validateScene} from "../lib/scene.ts";
@@ -130,4 +130,22 @@ test("disabled filters provide neither flow sources nor a powered water cue",()=
   const powered=buildEquipmentModel(installed.equipment[0],installed,filter),off=buildEquipmentModel(disabled.equipment[0],disabled,filter);
   const cue=model=>model.getObjectByName("Filter powered flow");
   assert.equal(cue(powered).userData.powered,true);assert.equal(cue(off).userData.powered,false);assert(cue(off).material.opacity<cue(powered).material.opacity);
+});
+
+
+test("filter outlet forcing tracks the real nozzle and saved pool level",()=>{
+  for(const id of ["filter-oase-biomaster-150","filter-fluval-307","filter-seachem-tidal-55"]){
+    const product=entry(id),base=initialScene();base.tank={width:.75,depth:.4,height:.4,source:"user-entered"};
+    const mounted=installEquipment(base,product,"datum-filter");
+    for(const level of [.35,1]){
+      const scene={...mounted,visual:{...mounted.visual,waterLevel:level}},instance=scene.equipment[0],datum=filterOutletDatum(instance,scene,product),source=filterFlowSources(scene)[0];
+      assert(Math.abs((source.position[0]-.5)*scene.tank.width-datum.worldPosition[0])<1e-9);
+      assert(Math.abs((source.position[1]-.5)*scene.tank.depth-datum.worldPosition[2])<1e-9);
+      const model=buildEquipmentModel(instance,scene,product),body=model.getObjectByName("Equipment body");
+      if(product.system.silhouette==="canister"){
+        assert(Math.abs(datum.worldPosition[1]-(datum.waterHeight-.009))<1e-9,"submerged return must follow the saved pool height");
+        assert(Math.abs(body.position.y+model.position.y)<1e-9,"external housing stays on the tank floor datum");
+      }else assert(Math.abs(datum.worldPosition[1]-(scene.tank.height-.003))<1e-9,"hang-on spillway remains at the rim as the pool changes");
+    }
+  }
 });

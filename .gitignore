@@ -4,6 +4,10 @@ __pycache__/
 *.blend1
 *.blend2
 blender/runs/
+# Render-inspection workspaces are reproducible local QA output, not runtime assets.
+blender/fishy-riverbank-study.blend
+workstreams/fidelity-reference-20260921/
+workstreams/filters-fish-ui-20260921/
 
 # Reinstallable/generated application state
 site/node_modules/
@@ -35,3 +39,6 @@ iaplc/scrape.log
 workstreams/frontier-workflows/research-inputs/aquamvs_zenodo/*.zip
 
 # IAPLC entry images are ADA copyright; keep local only
+
+# Local third-party reference HTML; do not redistribute template assets
+workstreams/fidelity-reference-20260921/reference/*.html

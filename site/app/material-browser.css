@@ -7,6 +7,47 @@
 .material-reference.material-reference-inspection{margin:0}
 .material-reference.material-reference-inspection>img{height:min(40vh,340px);object-fit:contain;background:#e9eeea}
 
+/* The catalog filters a large, mixed inventory without forcing users to
+   remember a horizontal run of category tabs. */
+.studio .materials-browser-toolbar{display:flex;align-items:center;gap:8px}
+.studio .materials-browser-toolbar .search-field{flex:1;min-width:0}
+.studio .catalog-filter-trigger{flex:none;min-height:38px;padding:6px 8px;border-color:#c2cbc4;background:#fff;color:#46514d;font-size:12px;font-weight:560;white-space:nowrap}
+.studio .catalog-filter-trigger-label{max-width:86px;overflow:hidden;text-overflow:ellipsis}
+.studio .catalog-filter-trigger-count{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 4px;border-radius:999px;background:#e2efe8;color:#17695d;font-size:11px;font-variant-numeric:tabular-nums}
+.catalog-filter-menu{min-width:220px!important;padding:5px!important;border-color:#cbd5cd!important;background:#fff!important;color:#303b36!important;box-shadow:0 10px 28px rgb(31 52 43 / 15%)!important}
+.catalog-filter-label{padding:7px 8px 3px!important;color:#66766b!important;font-size:11px!important;font-weight:650!important;letter-spacing:.06em;text-transform:uppercase}
+.catalog-filter-item{min-height:40px!important;padding:5px 8px 5px 30px!important;color:#303b36!important;font-size:13px!important}
+.catalog-filter-item[data-highlighted]{background:#e8f1ec!important;color:#17695d!important}
+.catalog-filter-thumbnail{width:25px;height:25px;flex:0 0 25px;margin-left:-24px;margin-right:7px;border-radius:6px;outline:1px solid rgb(0 0 0 / 10%);object-fit:cover;background:#eef2ee}
+.catalog-filter-item>span{margin-left:auto;color:#66766b;font-size:12px;font-variant-numeric:tabular-nums}
+.catalog-filter-separator{background:#e1e6e0!important}
+.studio .materials-browser-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}
+.studio .material-result-count{margin:0;color:#66766b;font-size:12px;font-variant-numeric:tabular-nums}
+.studio .material-density{display:flex;align-items:center;gap:3px;color:#66766b;font-size:11px}
+.studio .material-density>span{margin-right:2px}
+.studio .material-density button{width:27px;min-height:27px;padding:2px;border-radius:6px;background:#fff;color:#46514d;font-size:12px;font-variant-numeric:tabular-nums}
+.studio .material-density button[aria-pressed=true]{border-color:#17695d;background:#e2efe8;color:#17695d}
+.studio .material-density button:disabled{cursor:not-allowed}
+.studio .materials-panel .material-grid{grid-template-columns:repeat(var(--material-columns,2),minmax(0,1fr));gap:9px;margin-top:12px}
+.studio .materials-panel .material-choice{position:relative;min-height:0;padding:9px;gap:6px;transition:transform 150ms cubic-bezier(.2,0,0,1),border-color 150ms cubic-bezier(.2,0,0,1),background-color 150ms cubic-bezier(.2,0,0,1),box-shadow 150ms cubic-bezier(.2,0,0,1)}
+@media (hover:hover){.studio .materials-panel .material-choice:hover:not(:disabled){transform:translateY(-1px)}}
+.studio .materials-panel .material-choice:active:not(:disabled){transform:scale(.96)}
+.studio .materials-panel .material-choice .form-preview{height:72px;outline:1px solid rgb(0 0 0 / 7%);outline-offset:-1px}
+.studio .materials-panel .material-choice .eyebrow{margin:1px 0 0;font-size:10px;letter-spacing:.07em}
+.studio .materials-panel .material-choice strong{font-size:13px;line-height:1.3}
+.studio .material-size{display:inline-flex;width:fit-content;max-width:100%;padding:2px 5px;border-radius:999px;background:#edf3ef;color:#286b5b;font-size:10px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.studio .material-empty{margin-top:28px!important;text-align:center;color:#596561}
+.studio .material-empty button{min-height:28px;margin-left:3px;padding:3px 6px;color:#17695d;font-size:12px}
+
+/* The conversation is the primary task in Ideas, so it consumes the unused
+   tray height while the saved material remains directly beneath it. */
+.studio .dock-content:has(.ideas-workspace),.mobile-sheet .sheet-scroll:has(.ideas-workspace){display:flex;overflow:hidden}
+.ideas-workspace{display:flex;flex:1;flex-direction:column;min-height:0;overflow:auto}
+.studio .ideas-workspace>.panel-section,.mobile-sheet .ideas-workspace>.panel-section{margin-top:10px;padding:16px;border:1px solid var(--reui-line,#d7ddd7);border-radius:var(--reui-radius,12px);background:var(--reui-surface,#fff);box-shadow:var(--reui-shadow,0 1px 2px rgb(24 34 30 / 3%))}
+.ideas-workspace>.chat-panel{display:flex;flex:1 1 350px;min-height:350px}
+.ideas-workspace>.chat-panel .aquascape-chat{flex:1;min-height:0}
+@media(max-width:799px){.studio .materials-browser-toolbar{align-items:stretch}.studio .catalog-filter-trigger{min-height:40px}.studio .catalog-filter-trigger-label{max-width:76px}.studio .materials-panel .material-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ideas-workspace>.chat-panel{flex:none;min-height:320px}}
+
 /* Desktop configuration tray width can be adjusted with pointer or keyboard. */
 .left-panel-resize{position:relative;z-index:8;flex:0 0 12px;width:12px;cursor:col-resize;touch-action:none;user-select:none;outline:none}
 .left-panel-resize::before{content:"";position:absolute;top:0;bottom:0;left:5px;width:2px;background:transparent;transition:background .15s ease}

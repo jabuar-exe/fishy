@@ -1,5 +1,5 @@
 "use client";
-import {createContext,useContext,useEffect,useId,useRef,useState} from "react";
+import {createContext,useContext,useEffect,useLayoutEffect,useId,useRef,useState} from "react";
 import {Slider} from "@/components/ui/slider";
 export const DraftContext=createContext<(id:string,pending:boolean)=>void>(()=>{});
 
@@ -8,7 +8,7 @@ export function Field({label,value,onCommit,step=1,min=-999,max=999,unit}:{label
   const input=useRef<HTMLInputElement>(null),skipBlur=useRef(false),id=useId();
   const markDraft=useContext(DraftContext);
   useEffect(()=>()=>markDraft(id,false),[id,markDraft]);
-  useEffect(()=>{setDraft(String(value));setError("");markDraft(id,false);if(input.current)input.current.dataset.invalid="false";},[value,id,markDraft]);
+  useEffect(()=>{let active=true;queueMicrotask(()=>{if(!active)return;setDraft(String(value));setError("");markDraft(id,false);if(input.current)input.current.dataset.invalid="false";});return()=>{active=false;};},[value,id,markDraft]);
   const fail=(message:string)=>{setError(message);if(input.current){input.current.dataset.invalid="true";input.current.focus();}};
   const commit=()=>{if(skipBlur.current){skipBlur.current=false;return;}const n=Number(draft);if(!draft.trim()||!Number.isFinite(n)||n<min||n>max){fail(`Enter ${min}–${max}${unit?" "+unit:""}.`);return;}if(n!==value&&onCommit(n)===false){fail("This value does not fit. Adjust it or press Escape.");return;}setDraft(String(n));setError("");markDraft(id,false);if(input.current)input.current.dataset.invalid="false";};
   return <label className="number-field"><span>{label}</span><span className="number-input"><input ref={input} data-scene-draft="true" aria-label={label} aria-invalid={!!error} aria-describedby={error?id:undefined} type="number" min={min} max={max} step={step} value={draft} onChange={e=>{setDraft(e.target.value);setError("");markDraft(id,e.target.value!==String(value));e.target.dataset.invalid="false";}} onInvalid={()=>fail(`Enter ${min}–${max}${unit?" "+unit:""}.`)} onBlur={commit} onKeyDown={e=>{if(e.key==="Enter")e.currentTarget.blur();if(e.key==="Escape"){e.preventDefault();e.stopPropagation();skipBlur.current=true;markDraft(id,false);setDraft(String(value));setError("");e.currentTarget.dataset.invalid="false";e.currentTarget.blur();}}}/>{unit&&<span className="field-unit">{unit}</span>}</span>{error&&<span className="field-error" id={id} role="alert">{error}</span>}</label>;
@@ -17,7 +17,7 @@ export function Field({label,value,onCommit,step=1,min=-999,max=999,unit}:{label
 export type ControlGesture={cancel:()=>void};
 export function Adjustment({title,label,value,min,max,unit,revision,onCommit,onGesture,step=.1}:{title:string;label:string;value:number;min:number;max:number;unit:string;revision:number;onCommit:(value:number,base:number)=>boolean;onGesture:(gesture:ControlGesture|null)=>void;step?:number}) {
   const [draft,setDraft]=useState(value),host=useRef<HTMLDivElement>(null),id=useId();
-  const latest=useRef({value,revision,onCommit,onGesture});latest.current={value,revision,onCommit,onGesture};
+  const latest=useRef({value,revision,onCommit,onGesture});useLayoutEffect(()=>{latest.current={value,revision,onCommit,onGesture};},[value,revision,onCommit,onGesture]);
   const gesture=useRef<{start:number;base:number;keyboard:boolean}|null>(null),draftRef=useRef(value),cancelled=useRef(false);
   useEffect(()=>{if(!gesture.current){setDraft(value);draftRef.current=value;}},[value]);
   // The installed primitive owns its thumb; name that actual slider, not only its wrapper.

@@ -1,6 +1,7 @@
 import * as T from "three";
 import {isSystemCatalogEntry,type CatalogEntry} from "./catalog.ts";
-import {systemTransform} from "./equipment.ts";
+import {systemTransform,filterOutletDatum,type FilterTankScene} from "./equipment.ts";
+import {RoundedBoxGeometry} from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import type {EquipmentInstance,SceneRecord,Vec3} from "./scene.ts";
 
 function tube(points:Vec3[],radius:number,material:T.Material) {
@@ -35,34 +36,55 @@ export function lightFixtureGeometry(instance:EquipmentInstance,scene:Pick<Scene
   return {bodySize:[lengthCm/100,bodyHeight,depthCm/100],bodyCenterY:0,emitterLocalPosition,emitterWorldPosition:[root.position[0],root.position[1]+emitterY,root.position[2]],supportBottomY:null,supportTopY:null};
 }
 
-function canister(instance:EquipmentInstance,scene:Pick<SceneRecord,"tank">,entry:CatalogEntry) {
-  const group=new T.Group(),profile=entry.system;
-  if(!profile||profile.type!=="filter")return group;
-  const {height,depth}=scene.tank,[lengthCm,depthCm,heightCm]=profile.nominalDimensionsCm,bodyLength=lengthCm/100,bodyDepth=depthCm/100,bodyHeight=heightCm/100,bodyZ=-bodyDepth/2,bodyMat=new T.MeshStandardMaterial({color:entry.color??"#293230",roughness:.36,metalness:.38}),pipeMat=new T.MeshStandardMaterial({color:"#20292a",roughness:.2,metalness:.48}),waterMat=poweredMaterial("#9ec9c3",instance.enabled,.62);
-  // The external canister rests on the floor behind the rear pane at its source-listed size.
-  const bodyY=bodyHeight/2-height*.66,body=new T.Mesh(new T.BoxGeometry(bodyLength,bodyHeight,bodyDepth),bodyMat);body.name="Equipment body";body.userData.nominalEnvelopeMetres=[bodyLength,bodyHeight,bodyDepth];body.position.set(0,bodyY,bodyZ);group.add(body);
-  const capHeight=Math.min(.009,bodyHeight*.08),capY=bodyY+bodyHeight/2-capHeight/2,cap=new T.Mesh(new T.BoxGeometry(bodyLength*.94,capHeight,bodyDepth*.94),pipeMat);cap.position.set(0,capY,bodyZ);group.add(cap);
-  for(const ringY of [-.22,.22]){const ring=new T.Mesh(new T.BoxGeometry(bodyLength*.99,.003,bodyDepth*.99),pipeMat);ring.position.set(0,bodyY+bodyHeight*ringY,bodyZ);group.add(ring);}
-  for(const x of [-1,1] as const)for(const y of [-1,1] as const){const clasp=new T.Mesh(new T.BoxGeometry(.006,.013,.007),pipeMat);clasp.position.set(x*(bodyLength/2-.003),capY+y*.004,bodyZ);group.add(clasp);}
-  for(const side of [-1,1] as const){
-    const x=side*bodyLength*.24,top:Vec3=[x,capY+.004,bodyZ],returnY=height*.2;
-    group.add(tube([top,[x,-height*.08,bodyZ],[x,returnY,-depth*.025],[x,returnY,.028]],.0032,pipeMat));
-    const nozzle=new T.Mesh(new T.CylinderGeometry(.0045,.0035,.026,9),waterMat);nozzle.name="Filter powered flow";nozzle.userData.powered=instance.enabled;nozzle.rotation.x=Math.PI/2;nozzle.position.set(x,returnY,.039);group.add(nozzle);
+function housing(entry:CatalogEntry) {
+  const profile=entry.system;if(profile?.type!=="filter")throw new Error("Filter housing requires a filter.");
+  const [w,d,h]=profile.nominalDimensionsCm.map(cm=>cm/100),group=new T.Group();group.name="Equipment body";
+  group.userData.filterBodyAsset=entry.id;group.userData.nominalEnvelopeMetres=[w,h,d];
+  const plastic=new T.MeshStandardMaterial({color:entry.color??"#313b38",roughness:.48,metalness:.08}),lid=new T.MeshStandardMaterial({color:"#171f22",roughness:.36,metalness:.14}),accent=new T.MeshStandardMaterial({color:entry.id.includes("fluval")?"#8e2525":"#586963",roughness:.42,metalness:.15});
+  const box=(name:string,size:Vec3,pos:Vec3,mat:T.Material)=>{const mesh=new T.Mesh(new RoundedBoxGeometry(...size,3,Math.min(...size)*.14),mat);mesh.name=name;mesh.position.fromArray(pos);group.add(mesh);return mesh;};
+  if(entry.id.includes("eheim")){
+    const body=new T.Mesh(new T.CylinderGeometry(w/2,w/2,h*.78,40),plastic);body.position.y=h*.39;group.add(body);
+    const motor=new T.Mesh(new T.CylinderGeometry(w*.47,w*.5,h*.15,40),lid);motor.position.y=h*.88;group.add(motor);
+  }else{
+    box("Moulded filter vessel",[w,h*.77,d],[0,h*.405,0],plastic);
+    box("Separated motor lid",[w*.99,h*.14,d*.98],[0,h*.872,0],lid);
+    for(const side of [-1,1])box("Quick-release latch",[w*.075,h*.14,d*.19],[side*w*.457,h*.797,d*.25],accent);
+    for(const side of [-1,1])box("Non-slip foot",[w*.18,h*.026,d*.64],[side*w*.34,h*.013,0],lid);
   }
+  for(const side of [-1,1]){const port=new T.Mesh(new T.CylinderGeometry(w*.037,w*.045,h*.056,18),accent);port.position.set(side*w*.24,h*.972,0);group.add(port);}
+  box("Handle bridge",[w*.42,h*.035,d*.075],[0,h*.95,-d*.18],lid);
+  return group;
+}
+
+function canister(instance:EquipmentInstance,scene:FilterTankScene,entry:CatalogEntry) {
+  const group=new T.Group(),profile=entry.system;if(profile?.type!=="filter")return group;
+  const [w,d,h]=profile.nominalDimensionsCm.map(cm=>cm/100),root=systemTransform(instance,scene),datum=filterOutletDatum(instance,scene,entry);
+  const pipeMat=new T.MeshStandardMaterial({color:entry.id.includes("eheim")?"#326b4c":"#222d2c",roughness:.29,metalness:.08}),waterMat=poweredMaterial("#a9d5ce",instance.enabled,.22);
+  const body=housing(entry);body.position.set(0,datum.bodyBaseY,-d/2-.005);group.add(body);
+  const crest=Math.max(scene.tank.height+.018,h+.018)-root.position[1],intakeY=(scene.substrate??.04)+.05-root.position[1];
+  for(const side of [-1,1] as const){
+    const x=side*w*.24,z=-d/2-.005,portY=datum.bodyBaseY+h*.996,endY=side<0?intakeY:datum.localPosition[1];
+    group.add(tube([[x,portY,z],[x,Math.max(portY+.015,crest-.03),z],[x,crest,-.014],[x,crest,.025],[x,endY+.018,.040],[x,endY,.040]],.0034,pipeMat));
+    if(side<0){const strainer=new T.Mesh(new T.CylinderGeometry(.007,.007,.032,16),pipeMat);strainer.position.set(x,endY-.016,.040);group.add(strainer);for(let n=0;n<6;n++){const band=new T.Mesh(new T.TorusGeometry(.0074,.0007,5,18),pipeMat);band.rotation.x=Math.PI/2;band.position.set(x,endY-.003-n*.005,.040);group.add(band);}}
+  }
+  const [ox,oy,oz]=datum.localPosition;
+  if(profile.outlet==="line"){
+    group.add(tube([[-w*.30,oy,oz],[0,oy,oz],[w*.30,oy,oz]],.004,pipeMat));
+    for(let i=0;i<7;i++){const nozzle=new T.Mesh(new T.CylinderGeometry(.0014,.0014,.004,8),pipeMat);nozzle.rotation.x=Math.PI/2;nozzle.position.set((i-3)*w*.09,oy,oz+.004);group.add(nozzle);}
+  }else{const nozzle=new T.Mesh(new T.CylinderGeometry(.005,.004,.017,20,1,true),pipeMat);nozzle.rotation.x=Math.PI/2;nozzle.position.set(ox,oy,oz+.005);group.add(nozzle);}
+  const cue=new T.Mesh(new T.CylinderGeometry(.002,.006,.018,12,1,true),waterMat);cue.name="Filter powered flow";cue.userData.powered=instance.enabled;cue.rotation.x=Math.PI/2;cue.position.set(ox,oy,oz+.022);group.add(cue);
   return fixed(group,instance);
 }
 
-function hangOnBack(instance:EquipmentInstance,scene:Pick<SceneRecord,"tank">,entry:CatalogEntry) {
-  const group=new T.Group(),profile=entry.system;
-  if(!profile||profile.type!=="filter")return group;
-  const {height}=scene.tank,[lengthCm,depthCm,heightCm]=profile.nominalDimensionsCm,bodyWidth=lengthCm/100,bodyDepth=depthCm/100,bodyHeight=heightCm/100,bodyMat=new T.MeshStandardMaterial({color:entry.color??"#263035",roughness:.33,metalness:.44}),waterMat=poweredMaterial("#a8d8d2",instance.enabled,.6);
-  const body=new T.Mesh(new T.BoxGeometry(bodyWidth,bodyHeight,bodyDepth),bodyMat);body.position.set(0,bodyHeight/2-.02,-bodyDepth/2);group.add(body);
-  const hook=new T.Mesh(new T.BoxGeometry(bodyWidth*.74,.015,bodyDepth+.02),bodyMat);hook.position.set(0,bodyHeight-.025,-bodyDepth/2+.02);group.add(hook);
-  const intake=tube([[bodyWidth*.24,-.012,.016],[bodyWidth*.24,-height*.28,.022],[bodyWidth*.24,-height*.5,.025]],.0034,bodyMat);group.add(intake);
-  const strainer=new T.Mesh(new T.CylinderGeometry(.008,.008,.021,10),bodyMat);strainer.position.set(bodyWidth*.24,-height*.51,.025);group.add(strainer);
-  const waterfall=new T.Mesh(new T.PlaneGeometry(bodyWidth*.64,.025),waterMat);waterfall.name="Filter powered flow";waterfall.userData.powered=instance.enabled;waterfall.position.set(0,-.006,.031);waterfall.rotation.x=-.32;group.add(waterfall);
-  for(let tooth=0;tooth<7;tooth++){const weir=new T.Mesh(new T.BoxGeometry(bodyWidth*.055,.006,.007),bodyMat);weir.position.set((tooth-3)*bodyWidth*.085,.002,.024);group.add(weir);}
-  // The mounted body is deliberately fixed at the rear rim: it cannot be translated or rotated like hardscape.
+function hangOnBack(instance:EquipmentInstance,scene:FilterTankScene,entry:CatalogEntry) {
+  const group=new T.Group(),profile=entry.system;if(profile?.type!=="filter")return group;
+  const [w,d,h]=profile.nominalDimensionsCm.map(cm=>cm/100),datum=filterOutletDatum(instance,scene,entry),root=systemTransform(instance,scene),body=housing(entry);body.position.set(0,datum.bodyBaseY,-d/2-.005);group.add(body);
+  const plastic=new T.MeshStandardMaterial({color:entry.color??"#243235",roughness:.43,metalness:.06}),waterMat=poweredMaterial("#bfded8",instance.enabled,.30);
+  const lip=new T.Mesh(new RoundedBoxGeometry(w*.64,.005,.052,3,.0015),plastic);lip.position.set(0,datum.localPosition[1]+.003,.032);group.add(lip);
+  const intakeY=(scene.substrate??.04)+.055-root.position[1];group.add(tube([[w*.28,.02,-.01],[w*.28,.021,.03],[w*.28,intakeY,.033]],.0035,plastic));
+  const strainer=new T.Mesh(new T.CylinderGeometry(.008,.008,.025,16),plastic);strainer.position.set(w*.28,intakeY-.012,.033);group.add(strainer);
+  const fall=Math.max(.005,datum.worldPosition[1]-datum.waterHeight),waterfall=new T.Mesh(new T.PlaneGeometry(w*.59,fall,12,16),waterMat);waterfall.name="Filter powered flow";waterfall.userData.powered=instance.enabled;waterfall.position.set(0,datum.localPosition[1]-fall/2,datum.localPosition[2]+.004);group.add(waterfall);
+  for(let tooth=0;tooth<9;tooth++){const weir=new T.Mesh(new T.BoxGeometry(w*.032,.007,.005),plastic);weir.position.set((tooth-4)*w*.06,datum.localPosition[1]+.004,.054);group.add(weir);}
   return fixed(group,instance);
 }
 
@@ -85,7 +107,7 @@ function lightFixture(instance:EquipmentInstance,scene:Pick<SceneRecord,"tank">,
   return fixed(group,instance);
 }
 
-export function buildEquipmentModel(instance:EquipmentInstance,scene:Pick<SceneRecord,"tank">,entry:CatalogEntry) {
+export function buildEquipmentModel(instance:EquipmentInstance,scene:FilterTankScene,entry:CatalogEntry) {
   if(!isSystemCatalogEntry(entry)||(entry.system.type!=="filter"&&entry.system.type!=="light"))throw new Error(`${entry.displayLabel} cannot be built as equipment.`);
   const group=entry.system.type==="filter"?(entry.system.silhouette==="hob"?hangOnBack(instance,scene,entry):canister(instance,scene,entry)):lightFixture(instance,scene,entry);
   const transform=systemTransform(instance,scene);group.position.fromArray(transform.position);group.rotation.set(...transform.rotation);group.name=entry.displayLabel;group.userData.nominalDimensionsCm=entry.system.nominalDimensionsCm;group.updateMatrixWorld(true);return group;

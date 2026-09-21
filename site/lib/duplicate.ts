@@ -1,9 +1,9 @@
 import * as T from "three";
 import {boundsOf,tankBounds} from "./geometry.ts";
-import type {SceneRecord,SceneObject} from "./scene.ts";
+import {MAX_SCENE_OBJECTS,type SceneRecord,type SceneObject} from "./scene.ts";
 
 export function duplicateObject(scene:SceneRecord,id:string,newId:string):SceneObject {
-  if(scene.objects.length>=32)throw new Error("This scene has reached its 32-object limit.");
+  if(scene.objects.length>=MAX_SCENE_OBJECTS)throw new Error(`This scene has reached its ${MAX_SCENE_OBJECTS}-object limit.`);
   if(!newId||newId.length>100||scene.objects.some(o=>o.id===newId))throw new Error("Duplicate needs a new object identity.");
   const source=scene.objects.find(o=>o.id===id);if(!source)throw new Error("The selected object no longer exists.");
   const clone={...structuredClone(source),id:newId,name:`${source.name.slice(0,150)} copy`,protected:true},box=boundsOf(source),size=box.getSize(new T.Vector3()),boundary=tankBounds(scene),obstacles=scene.objects.map(boundsOf);

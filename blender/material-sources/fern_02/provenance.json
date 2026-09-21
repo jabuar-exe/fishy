@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "asset_id": "fern_02",
+  "asset_url": "https://polyhaven.com/a/fern_02",
+  "api_url": "https://api.polyhaven.com/files/fern_02",
+  "retrieved_utc": "2026-09-21",
+  "license": {"name": "CC0 1.0 Universal", "url": "https://polyhaven.com/license"},
+  "authors": [
+    {"name": "Rico Cilliers", "role": "Modeling"},
+    {"name": "Rob Tuytel", "role": "Scanning"}
+  ],
+  "notes": [
+    "The glTF package and its relative texture and binary references are retained unchanged under this directory.",
+    "The 2K Blend package is retained with its API-listed texture dependencies.",
+    "Additional 2K AO, displacement, and JPEG roughness maps are copied under maps/."
+  ],
+  "files": [
+    {"role":"gltf-package","local_path":"fern_02_2k.gltf","source_url":"https://dl.polyhaven.org/file/ph-assets/Models/gltf/2k/fern_02/fern_02_2k.gltf","source_md5":"904c73900125e017f5e76ac1cdd906fe","source_bytes":6899,"local_sha256":"50540d37531f93fd693d5340d5b3095c9d6d2834fa05c74bea797d54f290cb6a","local_bytes":6899},
+    {"role":"package-dependency","local_path":"textures/fern_02_diff_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/fern_02/fern_02_diff_2k.jpg","source_md5":"ba8bbb9dc9ff55bdc081565cd926d776","source_bytes":993703,"local_sha256":"9ee18172170728050871772e2cd6d8d37b52f9138e61b49b04486623f9caf84b","local_bytes":993703},
+    {"role":"package-dependency","local_path":"textures/fern_02_arm_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/fern_02/fern_02_arm_2k.jpg","source_md5":"7f7b46e813a3cb4811405191de0ecdce","source_bytes":850856,"local_sha256":"1eaf9bd29e2d83a77ca5d89bdddebcd9216b8b4ba244644580fe5b89bbe713f1","local_bytes":850856},
+    {"role":"package-dependency","local_path":"fern_02.bin","source_url":"https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/fern_02/fern_02.bin","source_md5":"c061e9255f7d36ae9ce0e92ef3e100b2","source_bytes":176176,"local_sha256":"fe1abb762bcbbc7ad9e86925c8080437a62add257d9280e9142fdc85c226e64c","local_bytes":176176},
+    {"role":"package-dependency","local_path":"textures/fern_02_nor_gl_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/fern_02/fern_02_nor_gl_2k.jpg","source_md5":"00936dff4661dc9fe1f2fbe6c000615a","source_bytes":1365615,"local_sha256":"dfe1ac4a428d21f7c134411500177d66b8dd800c8fec6f0040c50f44414a777b","local_bytes":1365615},
+    {"role":"blend-package","local_path":"fern_02_2k.blend","source_url":"https://dl.polyhaven.org/file/ph-assets/Models/blend/2k/fern_02/fern_02_2k.blend","source_md5":"fa04e3968d9dbfba0fac542b8381788c","source_bytes":262018,"local_sha256":"cf721e00ed5bb72f0b9c3fb59b8febc7b2b9b2082f162d5a80ba3a11e4e7028d","local_bytes":262018},
+    {"role":"package-dependency","local_path":"textures/fern_02_nor_gl_2k.exr","source_url":"https://dl.polyhaven.org/file/ph-assets/Models/exr/2k/fern_02/fern_02_nor_gl_2k.exr","source_md5":"4e1fa9220f53965604b406ba28e223b3","source_bytes":2895843,"local_sha256":"2787b69707c37a4b90627085f36e818b13816c6587aa0d06c5c6d004ccde7557","local_bytes":2895843},
+    {"role":"package-dependency","local_path":"textures/fern_02_rough_2k.exr","source_url":"https://dl.polyhaven.org/file/ph-assets/Models/exr/2k/fern_02/fern_02_rough_2k.exr","source_md5":"beb315edeb84760a46dcc3d223b609fd","source_bytes":901394,"local_sha256":"877fd64af4d815a2522700c676b2c32c6f075ce8bca59c6a2d267309b2fca550","local_bytes":901394},
+    {"role":"package-dependency","local_path":"textures/fern_02_alpha_2k.png","source_url":"https://dl.polyhaven.org/file/ph-assets/Models/png/2k/fern_02/fern_02_alpha_2k.png","source_md5":"ff18f7e8e869c58eac8f9c7d7c519f4a","source_bytes":230089,"local_sha256":"f51eb9b8f9f4b25a882f8fe12d1ef53ba69448bac7e71396ec1f05b684e9ea75","local_bytes":230089},
+    {"role":"ao-map","local_path":"maps/fern_02_ao_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/fern_02/fern_02_ao_2k.jpg","source_md5":"e79e193d7af4cf2d0f374ed15260e6b0","source_bytes":487034,"local_sha256":"f85cec069bac7c628ebc740e11f7c44161f4ba5fc5234095947912b7cec78580","local_bytes":487034},
+    {"role":"displacement-map","local_path":"maps/fern_02_displacement_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/fern_02/fern_02_disp_2k.jpg","source_md5":"681a454d3d30bb515247640a4a118bd4","source_bytes":471801,"local_sha256":"f219f09824540d8055380ee5ee8f6408b96372c7151599bf3192d558a2752ca0","local_bytes":471801},
+    {"role":"rough-map","local_path":"maps/fern_02_rough_2k.jpg","source_url":"https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/fern_02/fern_02_rough_2k.jpg","source_md5":"8314186165be744ae79952baf4388491","source_bytes":626789,"local_sha256":"33d8284959dae53a3eeb11d4a38199320e9a64e2710515b2f0a1a71be4cae908","local_bytes":626789}
+  ]
+}

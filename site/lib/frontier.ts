@@ -1,10 +1,10 @@
 import {z} from "zod";
-import {BUILDER,MAX_REVISION,sceneSchema,objectSchema,validateScene,commitScene,type SceneRecord,type SceneObject} from "./scene.ts";
+import {BUILDER,MAX_REVISION,MAX_SCENE_OBJECTS,sceneSchema,objectSchema,validateScene,commitScene,type SceneRecord,type SceneObject} from "./scene.ts";
 import {outsideObjects} from "./geometry.ts";
 
 export const MAX_REVIEW_BYTES=1024*1024;
 const id=z.string().min(1).max(100).regex(/^[a-zA-Z0-9][a-zA-Z0-9_.:-]*$/),prose=z.string().max(2000),hash=z.string().regex(/^[a-f0-9]{64}$/),revision=z.number().int().min(0).max(MAX_REVISION);
-const ids=z.array(id).max(32).refine(v=>new Set(v).size===v.length,"Duplicate IDs");
+const ids=z.array(id).max(MAX_SCENE_OBJECTS).refine(v=>new Set(v).size===v.length,"Duplicate IDs");
 const observation=z.object({id,view:z.enum(["front","left","right","top","overview","close_up"]),role:z.literal("reconstruction"),sha256:hash,note:prose,objectIds:ids,region:z.tuple([z.number().finite().min(0).max(1),z.number().finite().min(0).max(1),z.number().finite().min(0).max(1),z.number().finite().min(0).max(1)]).refine(v=>v[0]<v[2]&&v[1]<v[3],"Region must have positive area").optional()}).strict();
 const request=z.object({id,objectId:id,question:prose.min(1),requestedView:z.enum(["front","left","right","top","close_up"]),why:prose.min(1),status:z.enum(["requested","answered","resolved_changed","resolved_confirmed","request_unresolved"]),answerObservationId:id.optional()}).strict();
 const change=z.object({objectId:id,summary:prose.min(1),inferred:z.boolean().optional(),observationIds:z.array(id).max(20).refine(v=>new Set(v).size===v.length,"Duplicate citations")}).strict().refine(v=>v.inferred===true||v.observationIds.length>0,"At least one reconstruction citation is required unless explicitly inferred");
@@ -15,7 +15,7 @@ const evaluation=z.object({seriesId:id,runtime:z.enum(["browser","blender"]),bui
 export const reviewSchema=z.object({
   schemaVersion:z.literal("fishy.frontier.review.v1"),provenance:z.enum(["protocol_fixture","recorded_model_run","imported_run"]),
   run:z.object({id,runtime:z.enum(["browser","blender"]),builder:id,sceneId:id,baseRevision:revision,revision,createdAt:z.string().datetime({offset:true})}).strict(),
-  observations:z.array(observation).max(20),requests:z.array(request).max(2),changes:z.array(change).max(32),
+  observations:z.array(observation).max(20),requests:z.array(request).max(2),changes:z.array(change).max(MAX_SCENE_OBJECTS),
   protection:z.object({protectedIds:ids,blockedAttempts:z.array(blocked).max(64)}).strict(),evaluation:evaluation.nullable(),browserProposal:sceneSchema.nullable(),
 }).strict().superRefine((record,ctx)=>{
   const issue=(message:string)=>ctx.addIssue({code:"custom",message});
