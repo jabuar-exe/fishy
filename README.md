@@ -6,6 +6,15 @@ Fishy helps an aquascaper move from a real aquarium photograph, a material refer
 
 ![A Fishy aquascape study](site/public/showcase/hero-60-arch.png)
 
+## ▍Inside Fishy
+
+<table><tr>
+<td width="50%"><img src="https://raw.githubusercontent.com/bede-lau/bede-lau.github.io/main/assets/img/fishy/fishy_1.png" alt="Fishy project screenshot, first view" /></td>
+<td width="50%"><img src="https://raw.githubusercontent.com/bede-lau/bede-lau.github.io/main/assets/img/fishy/fishy_2.png" alt="Fishy project screenshot, second view" /></td>
+</tr></table>
+
+<sub>Images from the [project portfolio](https://bede-lau.github.io/); they may depict an earlier build.</sub>
+
 ## Why Fishy
 
 Aquascaping is fundamentally spatial. A reference image encodes hierarchy, negative space, depth, silhouette, massing, and the relationship between plants and hardscape—but it rarely exposes exact dimensions or the occluded sides of an object. Conventional inspiration boards can show a beautiful tank; they cannot turn the visual idea into an editable plan while preserving uncertainty.
